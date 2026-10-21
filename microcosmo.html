@@ -584,6 +584,7 @@
   .hud-check input{ width:14px; height:14px; margin:0; accent-color:#111; cursor:pointer; }
   .hud-range{ width:100%; margin:0 0 6px; accent-color:#111; cursor:pointer; }
   .hud-range:disabled{ opacity:.35; cursor:default; }
+  .hud-group[data-group="scene"].open .hud-group-body{ max-height:420px; }
   .release-btn{
     display:block; width:100%; margin-top:6px; padding:11px 0; cursor:pointer;
     background:#fff; color:#111; border:2px solid #111; border-radius:6px;
@@ -921,6 +922,9 @@
         <input type="range" id="limit-range" class="hud-range" min="1" max="20" value="20" disabled aria-label="Máximo de entidades">
         <label class="hud-check"><input type="checkbox" id="refresh-on"> Renovar a cada 20 s</label>
         <div class="hud-row"><span>próxima troca</span><span id="refresh-left">—</span></div>
+        <label class="hud-check" title="Os organismos procuram comida, os predadores caçam e espécies diferentes brigam entre si"><input type="checkbox" id="behavior-on"> Caçar e lutar</label>
+        <div class="hud-row"><span>comida na água</span><span id="hud-food">—</span></div>
+        <div class="hud-row"><span>mortes em lutas</span><span id="hud-fight-deaths">0</span></div>
       </div>
     </div>
     <div class="hud-group open" data-group="organisms">
@@ -1511,7 +1515,8 @@ const SPECIES = [
     length: 17, width: 9,
     depth: 2, rarity: 'comum', habitat: ['milk'],
     motility: 'brownian', speed: 0.1, turnRate: 0.6,
-    health: 'benefica', gram: 'Gram-positiva',
+    health: 'benefica', gram: 'Gram-positiva', bacteriocin: 'nisina',
+    // (no modo "Caçar e lutar", a nisina atinge patógenos Gram-positivos por perto)
     desc: 'Coco levemente ovalado que aparece aos pares ou em cadeias curtas. Uma das bactérias mais importantes da história dos laticínios: foi uma das primeiras bactérias isoladas em cultura pura, pelo cirurgião Joseph Lister, no século XIX.',
     behavior: 'Imóvel; o par de células apenas vibra no lugar.',
     healthNote: 'Benéfica e considerada segura para alimentos. Produz nisina, um antimicrobiano natural que inibe bactérias perigosas como a Listeria e os esporos de Clostridium.',
@@ -3187,6 +3192,7 @@ class Organism {
 
   update(dt, bounds){
     if(this.caught || this.escaped) return;
+    if(this._hitT > 0) this._hitT -= dt; // recoiling from a blow in a fight
 
     if(this.spawnFade < 1){
       this.spawnFade = Math.min(1, this.spawnFade + dt/1.8); // slow fade-in: drifts into the field of view
@@ -3260,6 +3266,14 @@ class Organism {
       this.speed = this.baseSpeed * 1.8;
     }
 
+    // ---- purposeful behaviour (scene option "Caçar e lutar"): squaring up to
+    // an opponent, or heading for the food / prey the game picked for it
+    if(this.engaged){ this.angle = this.engaged.face; this.speed = 0; }
+    else if(this.steerTo != null && !this.fleeing && !this.suction){
+      this.angle = this.displayAngle + Math.atan2(Math.sin(this.steerTo - this.displayAngle), Math.cos(this.steerTo - this.displayAngle));
+    }
+    this.steerTo = null;
+
     // ---- turning: the drawn body (displayAngle) eases toward the intended
     // heading (this.angle) with a capped angular speed that depends on how the
     // organism moves — a ciliate pivots briskly, a crawling amoeba or a
@@ -3281,8 +3295,9 @@ class Organism {
     // can't slide sideways), slowing down while it is still mid-turn.
     const turnSlow = 1 - 0.55*Math.min(1, Math.abs(delta)/1.4);
     const moveMul = (this.suction ? (canDart ? 0.3 : 0.1) : 1) * turnSlow;
-    this.x += Math.cos(this.displayAngle) * this.speed * dt * 26 * moveMul;
-    this.y += Math.sin(this.displayAngle) * this.speed * dt * 26 * moveMul;
+    const boost = this.speedBoost || 1; this.speedBoost = 1; // chasing food or prey: a short burst
+    this.x += Math.cos(this.displayAngle) * this.speed * dt * 26 * moveMul * boost;
+    this.y += Math.sin(this.displayAngle) * this.speed * dt * 26 * moveMul * boost;
 
     // ---- the drying edge: motile organisms sense the thinning water film and
     // turn back before reaching it; passive ones (drifting diatoms/algae,
@@ -3524,7 +3539,7 @@ class Organism {
     // cell barely wags; a dying one doesn't at all)
     const sf = this._speedFactor || 0;
     // struggling in the pipette's suction: a fast, hard wag plus a jitter
-    const struggling = this.suction && !this.dying;
+    const struggling = (this.suction || this._hitT > 0) && !this.dying;
     const wig = this.dying ? 0 : struggling ? Math.sin(this.phase*3.1) * 7 * this.wobble
       : Math.sin(this.phase) * (this.fleeing ? 3 : 0.6 + 1.2*Math.min(1,sf)) * this.wobble;
     const angDeg = this.displayAngle * 180/Math.PI;
@@ -4283,7 +4298,12 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   droppletSvg.removeChild(grainGroup);
   for(let d=1; d<=MAX_DEPTH; d++) droppletSvg.removeChild(layerGroups[d].g);
   livingRoot.appendChild(grainGroup);
-  for(let d=1; d<=MAX_DEPTH; d++) livingRoot.appendChild(layerGroups[d].g);
+  // the focal planes share one parent, so the click ripple can bend the
+  // organisms without the static debris (thousands of elements in soil and
+  // milk, which would have to be re-rasterized on every frame of the ripple)
+  const lifeLayers = el('g', { class:'life-layers' });
+  for(let d=1; d<=MAX_DEPTH; d++) lifeLayers.appendChild(layerGroups[d].g);
+  livingRoot.appendChild(lifeLayers);
   droppletSvg.appendChild(livingRoot);
   // organisms stranded on the dry glass but still alive (tardigrade tuns)
   // live here: outside the wet-drop clip so they stay visible and clickable,
@@ -4369,7 +4389,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
       }
     };
   }
-  const waterFX = createRippleFX(droppletSvg, livingRoot, ()=>({ x: camera.x - 40, y: camera.y - 40, w: VIEW_W + 80, h: VIEW_H + 80 }));
+  const waterFX = createRippleFX(droppletSvg, lifeLayers, ()=>({ x: camera.x - 40, y: camera.y - 40, w: VIEW_W + 80, h: VIEW_H + 80 }));
 
   // the visible surface rings (bright crest + dark trough, three of them,
   // staggered) on top of the refraction the filter does underneath
@@ -4979,7 +4999,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   function updateDivision(o, dt){
     if(!o.species.divides || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.suction || o.tun || o.fleeing) return;
     if(o._divT === undefined) o._divT = divisionDelay(o.species);
-    o._divT -= dt;
+    // "Caçar e lutar": a well-fed cell divides much sooner, a hungry one later
+    o._divT -= dt * (behaviorOn ? ((o.energy || 0) >= 3 ? 4 : 0.5) : 1);
     if(o._divT > 0) return;
     o._divT = divisionDelay(o.species);
     const same = organisms.filter(x => x.species === o.species && !x.dying && inView(x, 40)).length;
@@ -4992,6 +5013,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   // split along the valve plane, so the two daughters end up side by side
   function divide(o){
     const sp = o.species;
+    if(behaviorOn) o.energy = Math.max(0, (o.energy || 0) - 3); // dividing spends what it ate
     const child = placeOrganism(sp, o.x, o.y, o.depthLevel);
     child.spawnFade = o.spawnFade;
     child.angle = child.displayAngle = o.displayAngle;
@@ -5011,7 +5033,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   // sense nearby; then they need a while to digest before eating again
   function updatePredation(o, dt){
     const eats = o.species.eats;
-    if(!eats || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun || o.suction) return;
+    if(!eats || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun || o.suction || o.engaged) return;
     if(o._digest > 0){ o._digest -= dt; return; }
     const reach = Math.max(o.species.length, o.species.width) * 0.5;
     let best = null, bestD = Infinity;
@@ -5025,9 +5047,11 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     const preyR = Math.max(best.species.length, best.species.width) * 0.3;
     if(bestD < reach + preyR){
       if(Math.random() < dt*1.5) swallow(o, best);
-    } else if(bestD < reach*4 && o.species.motility !== 'stalked' && !o.fleeing){
+    } else if(bestD < reach*(behaviorOn ? 12 : 4) && o.species.motility !== 'stalked' && !o.fleeing){
       const toward = Math.atan2(best.y - o.y, best.x - o.x);
-      o.angle += Math.atan2(Math.sin(toward - o.angle), Math.cos(toward - o.angle)) * Math.min(1, dt*2);
+      // "Caçar e lutar": predators spot prey from much further and chase it
+      if(behaviorOn){ o.steerTo = toward; o.speedBoost = 1.45; }
+      else o.angle += Math.atan2(Math.sin(toward - o.angle), Math.cos(toward - o.angle)) * Math.min(1, dt*2);
     }
   }
   function swallow(pred, prey){
@@ -5441,6 +5465,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     organisms.forEach(o=>{ if(o.group.parentNode) o.group.parentNode.removeChild(o.group); });
     organisms.length = 0;
     refreshQueue.length = 0; refreshT = REFRESH_EVERY; // pending swaps belonged to the old sample
+    clearBehavior(); // food and fights belonged to the old sample too
     // reset the drop: full of water again
     dryElapsed = 0; wetR = MAX_WET_R; gameOver = false;
     driedOverlay.classList.remove('show');
@@ -5884,6 +5909,239 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     }
   }
 
+  // ---- scene option "Caçar e lutar": purposeful behaviour ----
+  // Instead of wandering at random: food particles appear in the water and
+  // organisms that feed that way sense the nearest one, swim to it and eat it
+  // (well-fed cells divide sooner); predators chase prey from further off;
+  // organisms of different species and similar size that meet may fight —
+  // they square up and lunge, each blow knocks the target back and costs it
+  // health, the loser dies or runs away. Algae and diatoms photosynthesise,
+  // so they neither forage nor fight. Lactococcus can't swim, but releases
+  // nisin, which hurts nearby Gram-positive pathogens.
+  const PHOTOSYNTHETIC = new Set(['spirogyra','oscillatoria','diatomP','diatomC','diatomR','diatomT','closterium','spiny','volvox','chlamy','flagellate']);
+  const FOOD_MAX = 26, FIGHT_MAX_TIME = 9;
+  const FOOD_COLOR = { water:'#8a7f52', soil:'#6b5434', milk:'#bfb284' };
+  const behaviorOnEl = document.getElementById('behavior-on');
+  const hudFood = document.getElementById('hud-food'), hudFightDeaths = document.getElementById('hud-fight-deaths');
+  let behaviorOn = false, foodSpawnT = 0, fightScanT = 0, fightDeaths = 0, fightToastShown = false, nisinToastShown = false;
+  const foods = [];  // { x, y, depth, el }
+  const fights = []; // { a, b, t, nextHit, lunge }
+
+  const bodyR = o => Math.max(o.species.length, o.species.width) * 0.45;
+  const strength = sp => Math.sqrt(sp.length * sp.width) / 8;
+  const maxHp = sp => 2 + strength(sp)*2;
+  const canSwim = o => !(o.species.motility === 'brownian' || o.species.motility === 'stalked');
+  const isFree = o => !(o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun || o.suction || o.dead);
+  const forages = o => !PHOTOSYNTHETIC.has(o.species.id);
+  const fights_ = o => canSwim(o) && !PHOTOSYNTHETIC.has(o.species.id);
+
+  behaviorOnEl.addEventListener('change', ()=>{
+    behaviorOn = behaviorOnEl.checked;
+    if(!behaviorOn){ clearBehavior(); hudFood.textContent = '—'; }
+    showToast(behaviorOn ? 'Os organismos agora caçam comida e brigam entre si' : 'Comportamento normal: os organismos voltam a vagar', false);
+  });
+  function clearBehavior(){
+    fightDeaths = 0; hudFightDeaths.textContent = 0;
+    foods.forEach(f=> f.el.remove()); foods.length = 0;
+    fights.slice().forEach(f=> endFight(f));
+  }
+
+  // a little clump of organic matter, drawn under the organisms of its plane
+  function spawnFood(){
+    const planes = [];
+    for(let d=1; d<=MAX_DEPTH; d++) if(speciesForDepth(d).some(sp=> !PHOTOSYNTHETIC.has(sp.id))) planes.push(d);
+    if(!planes.length) return;
+    const depth = (planes.includes(currentDepth) && Math.random() < 0.5) ? currentDepth : planes[Math.floor(Math.random()*planes.length)];
+    for(let k=0;k<6;k++){
+      const x = camera.x + Math.random()*VIEW_W, y = camera.y + Math.random()*VIEW_H;
+      if(!isInsideWetBlob(x, y, simTime, 0.9)) continue;
+      const g = el('g', { class:'food', transform:`translate(${x.toFixed(1)},${y.toFixed(1)})` });
+      const col = FOOD_COLOR[currentSlide] || FOOD_COLOR.water;
+      const n = 2 + Math.floor(Math.random()*3);
+      for(let i=0;i<n;i++) g.appendChild(el('circle', { cx:((Math.random()-0.5)*3).toFixed(1), cy:((Math.random()-0.5)*3).toFixed(1), r:(0.8+Math.random()*1.1).toFixed(2), fill:col, opacity:0.8 }));
+      const layer = layerGroups[depth].g;
+      layer.insertBefore(g, layer.firstChild);
+      g.animate([{ opacity:0 }, { opacity:1 }], { duration:600 });
+      foods.push({ x, y, depth, el:g });
+      return;
+    }
+  }
+  function eatFood(o, i){
+    const f = foods[i];
+    foods.splice(i, 1);
+    f.el.animate([{ opacity:1 }, { opacity:0 }], { duration:250 }).onfinish = ()=> f.el.remove();
+    o.energy = (o.energy || 0) + 1;
+  }
+
+  function updateBehavior(dt){
+    if(!behaviorOn) return;
+    foodSpawnT -= dt;
+    if(foodSpawnT <= 0){
+      foodSpawnT = 0.45;
+      if(foods.filter(f=> inView(f, 20)).length < FOOD_MAX) spawnFood();
+    }
+    for(let i=foods.length-1; i>=0; i--){
+      if(!inView(foods[i], VIEW_W*0.6)){ foods[i].el.remove(); foods.splice(i, 1); }
+    }
+    const near = organisms.filter(o=> isFree(o) && inView(o, 60));
+
+    // foraging: head for the nearest food in the same plane, eat it on contact
+    near.forEach(o=>{
+      if(o.hp !== undefined && !o.engaged) o.hp = Math.min(maxHp(o.species), o.hp + dt*0.1); // slowly heals
+      if(o.engaged || o.fleeing || !forages(o)) return;
+      const swim = canSwim(o), r = bodyR(o);
+      const sense = swim ? 90 + r*3 : r + 4; // drifters only eat what bumps into them
+      let best = -1, bestD = Infinity;
+      for(let i=0;i<foods.length;i++){
+        const f = foods[i];
+        if(f.depth !== o.depthLevel) continue;
+        const d = Math.hypot(f.x - o.x, f.y - o.y);
+        if(d < bestD){ bestD = d; best = i; }
+      }
+      if(best < 0 || bestD > sense) return;
+      if(bestD < r + 3){ eatFood(o, best); return; }
+      if(swim){ o.steerTo = Math.atan2(foods[best].y - o.y, foods[best].x - o.x); o.speedBoost = 1.35; }
+    });
+
+    fightScanT -= dt;
+    if(fightScanT <= 0){ fightScanT = 0.25; scanFights(near); }
+    updateFights(dt);
+    releaseBacteriocins(dt, near);
+    hudFood.textContent = foods.length;
+    hudFightDeaths.textContent = fightDeaths;
+  }
+
+  // ---- fights ----
+  function scanFights(near){
+    const cand = near.filter(o=> !o.engaged && fights_(o) && o !== holding && !(o._fightCool > simTime));
+    for(let i=0;i<cand.length;i++) for(let j=i+1;j<cand.length;j++){
+      const a = cand[i], b = cand[j];
+      if(a.engaged || b.engaged || a.depthLevel !== b.depthLevel || a.species === b.species) continue;
+      if((a.species.eats || []).includes(b.species.id) || (b.species.eats || []).includes(a.species.id)) continue; // that's predation
+      const ra = bodyR(a), rb = bodyR(b);
+      if(ra/rb < 0.4 || ra/rb > 2.5) continue;               // only rivals of similar size
+      if(Math.hypot(a.x - b.x, a.y - b.y) > (ra + rb)*1.7) continue;
+      if(Math.random() > 0.35) continue;
+      startFight(a, b);
+    }
+  }
+  function startFight(a, b){
+    const f = { a, b, t:0, nextHit: 0.35 + Math.random()*0.4, lunge:null };
+    if(a.hp === undefined) a.hp = maxHp(a.species);
+    if(b.hp === undefined) b.hp = maxHp(b.species);
+    a.engaged = { fight:f, face:a.displayAngle };
+    b.engaged = { fight:f, face:b.displayAngle };
+    fights.push(f);
+    if(!fightToastShown && inView(a, 0)){
+      fightToastShown = true;
+      showToast(`Briga! ${a.species.displayName} × ${b.species.displayName}`, true, null, 2200);
+    }
+  }
+  function endFight(f){
+    [f.a, f.b].forEach(o=>{ if(o.engaged && o.engaged.fight === f){ o.engaged = null; o._fightCool = simTime + 6 + Math.random()*4; } });
+    const i = fights.indexOf(f);
+    if(i >= 0) fights.splice(i, 1);
+  }
+  function updateFights(dt){
+    for(let k=fights.length-1; k>=0; k--){
+      const f = fights[k], a = f.a, b = f.b;
+      // grabbed by the pipette, eaten, dried up, swapped out, drifted away: over
+      if(!isFree(a) || !isFree(b) || !inView(a, 120)){ endFight(f); continue; }
+      f.t += dt;
+      const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+      a.engaged.face = Math.atan2(dy, dx);
+      b.engaged.face = Math.atan2(-dy, -dx);
+      const rr = bodyR(a) + bodyR(b);
+      if(f.lunge){
+        // the attacker darts in, strikes, and bounces back
+        const L = f.lunge, att = L.att, tgt = att === a ? b : a;
+        const ux = (tgt.x - att.x)/d, uy = (tgt.y - att.y)/d;
+        L.t += dt;
+        if(L.t < 0.16){
+          const step = Math.max(0, d - rr*0.8) * Math.min(1, dt*14);
+          att.x += ux*step; att.y += uy*step;
+        } else if(!L.hit){
+          L.hit = true;
+          if(strike(f, att, tgt, ux, uy)) continue; // fight is over
+        } else if(L.t < 0.42){
+          att.x -= ux*rr*0.9*dt/0.26; att.y -= uy*rr*0.9*dt/0.26;
+        } else f.lunge = null;
+      } else {
+        // circling at a short distance, then someone attacks
+        const push = (d - rr*1.25) * Math.min(1, dt*2) * 0.5;
+        a.x += dx/d*push; a.y += dy/d*push; b.x -= dx/d*push; b.y -= dy/d*push;
+        f.nextHit -= dt;
+        if(f.nextHit <= 0){
+          const sa = strength(a.species), sb = strength(b.species);
+          f.lunge = { att: Math.random() < sa/(sa+sb) ? a : b, t:0, hit:false };
+          f.nextHit = 0.45 + Math.random()*0.5;
+        }
+      }
+      if(f.t > FIGHT_MAX_TIME){ endFight(f); a.triggerFlee(b.x, b.y); b.triggerFlee(a.x, a.y); } // both give up
+    }
+  }
+  // returns true when the fight ended
+  function strike(f, att, tgt, ux, uy){
+    tgt.hp -= strength(att.species) * (0.6 + Math.random()*0.8);
+    const rr = bodyR(att) + bodyR(tgt);
+    tgt.x += ux*rr*0.35; tgt.y += uy*rr*0.35; // knocked back
+    hitFlash(tgt);
+    hitSpark((att.x + tgt.x)/2, (att.y + tgt.y)/2);
+    if(tgt.hp <= 0){ killedInFight(tgt, att); endFight(f); return true; }
+    if(tgt.hp < maxHp(tgt.species)*0.3 && Math.random() < 0.5){ endFight(f); tgt.triggerFlee(att.x, att.y); return true; } // runs for it
+    return false;
+  }
+  function hitFlash(o){
+    o._hitT = 0.25;
+    o.group.style.filter = 'sepia(1) saturate(5) hue-rotate(-35deg)';
+    setTimeout(()=>{ if(!o.dying && !o.tun) o.group.style.filter = ''; }, 150);
+  }
+  function hitSpark(x, y){
+    const g = el('g', {});
+    for(let i=0;i<6;i++){
+      const a = i/6*Math.PI*2 + Math.random()*0.5, r0 = 2, r1 = 5 + Math.random()*3;
+      g.appendChild(el('line', { x1:(x + Math.cos(a)*r0).toFixed(1), y1:(y + Math.sin(a)*r0).toFixed(1), x2:(x + Math.cos(a)*r1).toFixed(1), y2:(y + Math.sin(a)*r1).toFixed(1),
+        stroke:'#c0392b', 'stroke-width':0.8, 'stroke-linecap':'round' }));
+    }
+    rippleGroup.appendChild(g);
+    g.animate([{ opacity:0.9 }, { opacity:0 }], { duration:320, easing:'ease-out' }).onfinish = ()=> g.remove();
+  }
+  function killedInFight(o, by){
+    o.startDying();
+    fightDeaths++;
+    by.energy = (by.energy || 0) + 2;
+  }
+
+  // ---- bacteriocins: a non-swimming fighter (Lactococcus and its nisin) ----
+  function releaseBacteriocins(dt, near){
+    near.forEach(o=>{
+      if(!o.species.bacteriocin) return;
+      if(o._bactT === undefined) o._bactT = Math.random()*3;
+      o._bactT -= dt;
+      if(o._bactT > 0) return;
+      o._bactT = 3 + Math.random()*2;
+      const R = 55;
+      const targets = near.filter(p=> p !== o && p.depthLevel === o.depthLevel && p.species.health === 'patogenica' &&
+                                       p.species.gram === 'Gram-positiva' && Math.hypot(p.x - o.x, p.y - o.y) < R);
+      if(!targets.length) return;
+      const halo = el('circle', { cx:o.x.toFixed(1), cy:o.y.toFixed(1), r:2, fill:'none', stroke:'#2e8b57', 'stroke-width':1.2, opacity:0 });
+      rippleGroup.appendChild(halo);
+      halo.animate([{ r:2, opacity:0.5 }, { r:R, opacity:0 }], { duration:900, easing:'ease-out' }).onfinish = ()=> halo.remove();
+      targets.forEach(p=>{
+        if(p.hp === undefined) p.hp = maxHp(p.species);
+        p.hp -= 1.2;
+        hitFlash(p);
+        if(p.hp <= 0){
+          killedInFight(p, o);
+          if(!nisinToastShown){
+            nisinToastShown = true;
+            showToast(`${o.species.displayName} liberou ${o.species.bacteriocin} e matou um ${p.species.displayName}!`, false, '#2e8b57', 3000);
+          }
+        }
+      });
+    });
+  }
+
   // ---- main loop ----
   let lastT = null;
   function loop(now){
@@ -5895,6 +6153,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     if(!gameOver && !labOpen){
       updateDrying(dt);
       updateSceneOptions(dt);
+      updateBehavior(dt);
       maybeSpawnInView(dt);
       const bounds = {
         cx: CENTER.x, cy: CENTER.y, wetR,
