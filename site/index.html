@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Microcosmo · Ver o invisível</title>
+<meta name="description" content="Pitch do Microcosmo para a Feira Tecnológica: um microscópio digital que vê os microrganismos do leite cru. Role para baixo e as informações aparecem no lugar.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="track" aria-hidden="true"></div>
+
+<main id="stage" class="stage hud-off" data-bg="ink">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- ===================== 01 · CAPA E IDENTIDADE ===================== -->
+  <section class="scene" id="s1" aria-label="01 — Capa e identidade do projeto">
+
+    <div class="beat center" data-b="0">
+      <div class="title-card">
+        <p class="tc-name rv">Microcosmo</p>
+        <p class="tc-count mono rv" style="--d:.12s">01 / 06</p>
+      </div>
+      <p class="scroll-hint mono rv" style="--d:.5s">role para baixo <span class="arr">↓</span><br><span class="dim">ou espaço · setas · passador de slides</span></p>
+    </div>
+
+    <div class="beat cut" data-b="1">
+      <div class="bounce" id="bounce" aria-hidden="true">
+        <svg class="bn-svg"><path class="bn-line"/><path class="bn-lead"/></svg>
+        <i class="bn-dot"></i><i class="bn-dot"></i>
+        <i class="bn-shadow"></i>
+        <i class="bn-ball"></i>
+        <span class="bn-lbl mono">lâmina 01 · leite cru</span>
+        <span class="bn-lbl mono">bactéria · ~1 <span class="mu">µ</span>m</span>
+      </div>
+      <p class="bn-cap mono rv" style="--d:.3s">Toda gota de leite carrega vida<br>que o olho não vê.</p>
+    </div>
+
+    <div class="beat center cut" data-b="2">
+      <div class="logo-block">
+        <h1 class="logo" aria-label="Microcosmo"><span class="logo-m" data-split>MICROCOSMO</span><i class="logo-dot"></i></h1>
+        <div class="logo-rule rv" style="--d:.55s"></div>
+        <div class="logo-row mono rv" style="--d:.62s"><span>Feira Tecnológica · pitch técnico</span><span>Apresentação 21/10</span></div>
+        <p class="logo-sub rv" style="--d:.75s">Um microscópio digital que <b>vê o invisível</b> no leite, antes que ele chegue à mesa.</p>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="3">
+      <div class="split">
+        <div class="col">
+          <p class="mono kick rv">(01) norma e setor</p>
+          <h2 class="d d-xl"><span class="ml"><span>NR-32.</span></span></h2>
+          <h2 class="d d-l" style="margin-top:.12em"><span class="ml"><span style="--d:.07s">Risco</span></span><span class="ml"><span style="--d:.14s">biológico.</span></span></h2>
+          <div class="pill-row rv" style="--d:.3s"><span class="pill">Setor · indústria de laticínios</span><span class="arrow">↗</span></div>
+          <p class="small rv" style="--d:.42s">Segurança e saúde de quem trabalha exposto a agentes biológicos. No nosso caso: o técnico que analisa o leite cru que chega à fábrica.</p>
+        </div>
+        <div class="slot-wrap"><div class="ring" id="ring" data-text="MICROCOSMO · VER O INVISÍVEL · NR-32 · " aria-hidden="true"></div></div>
+      </div>
+    </div>
+
+    <div class="beat cut team" data-b="4">
+      <div class="split">
+        <div class="col">
+          <p class="mono kick rv">(01) a equipe</p>
+          <h2 class="d d-xl"><span class="ml"><span>Quem</span></span><span class="ml acc"><span style="--d:.08s">fez.</span></span></h2>
+          <p class="mono team-turma rv" style="--d:.3s">Turma · <span data-turma></span></p>
+        </div>
+        <ol class="names">
+          <li class="rv" style="--d:.12s"><span class="mono">01</span><span data-nome="0"></span></li>
+          <li class="rv" style="--d:.2s"><span class="mono">02</span><span data-nome="1"></span></li>
+          <li class="rv" style="--d:.28s"><span class="mono">03</span><span data-nome="2"></span></li>
+          <li class="rv" style="--d:.36s"><span class="mono">04</span><span data-nome="3"></span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 · A ORIGEM E O PROBLEMA ===================== -->
+  <section class="scene" id="s2" aria-label="02 — A origem da ideia e o problema real">
+
+    <div class="beat center cut" data-b="0">
+      <p class="kw-idx mono rv">(01)</p>
+      <h2 class="kw kw-type"><span data-split>O perigo</span><i class="caret"></i></h2>
+    </div>
+
+    <div class="beat center cut" data-b="1">
+      <div class="bbox">
+        <span class="bb-idx mono">(02)</span>
+        <h2 class="kw">Não se vê</h2>
+        <i class="hd" style="--hx:0;--hy:0"></i><i class="hd" style="--hx:.5;--hy:0"></i><i class="hd" style="--hx:1;--hy:0"></i>
+        <i class="hd" style="--hx:0;--hy:.5"></i><i class="hd" style="--hx:1;--hy:.5"></i>
+        <i class="hd" style="--hx:0;--hy:1"></i><i class="hd" style="--hx:.5;--hy:1"></i><i class="hd" style="--hx:1;--hy:1"></i>
+        <span class="bb-size mono">1 – 5 <span class="mu">µ</span>m</span>
+      </div>
+    </div>
+
+    <div class="beat center cut" data-b="2">
+      <p class="kw-idx mono rv">(03)</p>
+      <h2 class="kw kw-it">a olho</h2>
+    </div>
+
+    <div class="beat center cut" data-b="3">
+<pre class="codebg mono" aria-hidden="true">lote_0421   tanque: 03   temp: 7,8 °C   UFC/mL: ???   CCS: ???   status: aguardando
+amostra.coletar()        → ok
+amostra.incubar(72h)     → aguardando…
+lote.processar()         → ok   // o leite já seguiu na linha
+laudo.emitir()           → atrasado
+patogeno.detectado       → ???
+tecnico.epi              → não verificado
+lote_0422   tanque: 01   temp: 9,1 °C   UFC/mL: ???   CCS: ???   status: aguardando
+amostra.coletar()        → ok
+amostra.incubar(72h)     → aguardando…
+lote.processar()         → ok
+laudo.emitir()           → atrasado
+patogeno.detectado       → ???
+lote_0423   tanque: 02   temp: 6,4 °C   UFC/mL: ???   CCS: ???   status: aguardando
+amostra.coletar()        → ok
+amostra.incubar(72h)     → aguardando…</pre>
+      <p class="kw-idx mono rv">(04)</p>
+      <h2 class="kw kw-gl" data-text="NU.">NU.</h2>
+    </div>
+
+    <div class="beat cut" data-b="4">
+      <div class="split">
+        <div class="col">
+          <p class="mono kick rv">(05) a origem da ideia</p>
+          <h2 class="d d-l"><span class="ml"><span>Começou</span></span><span class="ml"><span style="--d:.06s">com água</span></span><span class="ml acc"><span style="--d:.12s">e solo.</span></span></h2>
+          <p class="lead rv" style="--d:.3s">Um microscópio virtual de água e solo virou ferramenta de indústria. No leite cru, bactérias que fazem bem e bactérias que adoecem pessoas e animais dividem a mesma gota — e ninguém enxerga nenhuma delas.</p>
+          <ul class="legend mono rv" style="--d:.45s"><li><i class="lg-l"></i>benéfica</li><li><i class="lg-b"></i>deteriorante</li><li><i class="lg-o"></i>patogênica</li></ul>
+        </div>
+        <div class="slot-wrap"><div class="g-slot" data-b="4"></div></div>
+      </div>
+    </div>
+
+    <div class="beat sc-cards" data-b="5-6">
+      <article class="panel sint rv">
+        <p class="mono kick">▲ Sintoma · o que a fábrica vê</p>
+        <h3 class="d d-s">O problema já aconteceu.</h3>
+        <ul class="ticks">
+          <li>Lotes reprovados na recepção</li>
+          <li>Leite que estraga antes da validade</li>
+          <li>Casos de intoxicação alimentar</li>
+        </ul>
+      </article>
+      <span class="sc-arrow d" data-b="6" aria-hidden="true">→</span>
+      <article class="panel caus st" data-b="6">
+        <p class="mono kick">● Causa-raiz · o que ninguém vê</p>
+        <h3 class="d d-s">Microrganismos invisíveis e uma análise lenta.</h3>
+        <ul class="ticks">
+          <li>Entram pela ordenha, pela mastite do rebanho e por falhas de refrigeração</li>
+          <li>A contagem em placa leva até 72 h: quando o resultado sai, o lote já foi processado</li>
+          <li>O técnico manipula amostras com patógenos sem saber o que tem nas mãos</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="beat stats-beat cut" data-b="7">
+      <div class="obj-slot field-slot" data-b="7" data-obj="field"></div>
+      <div class="scrim"></div>
+      <div class="stats">
+        <p class="mono kick rv">(06) os números do risco</p>
+        <div class="stat rv" style="--d:.1s"><b class="n" data-count="300">0</b><span class="u mono">mil UFC/mL</span><p>limite de bactérias no leite cru refrigerado (IN 76/2018 · MAPA)</p></div>
+        <div class="stat rv" style="--d:.2s"><b class="n" data-count="500">0</b><span class="u mono">mil células/mL</span><p>limite de células somáticas; acima disso, sinal de mastite no rebanho</p></div>
+        <div class="stat rv" style="--d:.3s"><b class="n" data-count="72">0</b><span class="u mono">horas</span><p>até sair o resultado de uma contagem tradicional em placa</p></div>
+        <div class="stat rv" style="--d:.4s"><b class="n">3</b><span class="u mono">classe de risco</span><p><i>Brucella</i> e <i>M. bovis</i>: zoonoses que podem infectar quem manipula a amostra</p></div>
+      </div>
+    </div>
+
+    <div class="mq" id="mq" data-b="8" aria-label="Se nada for feito: surtos de intoxicação, recall, multas, interdição, parada de linha e trabalhador infectado"></div>
+  </section>
+
+  <!-- ===================== 03 · COMO FIZEMOS ===================== -->
+  <section class="scene" id="s3" aria-label="03 — O processo de engenharia">
+
+    <div class="beat cut" data-b="0">
+      <div class="split">
+        <div class="col">
+          <p class="mono kick rv">(03) o processo de engenharia</p>
+          <h2 class="d d-xl"><span class="ml"><span>Como</span></span><span class="ml acc"><span style="--d:.08s">fizemos.</span></span></h2>
+          <p class="small rv" style="--d:.32s">Separamos o que o software resolve do que continua sendo trabalho físico no laboratório, e transformamos a norma em regra de sistema.</p>
+          <div class="mini-stats rv" style="--d:.45s"><span><b>06</b>requisitos funcionais</span><span><b>04</b>regras da NR</span><span><b>04</b>requisitos de qualidade</span></div>
+        </div>
+        <div class="slot-wrap"><div class="obj-slot" data-b="0" data-obj="helix"></div></div>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="1">
+      <div class="io">
+        <header class="io-h">
+          <p class="mono kick rv">(03.1) fronteira do sistema</p>
+          <h2 class="d"><span class="ml"><span>Dentro</span></span><span class="ml acc"><span style="--d:.06s">e fora.</span></span></h2>
+          <p class="small rv" style="--d:.2s">O escopo: o que fica no software (IN) e o que segue como processo físico (OUT).</p>
+        </header>
+        <div class="io-in rv" style="--d:.14s">
+          <span class="io-tag mono">IN · dentro do software</span>
+          <i class="hd" style="--hx:0;--hy:0"></i><i class="hd" style="--hx:1;--hy:0"></i><i class="hd" style="--hx:0;--hy:1"></i><i class="hd" style="--hx:1;--hy:1"></i>
+          <ol class="io-list">
+            <li>Lâmina digital com 4 planos de foco: água, solo e leite</li>
+            <li>Captura e identificação de cada microrganismo</li>
+            <li>Classificação: benéfico, deteriorante ou patogênico</li>
+            <li>Cálculo do risco do lote e laudo microbiológico</li>
+            <li>Placas de cultura e plano de análise</li>
+          </ol>
+        </div>
+        <div class="io-out rv" style="--d:.24s">
+          <span class="io-tag mono">OUT · processo físico</span>
+          <ol class="io-list">
+            <li>Coleta da amostra no caminhão-tanque</li>
+            <li>Preparo da lâmina e microscopia real</li>
+            <li>Uso de EPI e descarte de resíduo biológico</li>
+            <li>Pasteurização ou descarte do lote</li>
+            <li>Notificação oficial ao serviço veterinário</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="2">
+      <div class="io">
+        <header class="io-h">
+          <p class="mono kick rv">(03.2) atores e requisitos</p>
+          <h2 class="d"><span class="ml"><span>Quem usa</span></span><span class="ml acc"><span style="--d:.06s">e o que faz.</span></span></h2>
+        </header>
+        <div class="rv" style="--d:.12s">
+          <span class="mono blockt">Atores</span>
+          <div class="actor"><svg viewBox="0 0 26 40" aria-hidden="true"><circle cx="13" cy="7" r="5.5"/><path d="M13 13v13M3 18h20M13 26l-8 12M13 26l8 12"/></svg><div><b>Técnico de laboratório</b><span>principal · analisa as amostras</span></div></div>
+          <div class="actor"><svg viewBox="0 0 26 40" aria-hidden="true"><circle cx="13" cy="7" r="5.5"/><path d="M13 13v13M3 18h20M13 26l-8 12M13 26l8 12"/></svg><div><b>Supervisor de qualidade</b><span>aprova ou reprova o lote</span></div></div>
+          <div class="actor ext"><svg viewBox="0 0 26 40" aria-hidden="true"><circle cx="13" cy="7" r="5.5"/><path d="M13 13v13M3 18h20M13 26l-8 12M13 26l8 12"/></svg><div><b>Serviço de inspeção (SIF/MAPA)</b><span>secundário · recebe notificações</span></div></div>
+        </div>
+        <div class="rv" style="--d:.22s">
+          <span class="mono blockt">Requisitos funcionais</span>
+          <ol class="codes">
+            <li><b>RF01</b>Registrar o lote de leite recebido</li>
+            <li><b>RF02</b>Analisar a amostra na lâmina digital</li>
+            <li><b>RF03</b>Identificar e classificar o microrganismo</li>
+            <li><b>RF04</b>Calcular o risco do lote</li>
+            <li><b>RF05</b>Emitir o laudo microbiológico</li>
+            <li><b>RF06</b>Isolar a espécie em placa de cultura</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="3">
+      <div class="rules">
+        <header>
+          <p class="mono kick rv">(03.3) regras de negócio da NR-32</p>
+          <h2 class="d d-l"><span class="ml"><span>A norma</span></span><span class="ml"><span style="--d:.06s">vira regra.</span></span></h2>
+        </header>
+        <ol class="cards">
+          <li class="rv" style="--d:.1s"><b class="mono">RN01</b><p>Patógeno detectado → risco <b>alto</b>: o lote não é liberado cru.</p></li>
+          <li class="rv" style="--d:.17s"><b class="mono">RN02</b><p>Agente classe 3 (<i>Brucella</i>, <i>M. bovis</i>) → alerta de biossegurança e notificação.</p></li>
+          <li class="rv" style="--d:.24s"><b class="mono">RN03</b><p>A análise só começa com o EPI confirmado.</p></li>
+          <li class="rv" style="--d:.31s"><b class="mono">RN04</b><p>Amostra com patógeno é descartada como resíduo biológico.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="4">
+      <div class="rules">
+        <header>
+          <p class="mono kick rv">(03.4) qualidade · requisitos não funcionais</p>
+          <h2 class="d d-l"><span class="ml"><span>Confiável</span></span><span class="ml acc"><span style="--d:.06s">e rápido.</span></span></h2>
+        </header>
+        <ol class="cards">
+          <li class="rv" style="--d:.1s"><b class="mono">RNF01</b><p>Classificação na hora e laudo em segundos.</p></li>
+          <li class="rv" style="--d:.17s"><b class="mono">RNF02</b><p>Cada microrganismo com ficha científica e fonte.</p></li>
+          <li class="rv" style="--d:.24s"><b class="mono">RNF03</b><p>Roda no navegador, sem instalação.</p></li>
+          <li class="rv" style="--d:.31s"><b class="mono">RNF04</b><p>Treino sem contato com patógeno real.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 · DIAGRAMA DE CASOS DE USO ===================== -->
+  <section class="scene" id="s4" aria-label="04 — A arquitetura visual: diagrama de casos de uso">
+    <div class="beat uml-beat" data-b="0-">
+      <header class="uml-h">
+        <p class="mono kick rv">(04) UML · diagrama de casos de uso</p>
+        <h2 class="d"><span class="ml"><span>Casos</span></span> <span class="ml acc"><span style="--d:.06s">de uso.</span></span></h2>
+      </header>
+      <div class="uml-notes">
+        <div class="note st" data-b="0"><p class="mono">Fronteira do sistema</p><p>Tudo dentro do retângulo é o software Microcosmo. O que fica fora é processo físico ou órgão externo.</p></div>
+        <div class="note st" data-b="1"><p class="mono">Atores</p><p>O técnico opera o sistema; o supervisor decide sobre o lote; o SIF fica fora da fronteira e só recebe a notificação.</p></div>
+        <div class="note st" data-b="2"><p class="mono">Casos de uso</p><p>Oito funções que saem direto dos requisitos, do registro do lote até a decisão.</p></div>
+        <div class="note st" data-b="3"><p class="mono">«include» · sempre acontece</p><p>Analisar a amostra sempre inclui identificar o microrganismo, que sempre inclui classificar o risco à saúde.</p></div>
+        <div class="note st" data-b="4"><p class="mono ext-c">«extend» · só em condição</p><p>Notificar zoonose estende o laudo apenas quando aparecem <i>Brucella</i> ou <i>M. bovis</i>. Isolar em placa é opcional na análise.</p></div>
+      </div>
+      <div class="uml-wrap"><svg id="uml" role="img" aria-label="Diagrama de casos de uso do sistema Microcosmo"></svg></div>
+      <div class="obj-slot uml-obj" data-b="0-" data-obj="staph"></div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 · A APLICAÇÃO PRÁTICA ===================== -->
+  <section class="scene" id="s5" aria-label="05 — A aplicação prática do sistema">
+
+    <div class="beat cut" data-b="0">
+      <div class="split">
+        <div class="col">
+          <p class="mono kick rv">(05) a aplicação prática</p>
+          <h2 class="d d-l"><span class="ml"><span>Do tanque</span></span><span class="ml acc"><span style="--d:.08s">ao laudo.</span></span></h2>
+          <p class="lead rv" style="--d:.3s">No chão de fábrica: o leite chega, o técnico coloca a amostra na lâmina e o sistema diz, organismo por organismo, o que faz bem e o que faz mal.</p>
+          <div class="pill-row rv" style="--d:.45s"><span class="pill">O ponto principal</span><span class="mono">uso no dia a dia ↓</span></div>
+        </div>
+        <div class="slot-wrap"><div class="obj-slot" data-b="0" data-obj="drop"></div></div>
+      </div>
+    </div>
+
+    <div class="beat flow-beat cut" data-b="1-2">
+      <header>
+        <p class="mono kick rv">(05.1) fluxo de funcionamento</p>
+        <h2 class="d d-l"><span class="ml"><span>Um lote,</span></span><span class="ml acc"><span style="--d:.06s">seis passos.</span></span></h2>
+      </header>
+      <div class="wave rv" id="wave" style="--d:.15s" aria-hidden="true"></div>
+      <div class="wave-meta mono rv" style="--d:.2s"><span>amostra → laudo em segundos</span><span>sem esperar 72 h</span></div>
+      <ol class="steps">
+        <li class="step rv" style="--d:.18s"><span class="mono n">01</span><b>Recepção</b><p>Amostra coletada do caminhão-tanque</p></li>
+        <li class="step rv" style="--d:.24s"><span class="mono n">02</span><b>Lâmina</b><p>Foco em 4 planos, de 100 a 720 µm</p></li>
+        <li class="step rv" style="--d:.3s"><span class="mono n">03</span><b>Captura</b><p>A pipeta segura o microrganismo por 5 s</p></li>
+        <li class="step rv" style="--d:.36s"><span class="mono n">04</span><b>Classifica</b><span class="tagc"><span class="tg-l">✓ benéfica</span><span class="tg-b">↓ deteriorante</span><span class="tg-o">! patogênica</span></span></li>
+        <li class="step rv" style="--d:.42s"><span class="mono n">05</span><b>Laudo</b><p>Risco do lote e causa provável: mastite, higiene, refrigeração</p></li>
+        <li class="step rv" style="--d:.48s"><span class="mono n">06</span><b>Decisão</b><p>Liberar, pasteurizar sob controle ou descartar e notificar</p></li>
+      </ol>
+    </div>
+
+    <div class="beat center echo-beat cut" data-b="3">
+      <div class="echo" style="--len:9"><span class="eg eg-u" aria-hidden="true">Benéfica.</span><h3 class="em">Benéfica.</h3><span class="eg eg-d" aria-hidden="true">Benéfica.</span></div>
+      <div class="obj-slot echo-obj" data-b="3" data-obj="chain"></div>
+      <div class="echo-cap rv" style="--d:.35s"><span class="mono">✓ faz bem</span><p>Fermenta o leite e disputa espaço com as bactérias ruins. Ex.: <i>Lactococcus</i>, <i>Lactobacillus</i>.</p></div>
+      <span class="echo-arr rv" style="--d:.4s" aria-hidden="true">↗</span>
+    </div>
+
+    <div class="beat center echo-beat cut" data-b="4">
+      <div class="echo" style="--len:13"><span class="eg eg-u" aria-hidden="true">Deteriorante.</span><h3 class="em">Deteriorante.</h3><span class="eg eg-d" aria-hidden="true">Deteriorante.</span></div>
+      <div class="obj-slot echo-obj" data-b="4" data-obj="pseudo"></div>
+      <div class="echo-cap rv" style="--d:.35s"><span class="mono">↓ estraga o leite</span><p>Azeda, coagula e muda o sabor antes da validade, mesmo na geladeira. Ex.: <i>Pseudomonas</i>.</p></div>
+      <span class="echo-arr rv" style="--d:.4s" aria-hidden="true">↗</span>
+    </div>
+
+    <div class="beat center echo-beat echo-o cut" data-b="5">
+      <div class="echo" style="--len:11"><span class="eg eg-u" aria-hidden="true">Patogênica.</span><h3 class="em">Patogênica.</h3><span class="eg eg-d" aria-hidden="true">Patogênica.</span></div>
+      <div class="obj-slot echo-obj" data-b="5" data-obj="ecoli"></div>
+      <div class="echo-cap rv" style="--d:.35s"><span class="mono" style="color:var(--orange)">! faz mal à saúde</span><p>Adoece pessoas e animais: bloqueia o lote e, se for zoonose, gera notificação. Ex.: <i>E. coli</i>, <i>Brucella</i>, <i>M. bovis</i>.</p></div>
+      <span class="echo-arr rv" style="--d:.4s" aria-hidden="true">↗</span>
+    </div>
+
+    <div class="beat mosaic-beat cut" data-b="6">
+      <header class="mz-h">
+        <p class="mono kick rv">(05.2) visão da solução</p>
+        <h2 class="d d-m"><span class="ml"><span>O sistema</span></span><span class="ml acc"><span style="--d:.06s">em ação.</span></span></h2>
+        <p class="small rv" style="--d:.3s">Lâmina, ficha de cada espécie, laudo do lote e placas de cultura: tudo roda no navegador.</p>
+        <a class="btn rv" style="--d:.45s" href="../microcosmo.html" target="_blank" rel="noopener">▶ Abrir o simulador ↗</a>
+      </header>
+      <div class="mosaic">
+        <figure class="tile t1 rv" style="--d:.08s"><img src="../apresentacao-feira/img/lamina.webp" alt="Lâmina digital com microrganismos do leite e o painel de análise do lote" loading="lazy" decoding="async"><figcaption class="mono">Lâmina · leite cru</figcaption></figure>
+        <figure class="tile t2 rv" style="--d:.16s"><img src="../apresentacao-feira/img/ficha.webp" alt="Ficha científica da E. coli, marcada como patogênica" loading="lazy" decoding="async"><figcaption class="mono">Ficha · E. coli</figcaption></figure>
+        <figure class="tile t3 rv" style="--d:.24s"><img src="../apresentacao-feira/img/laudo.webp" alt="Laudo microbiológico do lote com risco alto" loading="lazy" decoding="async"><figcaption class="mono">Laudo · risco alto</figcaption></figure>
+        <figure class="tile t4 rv" style="--d:.32s"><img src="../apresentacao-feira/img/placas.webp" alt="Placas de cultura com as espécies isoladas" loading="lazy" decoding="async"><figcaption class="mono">Placas de cultura</figcaption></figure>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="7">
+      <div class="value">
+        <div class="obj-slot value-obj" data-b="7" data-obj="staph"></div>
+        <header>
+          <p class="mono kick rv">(05.3) o valor gerado</p>
+          <h2 class="d d-xl"><span class="ml"><span>O valor</span></span><span class="ml"><span style="--d:.07s">gerado.</span></span></h2>
+        </header>
+        <ol class="vals">
+          <li class="rv" style="--d:.15s"><span class="mono">01 · trabalhador</span><b>Menos exposição</b><p>O técnico treina no simulador e reconhece <i>Brucella</i> e <i>M. bovis</i> sem tocar em um agente classe 3.</p></li>
+          <li class="rv" style="--d:.25s"><span class="mono">02 · norma</span><b>Regra aplicada sozinha</b><p>Patógeno no laudo bloqueia o lote e zoonose gera notificação: a NR deixa de depender da memória de alguém.</p></li>
+          <li class="rv" style="--d:.35s"><span class="mono">03 · indústria</span><b>Decisão na hora</b><p>O risco do lote sai no fim da análise, não dias depois, quando o leite já foi processado.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 06 · CONCLUSÃO ===================== -->
+  <section class="scene" id="s6" aria-label="06 — Conclusão e encerramento">
+
+    <div class="beat cut" data-b="0">
+      <div class="p-slot full" data-b="0" data-p="text"></div>
+      <h2 class="sr-only">Invisível</h2>
+      <p class="mono p-kick rv" style="--d:.9s">(06) conclusão · a missão em uma frase ↓</p>
+    </div>
+
+    <div class="beat cut" data-b="1">
+      <div class="split">
+        <div class="col mission">
+          <p class="mono kick rv">(06) a missão</p>
+          <h2 class="d"><span class="ml"><span>Quem vê</span></span><span class="ml"><span style="--d:.05s">o invisível</span></span><span class="ml acc"><span style="--d:.1s">protege quem</span></span><span class="ml acc"><span style="--d:.15s">produz</span></span><span class="ml"><span style="--d:.2s">e quem consome.</span></span></h2>
+        </div>
+        <div class="slot-wrap"><div class="p-slot" data-b="1" data-p="sphere"></div></div>
+      </div>
+    </div>
+
+    <div class="beat cut" data-b="2">
+      <div class="p-slot full" data-b="2" data-p="swirl"></div>
+      <ol class="manifest">
+        <li class="rv"><span class="mono">01</span><b>Ver o invisível.</b></li>
+        <li class="rv" style="--d:.12s"><span class="mono">02</span><b>Proteger quem produz.</b></li>
+        <li class="rv" style="--d:.24s"><span class="mono">03</span><b>Proteger quem consome.</b></li>
+      </ol>
+    </div>
+
+    <div class="beat center cut" data-b="3">
+      <div class="logo-block final">
+        <h2 class="logo" aria-label="Microcosmo"><span class="logo-m" data-split>MICROCOSMO</span><i class="logo-dot" id="finalDot"></i></h2>
+        <div class="logo-rule rv" style="--d:.6s"></div>
+        <div class="logo-row mono rv" style="--d:.68s"><span>Pitch técnico · NR-32 · laticínios</span><span>Feira Tecnológica · 21/10</span></div>
+        <div class="thanks rv" style="--d:.8s"><p class="d d-m">Obrigado!</p><p class="mono"><i class="live"></i>Perguntas da banca?</p></div>
+        <p class="team-line mono rv" style="--d:.9s"><span data-nome="0"></span> · <span data-nome="1"></span> · <span data-nome="2"></span> · <span data-nome="3"></span> · Turma <span data-turma></span></p>
+        <p class="sig rv" style="--d:1s"><i>cada frame deste site é código.</i></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HUD: moldura de câmera, como no vídeo -->
+  <div class="hud">
+    <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+    <div class="hud-top">
+      <div class="hud-l"><p class="hud-brand"><i class="sq"></i>Microcosmo / pitch técnico</p><p class="hud-sub" id="hudSub">(01) capa e identidade</p></div>
+      <p class="hud-fala" id="hudFala">fala → todos</p>
+      <div class="hud-r"><p class="hud-tag">NR-32 · laticínios</p><p class="hud-count" id="hudCount">01 — 06</p></div>
+    </div>
+    <div class="hud-bot">
+      <p class="hud-motto">Ver o invisível</p>
+      <nav class="hud-segs" id="hudSegs" aria-label="Partes do pitch"></nav>
+      <div class="hud-line"><i id="hudProg"></i></div>
+      <button class="timer paused" id="timer" type="button" title="Cronômetro do pitch: clique para pausar ou continuar · tecla R zera"><span class="t" id="timerT">00:00</span> / 05:00</button>
+    </div>
+  </div>
+  <div class="grain" aria-hidden="true"></div>
+</main>
+
+<noscript><p style="position:fixed;inset:auto 16px 16px;z-index:99;font:14px/1.4 sans-serif;color:#fff">Este site precisa de JavaScript para animar as informações.</p></noscript>
+<script src="vendor/three.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
