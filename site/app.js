@@ -8,7 +8,7 @@
 
 /* ====== EDITE AQUI: nomes da equipe e turma ====== */
 const EQUIPE = {
-  nomes: ['Gustavo Henrique', 'Pedro Afonso', 'Ryam Bordes', 'João Victor', 'Izabelly Cauane'],
+  nomes: ['Gustavo Henrique', 'Pedro Afonso', 'Ryan Bordes', 'João Victor', 'Izabelly Kauane'],
   turma: '2°B tec',
 };
 
