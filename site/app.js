@@ -8,8 +8,8 @@
 
 /* ====== EDITE AQUI: nomes da equipe e turma ====== */
 const EQUIPE = {
-  nomes: ['Nome completo 1', 'Nome completo 2', 'Nome completo 3', 'Nome completo 4'],
-  turma: 'a definir',
+  nomes: ['Gustavo Henrique', 'Pedro Afonso', 'Ryam Bordes', 'João Victor', 'Izabelly Cauane'],
+  turma: '2°B tec',
 };
 
 // Um item por beat = a cor de fundo daquele momento. '!' no fim esconde o HUD.
