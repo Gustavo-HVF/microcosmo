@@ -1,0 +1,5710 @@
+// Banco de espécimes — 23 formas de vida microscópica real de água e solo, nomeadas
+// exatamente como pedido (displayName), mais 15 microrganismos do leite (indústria de
+// laticínios). Cada um é mapeado ao organismo real correspondente (realName / sciName)
+// para que a descrição e o link para a Wikipedia sejam factualmente corretos.
+// depth: 1 (superfície / baixo foco) a 4 (fundo / alto foco)
+// rarity: comum, incomum, raro, lendario
+// shape: ver organism.js para a lista de formas implementadas
+// motility: 'cilia' (batimento ciliar), 'flagellate-whip' (chicote de flagelo único),
+//           'flagella-colony' (colônia flagelada sincronizada), 'gliding' (deslize de diatomácea/alga),
+//           'crawl' (rastejo ameboide/tentacular), 'stalked' (presa por um talo, só o corpo se move),
+//           'flagella-run-tumble' (bactéria: corrida + cambalhota), 'flagella-smooth' (bactéria:
+//           nado contínuo), 'brownian' (sem locomoção própria)
+
+const SPECIES = [
+  {
+    id: 'ovoid',
+    displayName: 'ovoid',
+    commonName: 'Colpoda',
+    sciName: 'Colpoda cucullus',
+    wikiTitle: 'Colpoda',
+    shape: 'ovoid-cilia',
+    color: '#dcdbd2', colorDark: '#5e6058',
+    length: 24, width: 17,
+    depth: 1, rarity: 'comum', habitat: ['soil'],
+    motility: 'cilia', speed: 1.1,
+    desc: 'Ciliado ovalado muito comum em solo úmido e poças temporárias, formando cistos resistentes à dessecação que permitem recolonizar a água rapidamente após a chuva.',
+    behavior: 'Nada em trajetória ovalada girando sobre o próprio eixo, impulsionado por fileiras de cílios que cobrem todo o corpo.'
+  },
+  {
+    id: 'bean',
+    displayName: 'bean',
+    commonName: 'Colpidium',
+    sciName: 'Colpidium colpoda',
+    wikiTitle: 'Colpidium',
+    shape: 'bean-cilia',
+    color: '#dcdbd2', colorDark: '#5e6058',
+    length: 26, width: 15,
+    depth: 1, rarity: 'comum', habitat: ['water'],
+    motility: 'cilia', speed: 1.3,
+    eats: ['bacillus', 'vibrio'],
+    desc: 'Ciliado em forma de feijão/rim, comum em águas ricas em bactérias (infusões de feno), usado classicamente em laboratórios didáticos de protozoologia.',
+    behavior: 'Desliza em curvas suaves, a concavidade do corpo sempre voltada para dentro da trajetória, como um feijão rolando na água.'
+  },
+  {
+    id: 'round',
+    displayName: 'round',
+    commonName: 'Arcella',
+    sciName: 'Arcella vulgaris',
+    wikiTitle: 'Arcella',
+    shape: 'testate-amoeba',
+    color: '#cdbf9f', colorDark: '#6e6248',
+    length: 20, width: 20,
+    depth: 1, rarity: 'comum', habitat: ['soil', 'water'],
+    motility: 'crawl', speed: 0.3,
+    desc: 'Ameba testácea protegida por uma carapaça (teca) em forma de disco, com um poro central por onde projeta pseudópodes finos para se locomover e capturar alimento.',
+    behavior: 'Move-se muito lentamente pelo fundo, projetando pseudópodes finos pela abertura da teca; a carapaça em si nunca muda de forma.'
+  },
+  {
+    id: 'slipper',
+    displayName: 'slipper',
+    commonName: 'Paramécio',
+    sciName: 'Paramecium caudatum',
+    wikiTitle: 'Paramecium',
+    shape: 'slipper-cilia',
+    color: '#dddcd3', colorDark: '#5c5e56',
+    length: 46, width: 22,
+    depth: 1, rarity: 'incomum', habitat: ['water'],
+    motility: 'cilia', speed: 1.5,
+    eats: ['bacillus', 'vibrio'],
+    desc: 'Protozoário ciliado em forma de sola de sapato, um dos organismos mais estudados em biologia celular. Coberto por milhares de cílios que batem em ondas coordenadas.',
+    behavior: 'Desliza suavemente girando levemente o corpo em espiral, com uma reação de esquiva característica ao tocar obstáculos: recua, gira e retoma o rumo em outra direção.'
+  },
+  {
+    id: 'segmented',
+    displayName: 'segmented',
+    commonName: 'Aeolosoma',
+    sciName: 'Aeolosoma hemprichi',
+    wikiTitle: 'Aeolosoma',
+    shape: 'segmented-worm',
+    color: '#dad7cc', colorDark: '#5d5c52',
+    length: 48, width: 8,
+    depth: 2, rarity: 'incomum', habitat: ['water'],
+    motility: 'crawl', speed: 0.9,
+    desc: 'Pequeno anelídeo aquático de corpo segmentado, coberto por glândulas que secretam gotículas oleosas coloridas. Comum deslizando sobre detritos e algas no fundo de lagoas.',
+    behavior: 'Rasteja ondulando o corpo segmentado contra superfícies, alternando entre deslizar e se esticar para alcançar novos pontos de apoio.'
+  },
+  {
+    id: 'ciliate',
+    displayName: 'ciliate',
+    commonName: 'Tetrahymena',
+    sciName: 'Tetrahymena thermophila',
+    wikiTitle: 'Tetrahymena',
+    shape: 'ciliate-generic',
+    color: '#dcdbd2', colorDark: '#5e6058',
+    length: 28, width: 16,
+    depth: 1, rarity: 'comum', habitat: ['water'],
+    motility: 'cilia', speed: 1.4,
+    eats: ['bacillus', 'vibrio'],
+    desc: 'Ciliado modelo amplamente usado em pesquisa de biologia celular e molecular (seus estudos renderam dois Prêmios Nobel). Corpo ovalado coberto uniformemente por cílios.',
+    behavior: 'Nada de forma rápida e relativamente retilínea, com mudanças de direção bruscas ao colidir com obstáculos.'
+  },
+  {
+    id: 'blepharisma',
+    displayName: 'blepharisma',
+    commonName: 'Blepharisma',
+    sciName: 'Blepharisma japonicum',
+    wikiTitle: 'Blepharisma',
+    shape: 'blepharisma-shape',
+    color: '#ddd1cf', colorDark: '#6e5f5d',
+    length: 40, width: 18,
+    depth: 2, rarity: 'incomum', habitat: ['water'],
+    motility: 'cilia', speed: 1.0,
+    desc: 'Ciliado de água doce e salgada facilmente reconhecível por sua coloração rosada a avermelhada, causada pelo pigmento blepharismina presente em grânulos na membrana.',
+    behavior: 'Nada devagar e é fortemente fotofóbico: ao ser exposto a luz intensa, muda de direção buscando áreas mais escuras.'
+  },
+  {
+    id: 'nematode',
+    displayName: 'nematode',
+    commonName: 'Nematódeo de solo',
+    sciName: 'Rhabditis sp.',
+    wikiTitle: 'Nematoda',
+    shape: 'nematode-worm',
+    color: '#dfddd3', colorDark: '#56584f',
+    length: 58, width: 6,
+    depth: 2, rarity: 'incomum', habitat: ['soil', 'water'],
+    motility: 'crawl', speed: 1.1,
+    eats: ['spirillum'],
+    desc: 'Verme cilíndrico microscópico, um dos grupos animais mais numerosos da Terra. Vive no filme de água entre partículas de solo, alimentando-se de bactérias.',
+    behavior: 'Move-se ondulando o corpo inteiro em forma de "S" contínuo, sem apêndices — o movimento clássico de nematódeo sob a lente.'
+  },
+  {
+    id: 'spirogyra',
+    displayName: 'spirogyra',
+    commonName: 'Spirogyra',
+    sciName: 'Spirogyra sp.',
+    wikiTitle: 'Spirogyra',
+    shape: 'spirogyra-filament',
+    color: '#d8dccf', colorDark: '#6b8253',
+    length: 70, width: 10,
+    depth: 2, rarity: 'comum', habitat: ['water'],
+    motility: 'brownian', speed: 0.05, turnRate: 0.15,
+    desc: 'Alga verde filamentosa de água doce, famosa por seus cloroplastos dispostos em espiral dentro de cada célula do filamento — visíveis até em microscópios escolares simples.',
+    behavior: 'Não possui locomoção própria; os filamentos flutuam livremente na água, movendo-se apenas com a correnteza.'
+  },
+  {
+    id: 'oscillatoria',
+    displayName: 'oscillatoria',
+    commonName: 'Oscillatoria',
+    sciName: 'Oscillatoria sp.',
+    wikiTitle: 'Oscillatoria',
+    shape: 'oscillatoria-filament',
+    color: '#b6beb0', colorDark: '#5a675d',
+    length: 65, width: 7,
+    depth: 2, rarity: 'comum', habitat: ['soil', 'water'],
+    motility: 'gliding', speed: 0.5,
+    desc: 'Cianobactéria filamentosa que forma esteiras esverdeadas em águas paradas e solos úmidos. O nome vem do característico movimento oscilante do filamento.',
+    behavior: 'Desliza lentamente sobre superfícies balançando a ponta do filamento de um lado para o outro, sem flagelos — o deslize é gerado por secreção de muco.'
+  },
+  {
+    id: 'diatomP',
+    displayName: 'diatomP',
+    commonName: 'Diatomácea penada',
+    sciName: 'Pinnularia sp.',
+    wikiTitle: 'Pinnularia',
+    shape: 'diatom-pennate',
+    color: '#d9d1bf', colorDark: '#7a6c52',
+    length: 38, width: 11,
+    depth: 3, rarity: 'incomum', habitat: ['soil', 'water'],
+    motility: 'gliding', speed: 0.6,
+    divides: true,
+    desc: 'Diatomácea alongada e simétrica com uma fenda central (rafe) percorrendo todo o comprimento da carapaça de sílica, usada para o deslizamento característico do grupo.',
+    behavior: 'Desliza em linha reta sobre superfícies por meio de correntes citoplasmáticas na rafe, parando e invertendo a direção periodicamente.'
+  },
+  {
+    id: 'diatomC',
+    displayName: 'diatomC',
+    commonName: 'Diatomácea cêntrica',
+    sciName: 'Cyclotella sp.',
+    wikiTitle: 'Cyclotella',
+    shape: 'diatom-centric',
+    color: '#dad3c2', colorDark: '#7b6e55',
+    length: 24, width: 24,
+    depth: 3, rarity: 'incomum', habitat: ['water'],
+    motility: 'brownian', speed: 0.02, turnRate: 0.15,
+    divides: true,
+    desc: 'Diatomácea circular com ornamentação radial na carapaça de sílica, componente abundante do fitoplâncton de lagos e importante indicador de qualidade da água.',
+    behavior: 'Sem rafe nem flagelo, não possui locomoção própria — permanece suspensa na coluna d\'água, girando lentamente com as correntes.'
+  },
+  {
+    id: 'diatomR',
+    displayName: 'diatomR',
+    commonName: 'Diatomácea retangular',
+    sciName: 'Navicula sp.',
+    wikiTitle: 'Navicula',
+    shape: 'diatom-rect',
+    color: '#d9d1bf', colorDark: '#7a6c52',
+    length: 32, width: 13,
+    depth: 3, rarity: 'incomum', habitat: ['soil', 'water'],
+    motility: 'gliding', speed: 0.55,
+    divides: true,
+    desc: 'Diatomácea em forma de barco, um dos gêneros mais diversos e comuns entre as diatomáceas penadas, encontrada em praticamente qualquer corpo d\'água doce.',
+    behavior: 'Desliza suavemente sobre o substrato em linha reta, deixando um rastro de muco, e inverte o sentido ao atingir um obstáculo.'
+  },
+  {
+    id: 'diatomT',
+    displayName: 'diatomT',
+    commonName: 'Diatomácea triangular',
+    sciName: 'Triceratium sp.',
+    wikiTitle: 'Triceratium',
+    shape: 'diatom-tri',
+    color: '#dbd4c4', colorDark: '#7d7058',
+    length: 30, width: 30,
+    depth: 3, rarity: 'raro', habitat: ['water'],
+    motility: 'brownian', speed: 0.02, turnRate: 0.15,
+    divides: true,
+    desc: 'Diatomácea cêntrica de carapaça triangular ornamentada, encontrada principalmente em ambientes marinhos e salobros, com registro fóssil abundante.',
+    behavior: 'Imóvel por natureza, apenas deriva suspensa na água sem qualquer locomoção própria.'
+  },
+  {
+    id: 'closterium',
+    displayName: 'closterium',
+    commonName: 'Closterium',
+    sciName: 'Closterium sp.',
+    wikiTitle: 'Closterium',
+    shape: 'closterium-crescent',
+    color: '#d0d7c3', colorDark: '#647553',
+    length: 54, width: 10,
+    depth: 2, rarity: 'incomum', habitat: ['water'],
+    motility: 'gliding', speed: 0.4,
+    desc: 'Alga desmídia unicelular em forma de meia-lua alongada, com dois cloroplastos simétricos. Cada extremidade abriga um vacúolo com cristais de gipsita em movimento browniano.',
+    behavior: 'Move-se lentamente deslizando sobre superfícies por secreção de muco pelas extremidades, podendo também balançar-se lentamente de um lado a outro.'
+  },
+  {
+    id: 'spiny',
+    displayName: 'spiny',
+    commonName: 'Micrasterias',
+    sciName: 'Micrasterias sp.',
+    wikiTitle: 'Micrasterias',
+    shape: 'spiny-desmid',
+    color: '#cdd5c0', colorDark: '#5f7150',
+    length: 42, width: 36,
+    depth: 3, rarity: 'raro', habitat: ['water'],
+    motility: 'brownian', speed: 0.02, turnRate: 0.15,
+    desc: 'Alga desmídia de simetria radial elaborada, com o corpo dividido em dois semicélulas espelhadas e margens profundamente recortadas em lobos espinhosos.',
+    behavior: 'Não possui locomoção própria; permanece praticamente parada, apenas derivando suavemente no meio líquido.'
+  },
+  {
+    id: 'heliozoan',
+    displayName: 'heliozoan',
+    commonName: 'Heliozoário',
+    sciName: 'Actinophrys sol',
+    wikiTitle: 'Heliozoa',
+    shape: 'heliozoan-rays',
+    color: '#dfded6', colorDark: '#62645b',
+    length: 26, width: 26,
+    depth: 3, rarity: 'raro', habitat: ['water'],
+    motility: 'crawl', speed: 0.2,
+    eats: ['chlamy'],
+    desc: 'Protista esférico conhecido como "ameba-sol", com finos pseudópodes radiais rígidos (axópodes) usados tanto para captura de presas quanto para locomoção lenta.',
+    behavior: 'Move-se muito lentamente rolando sobre os próprios axópodes, que também vibram para atrair e capturar pequenas presas que tocam sua superfície.'
+  },
+  {
+    id: 'flagellate',
+    displayName: 'flagellate',
+    commonName: 'Euglena',
+    sciName: 'Euglena viridis',
+    wikiTitle: 'Euglena',
+    shape: 'euglena-flagellate',
+    color: '#d0d8c2', colorDark: '#5f7450',
+    length: 36, width: 12,
+    depth: 1, rarity: 'incomum', habitat: ['water'],
+    motility: 'flagellate-whip', speed: 1.7,
+    desc: 'Protista flagelado fotossintetizante, com um único flagelo longo usado para locomoção e uma mancha ocular (estigma) sensível à luz, que o ajuda a buscar áreas iluminadas.',
+    behavior: 'Nada chicoteando o flagelo à frente do corpo, girando ligeiramente ao longo do eixo; pode também se contrair e alongar (movimento metabólico) quando parado.'
+  },
+  {
+    id: 'medusa',
+    displayName: 'medusa',
+    commonName: 'Água-viva de água doce (medusa jovem)',
+    sciName: 'Craspedacusta sowerbii',
+    wikiTitle: 'Craspedacusta_sowerbii',
+    shape: 'medusa-bell',
+    color: '#e0e1dc', colorDark: '#62665f',
+    length: 34, width: 30,
+    depth: 4, rarity: 'lendario', habitat: ['water'],
+    motility: 'flagella-colony', speed: 0.7,
+    desc: 'Cnidário de água doce com ciclo de vida em duas fases: um pólipo séssil e a medusa. A medusa recém-liberada do pólipo mede só ~0,4 mm (microscópica); adulta chega a ~2 cm e fica visível a olho nu.',
+    behavior: 'Nada por jato: contrai o sino ritmicamente, expulsando água e avançando com o sino à frente e os tentáculos arrastando atrás.'
+  },
+  {
+    id: 'volvox',
+    displayName: 'volvox',
+    commonName: 'Vólvox',
+    sciName: 'Volvox aureus',
+    wikiTitle: 'Volvox',
+    shape: 'volvox',
+    color: '#cfd8c0', colorDark: '#5f7650',
+    length: 36, width: 36,
+    depth: 4, rarity: 'lendario', habitat: ['water'],
+    motility: 'flagella-colony', speed: 0.9,
+    desc: 'Colônia esférica de milhares de células flageladas trabalhando em conjunto, girando lentamente como um pequeno planeta verde. Um dos encontros mais raros sob a objetiva.',
+    behavior: 'Gira sobre o próprio eixo enquanto avança em trajetória curva e previsível, todas as células batendo os flagelos em sincronia.'
+  },
+  {
+    id: 'rotifer',
+    displayName: 'rotifer',
+    commonName: 'Rotífero',
+    sciName: 'Philodina sp.',
+    wikiTitle: 'Rotifer',
+    shape: 'rotifer-crown',
+    color: '#dcdad0', colorDark: '#5d5e55',
+    length: 40, width: 16,
+    depth: 2, rarity: 'incomum', habitat: ['soil', 'water'],
+    motility: 'cilia', speed: 1.2,
+    eats: ['spirillum'],
+    desc: 'Animal microscópico com uma coroa de cílios na extremidade anterior (corona) que, ao bater, lembra uma roda girando — origem do nome do grupo.',
+    behavior: 'Alterna entre nadar livremente, impulsionado pela corona ciliar, e se fixar temporariamente a superfícies com o "pé" posterior, esticando e contraindo o corpo.'
+  },
+  {
+    id: 'vorticella',
+    displayName: 'vorticella',
+    commonName: 'Vorticella',
+    sciName: 'Vorticella sp.',
+    wikiTitle: 'Vorticella',
+    shape: 'vorticella-stalked',
+    color: '#dddcd4', colorDark: '#5f6159',
+    length: 22, width: 20,
+    depth: 2, rarity: 'incomum', habitat: ['water'],
+    motility: 'stalked', speed: 0.05,
+    eats: ['spirillum'],
+    desc: 'Ciliado séssil em forma de sino, preso a superfícies por um longo talo contrátil em espiral. A coroa de cílios ao redor da "boca" cria correntes que atraem alimento.',
+    behavior: 'O corpo permanece fixo pelo talo; quando perturbado, o talo se contrai bruscamente em espiral, recolhendo o sino instantaneamente.'
+  },
+  {
+    id: 'tardigrade',
+    displayName: 'tardigrado',
+    commonName: 'Tardígrado (urso-d\'água)',
+    sciName: 'Hypsibius exemplaris',
+    wikiTitle: 'Tardigrade',
+    shape: 'tardigrade',
+    color: '#dedbcf', colorDark: '#5c5b50',
+    length: 60, width: 24,
+    depth: 4, rarity: 'raro', habitat: ['soil', 'water'],
+    maxInView: 2,           // not abundant in a sample: at most two in the field of view
+    cryptobiosis: true,     // survives drying by forming a "tun" instead of dying
+    motility: 'crawl', speed: 0.45,
+    desc: 'Animal microscópico (0,1–0,5 mm) com corpo segmentado e oito patas curtas terminadas em garras. Vive no filme de água de musgos, liquens, solo e sedimentos. É famoso pela criptobiose: ao secar, recolhe as patas e vira um "barrilzinho" (tun), sobrevivendo à desidratação, ao frio extremo, à radiação e até ao vácuo do espaço — e volta à vida ao ser reidratado.',
+    behavior: 'Anda devagar e de forma desajeitada, movendo as oito patas em onda e agarrando-se aos detritos com as garras. Aqui no jogo, quando a gota seca ao redor dele, ele não morre: entra em criptobiose e fica imóvel em forma de barril.'
+  },
+  {
+    id: 'stentor',
+    displayName: 'stentor',
+    commonName: 'Stentor (trompeta)',
+    sciName: 'Stentor coeruleus',
+    wikiTitle: 'Stentor_(ciliate)',
+    shape: 'stentor-trumpet',
+    color: '#d3dfe2', colorDark: '#4c6670',
+    length: 70, width: 34,
+    depth: 2, rarity: 'incomum', habitat: ['water'],
+    motility: 'cilia', speed: 0.8,
+    eats: ['spirillum', 'rotifer'],
+    desc: 'Um dos maiores protozoários (até 2 mm esticado), em forma de trompete. Tem cílios curtos pelo corpo, mas os grandes — fundidos em membranelas — ficam só na "boca" larga da frente, girando como um redemoinho que puxa alimento. Esta espécie é azul-esverdeada por causa do pigmento estentorina, e seu núcleo parece um colar de contas.',
+    behavior: 'Nada devagar com o lado largo à frente e o corpo mole se deformando; quando é tocado ou sugado, contrai-se bruscamente numa bola. Come bactérias, algas e até rotíferos.'
+  },
+  {
+    id: 'chlamy',
+    displayName: 'chlamydomonas',
+    commonName: 'Clamidomonas',
+    sciName: 'Chlamydomonas reinhardtii',
+    wikiTitle: 'Chlamydomonas_reinhardtii',
+    shape: 'biflagellate',
+    color: '#d3dcc6', colorDark: '#56704a',
+    length: 22, width: 16,
+    depth: 3, rarity: 'raro', habitat: ['water', 'soil'],
+    motility: 'flagellate-whip', speed: 2.2,
+    divides: true,
+    desc: 'Alga verde unicelular com dois flagelos iguais na frente. Tem um único cloroplasto em forma de taça, com um pirenoide, e uma mancha ocular vermelha que detecta a luz. É um organismo-modelo para estudar flagelos e fotossíntese.',
+    behavior: 'Nadadora rápida: puxa o corpo com os dois flagelos num movimento de "nado de peito", girando sobre o próprio eixo. Quando perturbada, dispara para longe.'
+  },
+  // bactérias comuns de água e solo — aqui bem ampliadas (de verdade medem de
+  // 1 a 60 µm); são os "pretinhos" mais frequentes da amostra
+  {
+    id: 'bacillus',
+    displayName: 'bacillus',
+    commonName: 'Bacilo do feno',
+    sciName: 'Bacillus subtilis',
+    wikiTitle: 'Bacillus_subtilis',
+    shape: 'bacillus', flagella: 'peritrichous',
+    color: '#d8d6cc', colorDark: '#2e2e29',
+    length: 14, width: 5,
+    depth: 1, rarity: 'comum', habitat: ['soil', 'water'],
+    motility: 'flagella-run-tumble', speed: 1.3,
+    divides: true,
+    desc: 'Bacilo (bactéria em bastonete) dos mais comuns no solo, na poeira e na vegetação, de onde chega à água. Forma endósporos que resistem ao calor e à seca. No jogo aparece bem ampliado: na realidade mede só 2–3 µm.',
+    behavior: 'Nada em corridas retas, com vários flagelos, e dá cambalhotas para mudar de direção. Divide-se ao meio (fissão binária): em laboratório, a população pode dobrar em cerca de 20 a 30 minutos.'
+  },
+  {
+    id: 'spirillum',
+    displayName: 'spirillum',
+    commonName: 'Espirilo',
+    sciName: 'Spirillum volutans',
+    wikiTitle: 'Spirillum_volutans',
+    shape: 'spirillum', turns: 2.2,
+    color: '#d8d6cc', colorDark: '#2e2e29',
+    length: 30, width: 7,
+    depth: 2, rarity: 'comum', habitat: ['water'],
+    motility: 'flagella-smooth', speed: 1.6,
+    divides: true,
+    desc: 'Uma das maiores bactérias de água doce (até ~60 µm), em espiral rígida, com um tufo de flagelos em cada ponta. Vive em águas paradas ricas em matéria orgânica e prefere pouco oxigênio.',
+    behavior: 'Nada girando como um saca-rolhas; para mudar de rumo, inverte o batimento dos tufos de flagelos e volta pelo mesmo caminho.'
+  },
+  {
+    id: 'vibrio',
+    displayName: 'vibrio',
+    commonName: 'Vibrião',
+    sciName: 'Vibrio sp.',
+    wikiTitle: 'Vibrio',
+    shape: 'vibrio',
+    color: '#d8d6cc', colorDark: '#2e2e29',
+    length: 12, width: 4,
+    depth: 1, rarity: 'incomum', habitat: ['water'],
+    motility: 'flagella-smooth', speed: 2.2,
+    divides: true,
+    desc: 'Bastonete curvo em forma de vírgula, com um único flagelo polar. O gênero vive em águas doces, salobras e marinhas; algumas espécies causam doenças, como o Vibrio cholerae, agente da cólera.',
+    behavior: 'Um dos nadadores mais rápidos da amostra: dispara em linha reta, empurrado pelo flagelo, recua um pouco e, ao voltar a avançar, o flagelo dobra e joga a célula para o lado (o "flick").'
+  },
+  {
+    id: 'spirochete',
+    displayName: 'spirochete',
+    commonName: 'Espiroqueta',
+    sciName: 'Spirochaeta plicatilis',
+    wikiTitle: 'Spirochaeta',
+    shape: 'spirochete', turns: 7,
+    color: '#d8d6cc', colorDark: '#2e2e29',
+    length: 70, width: 5,
+    depth: 1, rarity: 'comum', habitat: ['water'],
+    motility: 'flagella-smooth', speed: 0.9,
+    desc: 'Bactéria longuíssima e fina, enrolada em espiral apertada. Seus flagelos ficam escondidos dentro da célula (endoflagelos), entre a parede e a membrana externa, e fazem o corpo inteiro girar. Vive em lodos e águas paradas com pouco oxigênio.',
+    behavior: 'Avança girando sem parar, como um saca-rolhas; às vezes se dobra e se contorce no lugar.'
+  },
+
+  // ---------------------------------------------------------------------------
+  // Lâmina de LEITE (indústria de laticínios). Vista em objetiva de imersão
+  // (1000x), por isso bactérias de 1–5 µm aparecem do tamanho dos protozoários
+  // das outras lâminas. Campos extras:
+  //   health: 'benefica' | 'deteriorante' | 'patogenica' — efeito na saúde humana
+  //   gram: resultado da coloração de Gram, o primeiro teste do laboratório
+  //   healthNote / industry: textos da ficha; finding: o que o achado indica no laudo
+  //   chainCells / spores / turns / shapeLabel / turnRate: ajustes de forma e movimento
+  // ---------------------------------------------------------------------------
+  {
+    id: 'acidophilus',
+    displayName: 'acidophilus',
+    commonName: 'Lactobacilo acidófilo',
+    sciName: 'Lactobacillus acidophilus',
+    wikiTitle: 'Lactobacillus_acidophilus',
+    shape: 'bacillus-chain', chainCells: 3,
+    color: '#e4e0d3', colorDark: '#4c4a40',
+    length: 42, width: 6,
+    depth: 1, rarity: 'comum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.12, turnRate: 0.5,
+    health: 'benefica', gram: 'Gram-positiva',
+    desc: 'Bactéria láctica em forma de bastonete que costuma aparecer em pares ou cadeias curtas. Fermenta a lactose do leite em ácido lático e vive naturalmente no intestino humano.',
+    behavior: 'Não tem flagelos: as cadeias de bastonetes só tremulam no lugar, empurradas pelo movimento browniano.',
+    healthNote: 'Probiótico clássico, estudado por ajudar a manter o equilíbrio da microbiota intestinal. O ácido lático que produz deixa o meio ácido, o que dificulta o crescimento de bactérias nocivas.',
+    industry: 'Adicionado a leites fermentados, iogurtes e bebidas lácteas probióticas. Aqui ele não é contaminante — é ingrediente.',
+    finding: 'cultura probiótica (fermento lático)'
+  },
+  {
+    id: 'thermophilus',
+    displayName: 'thermophilus',
+    commonName: 'Estreptococo do iogurte',
+    sciName: 'Streptococcus thermophilus',
+    wikiTitle: 'Streptococcus_thermophilus',
+    shape: 'coccus-chain', chainCells: 6,
+    color: '#e6e2d6', colorDark: '#4a483f',
+    length: 40, width: 8,
+    depth: 1, rarity: 'comum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.1, turnRate: 0.5,
+    health: 'benefica', gram: 'Gram-positiva',
+    desc: 'Coco (célula esférica) que se divide sempre no mesmo plano e forma cadeias, como um colar de contas. Cresce bem em temperaturas altas, por volta de 40–45 °C — daí o nome "thermophilus".',
+    behavior: 'Imóvel: a cadeia só se dobra e treme com o movimento browniano, sem nadar.',
+    healthNote: 'Inofensivo e benéfico. As culturas vivas do iogurte produzem a enzima lactase e ajudam pessoas com intolerância à lactose a digerir melhor o leite fermentado.',
+    industry: 'Fermento lático do iogurte (em dupla com o L. bulgaricus) e de queijos como a muçarela e o parmesão. Transforma a lactose em ácido lático, que coagula as proteínas do leite.',
+    finding: 'fermento lático (iogurte e queijos)'
+  },
+  {
+    id: 'lactococcus',
+    displayName: 'lactococcus',
+    commonName: 'Lactococo do queijo',
+    sciName: 'Lactococcus lactis',
+    wikiTitle: 'Lactococcus_lactis',
+    shape: 'coccus-chain', chainCells: 2, shapeLabel: 'Cocos aos pares (diplococos)',
+    color: '#e5e1d4', colorDark: '#4b493f',
+    length: 17, width: 9,
+    depth: 2, rarity: 'comum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.1, turnRate: 0.6,
+    health: 'benefica', gram: 'Gram-positiva', bacteriocin: 'nisina',
+    // (no modo "Caçar e lutar", a nisina atinge patógenos Gram-positivos por perto)
+    desc: 'Coco levemente ovalado que aparece aos pares ou em cadeias curtas. Uma das bactérias mais importantes da história dos laticínios: foi uma das primeiras bactérias isoladas em cultura pura, pelo cirurgião Joseph Lister, no século XIX.',
+    behavior: 'Imóvel; o par de células apenas vibra no lugar.',
+    healthNote: 'Benéfica e considerada segura para alimentos. Produz nisina, um antimicrobiano natural que inibe bactérias perigosas como a Listeria e os esporos de Clostridium.',
+    industry: 'Principal fermento de queijos (cheddar, gouda, queijo minas), creme azedo e manteiga. A nisina que ele produz é usada como conservante em queijos processados.',
+    finding: 'fermento lático de queijos'
+  },
+  {
+    id: 'bulgaricus',
+    displayName: 'bulgaricus',
+    commonName: 'Lactobacilo búlgaro',
+    sciName: 'Lactobacillus delbrueckii subsp. bulgaricus',
+    wikiTitle: 'Lactobacillus_delbrueckii_subsp._bulgaricus',
+    shape: 'bacillus-chain', chainCells: 2,
+    color: '#e4e0d3', colorDark: '#4c4a40',
+    length: 46, width: 6,
+    depth: 3, rarity: 'incomum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.1, turnRate: 0.5,
+    health: 'benefica', gram: 'Gram-positiva',
+    desc: 'Bastonete longo, isolado ou em cadeias curtas, descrito pelo médico búlgaro Stamen Grigorov em 1905 no iogurte de seu país. Trabalha em parceria com o S. thermophilus: um estimula o crescimento do outro (protocooperação).',
+    behavior: 'Imóvel; os bastonetes longos apenas balançam lentamente.',
+    healthNote: 'Benéfico. O cientista Élie Metchnikoff (Nobel de 1908) associou o consumo de leites fermentados com essa bactéria à longevidade dos camponeses búlgaros — a origem da ideia de probiótico.',
+    industry: 'Fermento obrigatório do iogurte: produz ácido lático e o acetaldeído, responsável pelo aroma típico do iogurte.',
+    finding: 'fermento lático do iogurte'
+  },
+  {
+    id: 'bifidus',
+    displayName: 'bifidus',
+    commonName: 'Bifidobactéria',
+    sciName: 'Bifidobacterium animalis subsp. lactis',
+    wikiTitle: 'Bifidobacterium_animalis',
+    shape: 'bifid-rod',
+    color: '#e5e1d5', colorDark: '#4a483e',
+    length: 26, width: 5,
+    depth: 3, rarity: 'raro', habitat: ['milk'],
+    motility: 'brownian', speed: 0.08, turnRate: 0.6,
+    health: 'benefica', gram: 'Gram-positiva',
+    desc: 'Bastonete irregular que se ramifica em forma de "Y" — o nome vem do latim bifidus, "dividido em dois". O gênero é anaeróbio: o oxigênio o prejudica.',
+    behavior: 'Imóvel, sem flagelos; apenas vibra no lugar.',
+    healthNote: 'Probiótico. Bifidobactérias estão entre as primeiras bactérias a colonizar o intestino de bebês amamentados e ajudam a regular o trânsito intestinal e a competir com microrganismos nocivos.',
+    industry: 'É o "bifidus" dos rótulos de iogurtes e leites fermentados. Esta subespécie é a preferida da indústria por tolerar melhor o oxigênio e a acidez, sobrevivendo até o fim da validade do produto.',
+    finding: 'cultura probiótica'
+  },
+  {
+    id: 'kefir',
+    displayName: 'kefir',
+    commonName: 'Levedura do kefir',
+    sciName: 'Kluyveromyces marxianus',
+    wikiTitle: 'Kluyveromyces_marxianus',
+    shape: 'budding-yeast',
+    color: '#e8e4d8', colorDark: '#4d4b41',
+    length: 32, width: 22,
+    depth: 4, rarity: 'incomum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.06, turnRate: 0.4,
+    health: 'benefica', gram: 'Não se aplica (é um fungo)',
+    desc: 'Não é bactéria: é um fungo unicelular (levedura), bem maior que as bactérias ao redor. Reproduz-se por brotamento — uma célula-filha cresce como um "broto" na ponta da célula-mãe. É uma das poucas leveduras capazes de fermentar a lactose.',
+    behavior: 'Imóvel; observe o broto aumentando aos poucos até se soltar da célula-mãe.',
+    healthNote: 'Benéfica: vive nos grãos de kefir junto com bactérias lácticas, numa simbiose que produz uma bebida fermentada levemente gaseificada, estudada por seu potencial probiótico.',
+    industry: 'Fermenta o kefir e é usada para aproveitar o soro de leite — um resíduo dos laticínios — transformando sua lactose em etanol e biomassa. Leveduras desse gênero também são fonte da lactase usada no leite sem lactose.',
+    finding: 'levedura fermentadora (kefir)'
+  },
+  {
+    id: 'ecoli',
+    displayName: 'e. coli',
+    commonName: 'Escherichia coli (coliforme)',
+    sciName: 'Escherichia coli',
+    wikiTitle: 'Escherichia_coli',
+    shape: 'bacillus', flagella: 'peritrichous',
+    color: '#e3dfd3', colorDark: '#47453c',
+    length: 18, width: 7,
+    depth: 1, rarity: 'comum', habitat: ['milk'],
+    motility: 'flagella-run-tumble', speed: 1.5,
+    divides: true,
+    health: 'patogenica', gram: 'Gram-negativa',
+    desc: 'Bastonete curto com vários flagelos espalhados pelo corpo. Vive no intestino de pessoas e animais, por isso sua presença no leite indica contaminação fecal — é o indicador clássico de higiene na indústria de alimentos.',
+    behavior: 'Nada em "corridas" retas, com os flagelos enrolados num feixe, e de repente dá uma "cambalhota" (tumble) e sai numa direção nova, ao acaso.',
+    healthNote: 'A maioria das cepas é inofensiva, mas algumas são perigosas: a E. coli O157:H7 produz a toxina Shiga e pode causar diarreia com sangue e síndrome hemolítico-urêmica, que lesa os rins — sobretudo em crianças.',
+    industry: 'Faz parte dos coliformes, grupo contado nas análises de rotina do leite e derivados. É destruída pela pasteurização; encontrá-la num produto pasteurizado significa falha no processo ou recontaminação.',
+    finding: 'contaminação fecal — falha de higiene na ordenha, nos equipamentos ou na água'
+  },
+  {
+    id: 'aureus',
+    displayName: 's. aureus',
+    commonName: 'Estafilococo dourado',
+    sciName: 'Staphylococcus aureus',
+    wikiTitle: 'Staphylococcus_aureus',
+    shape: 'coccus-cluster',
+    color: '#e6e2d5', colorDark: '#4a483e',
+    length: 30, width: 8,
+    depth: 2, rarity: 'comum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.08, turnRate: 0.4,
+    health: 'patogenica', gram: 'Gram-positiva',
+    desc: 'Cocos que se dividem em vários planos e ficam agrupados em cachos, como uvas (staphylé, em grego). É um dos principais causadores de mastite — a inflamação do úbere das vacas — e também vive na pele e no nariz das pessoas.',
+    behavior: 'Imóvel: o cacho apenas treme no lugar com o movimento browniano.',
+    healthNote: 'Produz enterotoxinas que causam intoxicação alimentar, com vômitos e cólicas poucas horas após a ingestão. A pasteurização mata a bactéria, mas a toxina resiste ao calor — por isso o leite precisa ser resfriado logo após a ordenha.',
+    industry: 'Indica mastite no rebanho ou manipulação sem higiene. A mastite também eleva a contagem de células somáticas (CCS) — as células grandes de núcleo lobulado no fundo da lâmina.',
+    finding: 'mastite no rebanho ou manipulação sem higiene (a enterotoxina resiste à pasteurização)'
+  },
+  {
+    id: 'salmonella',
+    displayName: 'salmonella',
+    commonName: 'Salmonela',
+    sciName: 'Salmonella enterica',
+    wikiTitle: 'Salmonella_enterica',
+    shape: 'bacillus', flagella: 'peritrichous-dense',
+    color: '#e3dfd3', colorDark: '#47453c',
+    length: 19, width: 7,
+    depth: 2, rarity: 'incomum', habitat: ['milk'],
+    motility: 'flagella-run-tumble', speed: 1.4,
+    divides: true,
+    health: 'patogenica', gram: 'Gram-negativa',
+    desc: 'Bastonete coberto de flagelos, parente próximo da E. coli. Vive no intestino de animais e chega ao leite por contaminação fecal durante a ordenha.',
+    behavior: 'Nadadora ativa: corre em linha reta e dá cambalhotas para mudar de rumo, como a E. coli.',
+    healthNote: 'Causa salmonelose: febre, diarreia, vômitos e cólicas, de algumas horas a poucos dias após o consumo. Pode ser grave em crianças, idosos e imunossuprimidos. Há surtos documentados ligados a leite cru e queijos de leite cru.',
+    industry: 'Os padrões microbiológicos exigem ausência de Salmonella em leite e derivados. A pasteurização (72–75 °C por 15–20 s) a elimina.',
+    finding: 'contaminação fecal grave — leite impróprio para consumo cru'
+  },
+  {
+    id: 'listeria',
+    displayName: 'listeria',
+    commonName: 'Listéria',
+    sciName: 'Listeria monocytogenes',
+    wikiTitle: 'Listeria_monocytogenes',
+    shape: 'bacillus', flagella: 'peritrichous',
+    color: '#e5e1d4', colorDark: '#47453c',
+    length: 14, width: 6,
+    depth: 3, rarity: 'raro', habitat: ['milk'],
+    motility: 'flagella-run-tumble', speed: 0.9,
+    divides: true,
+    health: 'patogenica', gram: 'Gram-positiva',
+    desc: 'Bastonete pequeno e muito resistente: cresce até na temperatura de geladeira (é psicrotrófica) e tolera sal e acidez. Vive no solo e na silagem, e forma biofilmes em ralos e equipamentos de laticínios.',
+    behavior: 'Em temperatura ambiente tem flagelos e se move com um "tombamento" característico (tumbling); a 37 °C, dentro do corpo, deixa de produzir os flagelos.',
+    healthNote: 'Causa listeriose, rara mas muito grave: pode provocar meningite e septicemia, e em gestantes causa aborto e infecção do bebê. É uma das doenças transmitidas por alimentos com maior taxa de mortalidade.',
+    industry: 'Grande preocupação em queijos macios e de leite cru. Como cresce no frio, a geladeira não a detém — o controle depende da pasteurização e de higiene rigorosa na fábrica para evitar a recontaminação.',
+    finding: 'contaminação ambiental da fábrica — risco grave para gestantes'
+  },
+  {
+    id: 'campylobacter',
+    displayName: 'c. jejuni',
+    commonName: 'Campilobacter',
+    sciName: 'Campylobacter jejuni',
+    wikiTitle: 'Campylobacter_jejuni',
+    shape: 'spirillum', turns: 1.5, shapeLabel: 'Bastonete curvo em espiral ("asa de gaivota")',
+    color: '#e3dfd3', colorDark: '#47453c',
+    length: 22, width: 6,
+    depth: 3, rarity: 'incomum', habitat: ['milk'],
+    motility: 'flagella-smooth', speed: 1.9,
+    health: 'patogenica', gram: 'Gram-negativa',
+    desc: 'Bastonete curvo em espiral, com um flagelo em cada ponta. Vive no intestino de aves e bovinos sem fazê-los adoecer.',
+    behavior: 'Move-se muito rápido, em saca-rolhas, girando o corpo em espiral. Tem um flagelo em cada ponta e troca de sentido de repente, sem precisar dar a volta.',
+    healthNote: 'Uma das causas mais comuns de gastroenterite bacteriana no mundo (diarreia, febre, dor abdominal). Raramente desencadeia a síndrome de Guillain-Barré, uma paralisia temporária. O leite cru é uma fonte frequente de surtos.',
+    industry: 'Quase não se multiplica fora do intestino, mas poucas células bastam para infectar uma pessoa. A pasteurização a elimina com facilidade.',
+    finding: 'contaminação fecal do leite cru'
+  },
+  {
+    id: 'bcereus',
+    displayName: 'b. cereus',
+    commonName: 'Bacilo cereus',
+    sciName: 'Bacillus cereus',
+    wikiTitle: 'Bacillus_cereus',
+    shape: 'bacillus-chain', chainCells: 4, spores: true, shapeLabel: 'Bastonetes grandes em cadeia, com esporos',
+    color: '#e4e0d4', colorDark: '#45433a',
+    length: 64, width: 9,
+    depth: 3, rarity: 'incomum', habitat: ['milk'],
+    motility: 'brownian', speed: 0.08, turnRate: 0.35,
+    health: 'patogenica', gram: 'Gram-positiva',
+    desc: 'Bastonete grande que forma cadeias e produz endósporos — as estruturas ovais brilhantes dentro das células, formas de resistência que suportam calor, secura e desinfetantes. Vem do solo, da poeira e da ração.',
+    behavior: 'Em cadeias longas fica praticamente imóvel, só oscilando; células soltas conseguem nadar com flagelos.',
+    healthNote: 'Causa intoxicação alimentar de dois tipos: emética (vômitos, por uma toxina que resiste ao calor) e diarreica. Em geral é leve e passageira.',
+    industry: 'Os esporos sobrevivem à pasteurização e, no leite mal refrigerado, germinam e causam a "coagulação doce" e sabor amargo — por isso também é um deteriorante importante.',
+    finding: 'esporos vindos do solo e da ração — sobrevivem à pasteurização'
+  },
+  {
+    id: 'mbovis',
+    displayName: 'm. bovis',
+    commonName: 'Bacilo da tuberculose bovina',
+    sciName: 'Mycobacterium bovis',
+    wikiTitle: 'Mycobacterium_bovis',
+    shape: 'bacillus', shapeLabel: 'Bastonete fino e longo',
+    color: '#e5e1d5', colorDark: '#47453c',
+    length: 22, width: 4,
+    depth: 4, rarity: 'raro', habitat: ['milk'],
+    motility: 'brownian', speed: 0.05, turnRate: 0.5,
+    health: 'patogenica', gram: 'Álcool-ácido resistente (cora mal pelo Gram; usa-se Ziehl-Neelsen)',
+    desc: 'Bastonete fino, de crescimento muito lento, com uma parede celular rica em ceras (ácidos micólicos) que o torna resistente a desinfetantes. Causa a tuberculose bovina.',
+    behavior: 'Imóvel: não tem flagelos.',
+    healthNote: 'Zoonose: transmite tuberculose ao ser humano, principalmente pelo consumo de leite cru e queijos de leite cru de vacas infectadas. Antes da pasteurização, era uma causa importante de tuberculose em crianças.',
+    industry: 'Foi um dos principais motivos para tornar obrigatória a pasteurização do leite. No Brasil é alvo do PNCEBT (Programa Nacional de Controle e Erradicação da Brucelose e Tuberculose Animal).',
+    finding: 'tuberculose no rebanho — zoonose de notificação obrigatória ao serviço veterinário'
+  },
+  {
+    id: 'brucella',
+    displayName: 'brucella',
+    commonName: 'Brucela',
+    sciName: 'Brucella abortus',
+    wikiTitle: 'Brucella_abortus',
+    shape: 'bacillus', shapeLabel: 'Cocobacilo (bastonete curtíssimo)',
+    color: '#e4e0d4', colorDark: '#47453c',
+    length: 10, width: 6,
+    depth: 4, rarity: 'raro', habitat: ['milk'],
+    motility: 'brownian', speed: 0.06, turnRate: 0.6,
+    health: 'patogenica', gram: 'Gram-negativa',
+    desc: 'Cocobacilo minúsculo — tão curto que quase parece um coco — que sobrevive dentro das células do hospedeiro. Causa a brucelose bovina, que provoca abortos nas vacas e é eliminada no leite.',
+    behavior: 'Imóvel, sem flagelos; por ser tão pequena, é uma das mais difíceis de capturar.',
+    healthNote: 'Zoonose: no ser humano causa a brucelose ("febre ondulante"), com febre que vai e volta, dores nas articulações e cansaço que podem durar meses. É transmitida por leite cru, queijos frescos de leite cru e contato com animais doentes.',
+    industry: 'Também é alvo do PNCEBT: os rebanhos são testados e as bezerras, vacinadas. A pasteurização elimina a bactéria — mais um motivo para nunca consumir leite cru.',
+    finding: 'brucelose no rebanho — zoonose de notificação obrigatória ao serviço veterinário'
+  },
+  {
+    id: 'pseudomonas',
+    displayName: 'pseudomonas',
+    commonName: 'Pseudomonas psicrotrófica',
+    sciName: 'Pseudomonas fluorescens',
+    wikiTitle: 'Pseudomonas_fluorescens',
+    shape: 'bacillus', flagella: 'polar',
+    color: '#e3dfd3', colorDark: '#47453c',
+    length: 17, width: 6,
+    depth: 1, rarity: 'incomum', habitat: ['milk'],
+    motility: 'flagella-smooth', speed: 1.9,
+    divides: true,
+    health: 'deteriorante', gram: 'Gram-negativa',
+    desc: 'Bastonete com um tufo de flagelos numa das pontas, comum na água, no solo e em superfícies úmidas. É psicrotrófica: multiplica-se bem dentro do tanque de refrigeração do leite.',
+    behavior: 'Nadadora rápida e quase retilínea, empurrada pelos flagelos polares como por uma hélice. Para mudar de rumo, inverte o giro dos flagelos e recua pelo mesmo caminho.',
+    healthNote: 'Não costuma causar doença em pessoas saudáveis, por isso não é tratada como patógeno de origem alimentar. Mas estraga o leite: o produto fica amargo, rançoso e pode até gelificar.',
+    industry: 'Produz proteases e lipases termorresistentes que sobrevivem até ao tratamento UHT e continuam degradando o leite "longa vida" na prateleira. Controle: resfriar rápido, estocar por pouco tempo e higienizar bem tanques e tubulações.',
+    finding: 'refrigeração ou higienização deficiente — encurta a validade do produto'
+  },
+];
+const SPECIES_BY_ID = Object.fromEntries(SPECIES.map(s => [s.id, s]));
+
+// Efeito de cada microrganismo do leite na saúde humana (mostrado ao coletar,
+// no frasco, na ficha e no laudo do lote)
+const HEALTH_INFO = {
+  benefica:     { label: 'BENÉFICA À SAÚDE',               short: 'benéfica',     icon: '✓', color: '#2e7d4f' },
+  deteriorante: { label: 'DETERIORANTE — ESTRAGA O LEITE', short: 'deteriorante', icon: '↓', color: '#b36b00' },
+  patogenica:   { label: 'PATOGÊNICA — FAZ MAL À SAÚDE',   short: 'patogênica',   icon: '!', color: '#c0262d' },
+};
+
+// Perfis de lote de leite cru: cada nova lâmina de leite sorteia um, que fica
+// oculto e muda as chances de cada microrganismo aparecer (boost multiplica o
+// peso de raridade; ausente = 1, 0 = não aparece). O jogador deduz o problema
+// pelo que coleta, e o laudo revela o diagnóstico real e se o agente-chave
+// (key) foi encontrado. somatic = células somáticas espalhadas no fundo.
+const MILK_LOTS = [
+  { id: 'bom', somatic: 20, key: [],
+    diagnosis: 'lote de boa qualidade — ordenha higiênica, rebanho sadio e leite bem refrigerado.',
+    boost: { acidophilus: 1.5, thermophilus: 1.5, lactococcus: 1.5, bulgaricus: 1.5, bifidus: 1.5, kefir: 1.5, pseudomonas: 0.3,
+             ecoli: 0, aureus: 0, salmonella: 0, listeria: 0, campylobacter: 0, bcereus: 0, mbovis: 0, brucella: 0 } },
+  { id: 'mastite', somatic: 260, key: ['aureus'],
+    diagnosis: 'rebanho com mastite (inflamação do úbere) — muitas células somáticas e Staphylococcus aureus.',
+    boost: { aureus: 6, ecoli: 0.8, salmonella: 0.2, campylobacter: 0.2, listeria: 0.2, bcereus: 0.5, mbovis: 0.1, brucella: 0.1 } },
+  { id: 'fecal', somatic: 40, key: ['ecoli', 'salmonella', 'campylobacter'],
+    diagnosis: 'falha de higiene na ordenha — contaminação fecal (E. coli, Salmonella, Campylobacter).',
+    boost: { ecoli: 5, salmonella: 4, campylobacter: 4, aureus: 0.4, listeria: 0.4, bcereus: 0.8, mbovis: 0.1, brucella: 0.1 } },
+  { id: 'frio', somatic: 40, key: ['pseudomonas', 'listeria', 'bcereus'],
+    diagnosis: 'refrigeração deficiente e estocagem longa — proliferação de bactérias que crescem no frio e de esporulados.',
+    boost: { pseudomonas: 6, listeria: 3, bcereus: 3, ecoli: 0.5, aureus: 0.5, salmonella: 0.2, campylobacter: 0.1, mbovis: 0.1, brucella: 0.1 } },
+  { id: 'zoonose', somatic: 80, key: ['mbovis', 'brucella'],
+    diagnosis: 'rebanho com tuberculose e/ou brucelose — zoonoses de notificação obrigatória ao serviço veterinário.',
+    boost: { mbovis: 6, brucella: 6, aureus: 0.6, ecoli: 0.5, salmonella: 0.2, campylobacter: 0.2, listeria: 0.2, bcereus: 0.5 } },
+];
+
+const RARITY_INFO = {
+  comum:     { label: 'COMUM',     plural: 'comuns',    color: '#111111', weight: 50 },
+  incomum:   { label: 'INCOMUM',   plural: 'incomuns',  color: '#2e8b57', weight: 30 },
+  raro:      { label: 'RARO',      plural: 'raros',     color: '#8e44ad', weight: 15 },
+  lendario:  { label: 'LENDÁRIO',  plural: 'lendários', color: '#c9a227', weight: 5  },
+};
+
+const DEPTH_INFO = {
+  1: 'Superficial — 100µm',
+  2: 'Intermediário — 250µm',
+  3: 'Profundo — 480µm',
+  4: 'Fundo da lâmina — 720µm',
+};
+
+function wikipediaUrl(species){
+  const title = species.wikiTitle || species.sciName.split(' ')[0];
+  return 'https://en.wikipedia.org/wiki/' + title.replace(/ /g, '_');
+}
+
+// Renderização procedural das formas + física de movimento — estilo campo claro real:
+// preenchimento translúcido baixo-contraste, contorno fino, sem cor saturada.
+// Corpo com deformação tipo membrana mole (squash/stretch por vértice) e caudas/flagelos
+// com física de segmentos encadeados (cada ponto persegue o anterior com atraso e amortecimento).
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function el(tag, attrs){
+  const e = document.createElementNS(SVG_NS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+let ORG_UID = 0;
+
+// ---- how each bacterium really moves, given the structure it has ----------
+//  peritrichous   flagella all over the cell (E. coli, Salmonella, Bacillus,
+//                 Listeria): "run and tumble". The flagella turn together as
+//                 one bundle behind the cell (run); when motors reverse, the
+//                 bundle flies apart and the cell tumbles in place, then
+//                 starts a new run in a random direction.
+//  push-pull      polar tuft (Pseudomonas): pushed forward by the tuft, then
+//                 the motor reverses and the cell backs up the same way.
+//  flick          one polar flagellum (Vibrio): forward, reverse, and on
+//                 restarting forward the flagellum buckles at its hook and
+//                 flicks the cell about 90 degrees to one side.
+//  amphitrichous  one flagellum at each pole and a helical body
+//                 (Campylobacter): darting corkscrew that swaps which end
+//                 leads instead of turning around.
+//  rigid-helix    rigid spiral with a tuft at each pole (Spirillum): the whole
+//                 helix rotates; both tufts flip together to back up.
+//  endoflagella   flagella inside the cell (spirochetes): the flexible body
+//                 itself rotates and undulates, and now and then stops to flex.
+//  brownian       no flagella: only thermal jiggling (translation and
+//                 rotation), stronger the smaller the cell; chains flex at
+//                 their septa, clusters jiggle as one rigid piece.
+const BACTERIA_MOTOR = {
+  ecoli:       { type:'peritrichous', run:1.0, tumble:0.16 },
+  salmonella:  { type:'peritrichous', run:1.1, tumble:0.16 },
+  bacillus:    { type:'peritrichous', run:1.6, tumble:0.2 },
+  listeria:    { type:'peritrichous', run:0.55, tumble:0.3 },
+  pseudomonas: { type:'push-pull', fwd:1.3, back:0.8 },
+  vibrio:      { type:'flick', fwd:0.9, back:0.35 },
+  campylobacter:{ type:'amphitrichous', run:0.5 },
+  spirillum:   { type:'rigid-helix', run:2.4 },
+  spirochete:  { type:'endoflagella', run:2.2 },
+  acidophilus: { type:'brownian', flex:0.12 },
+  bulgaricus:  { type:'brownian', flex:0.1 },
+  bcereus:     { type:'brownian', flex:0.09 },
+  thermophilus:{ type:'brownian', flex:0.26 },
+  lactococcus: { type:'brownian', flex:0.08 },
+  aureus:      { type:'brownian' },
+  bifidus:     { type:'brownian' },
+  mbovis:      { type:'brownian' },
+  brucella:    { type:'brownian' },
+  kefir:       { type:'brownian' },
+};
+function gauss(){ let u = 0; while(!u) u = Math.random(); return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*Math.random()); }
+const expRand = mean => -Math.log(1 - Math.random()) * mean;
+
+// A chain of points anchored at a base (attached to the body, in the body's local
+// space) that trails behind with lag and springy damping — real whip/tail physics,
+// not a pre-baked wiggle. Call update() every frame with the base's CURRENT WORLD
+// position/angle (since the body itself moves+rotates), then read .points (world
+// space) to draw.
+class TailChain{
+  constructor(segmentCount, segmentLen, opts){
+    opts = opts || {};
+    this.segmentLen = segmentLen;
+    this.stiffness = opts.stiffness !== undefined ? opts.stiffness : 0.35; // how hard it snaps toward the target chain shape
+    this.damping = opts.damping !== undefined ? opts.damping : 0.78; // velocity retained per frame (lower = draggier)
+    this.points = [];
+    this.vel = [];
+    for(let i=0;i<=segmentCount;i++){
+      this.points.push({x:0, y:0});
+      this.vel.push({x:0, y:0});
+    }
+    this._initialized = false;
+  }
+
+  // baseX/Y/angle: world-space position and heading of the attachment point.
+  // restAngleOffset: local angle (radians, relative to base heading) the tail rests along.
+  update(dt, baseX, baseY, baseAngle, restAngleOffset, flutter){
+    const n = this.points.length;
+    const restAng = baseAngle + restAngleOffset;
+
+    if(!this._initialized){
+      // snap straight out on first frame so it doesn't spring in from origin
+      for(let i=0;i<n;i++){
+        this.points[i].x = baseX + Math.cos(restAng)*this.segmentLen*i;
+        this.points[i].y = baseY + Math.sin(restAng)*this.segmentLen*i;
+      }
+      this._initialized = true;
+      return;
+    }
+
+    this.points[0].x = baseX;
+    this.points[0].y = baseY;
+
+    for(let i=1;i<n;i++){
+      // target: straight continuation of the previous segment's direction, i.e.
+      // where this point would sit if the tail were perfectly rigid right now.
+      const prev = this.points[i-1];
+      const prevPrev = this.points[i-2] || { x: baseX - Math.cos(restAng), y: baseY - Math.sin(restAng) };
+      let dirX = prev.x - prevPrev.x, dirY = prev.y - prevPrev.y;
+      const dirLen = Math.hypot(dirX, dirY) || 1;
+      dirX /= dirLen; dirY /= dirLen;
+
+      // blend the rigid-continuation direction with the rest pose direction so the
+      // tail has a "preferred" shape to spring back to (keeps it from going limp/coiling forever)
+      const restX = Math.cos(restAng), restY = Math.sin(restAng);
+      const blendedX = dirX*0.72 + restX*0.28;
+      const blendedY = dirY*0.72 + restY*0.28;
+      const blendedLen = Math.hypot(blendedX, blendedY) || 1;
+
+      const targetX = prev.x + (blendedX/blendedLen) * this.segmentLen;
+      const targetY = prev.y + (blendedY/blendedLen) * this.segmentLen;
+
+      const p = this.points[i], v = this.vel[i];
+      const ax = (targetX - p.x) * this.stiffness;
+      const ay = (targetY - p.y) * this.stiffness;
+      v.x = (v.x + ax) * this.damping;
+      v.y = (v.y + ay) * this.damping;
+
+      // gentle sinusoidal flutter perpendicular to the tail, stronger toward the tip,
+      // so it never looks perfectly dead even at rest
+      if(flutter){
+        const perpX = -Math.sin(restAng), perpY = Math.cos(restAng);
+        const tipWeight = i/n;
+        const f = Math.sin(flutter.phase + i*0.9) * flutter.amount * tipWeight;
+        v.x += perpX * f * dt * 6;
+        v.y += perpY * f * dt * 6;
+      }
+
+      p.x += v.x;
+      p.y += v.y;
+
+      // rigid length constraint: the spring above gives the lag/whip feel, but
+      // left unconstrained it can overshoot and let each link's length drift
+      // (visually reads as the tail stretching/shrinking like it's breathing).
+      // Snap the point back to exactly segmentLen from its parent so only the
+      // ANGLE whips around, never the length.
+      const cdx = p.x - prev.x, cdy = p.y - prev.y;
+      const clen = Math.hypot(cdx, cdy) || 0.0001;
+      const scale = this.segmentLen / clen;
+      p.x = prev.x + cdx*scale;
+      p.y = prev.y + cdy*scale;
+    }
+  }
+
+  // SVG path 'd' string through the chain (world space) — caller translates/rotates
+  // into local space via a wrapping <g> if needed, or draws directly in world coords.
+  toPathD(){
+    if(this.points.length < 2) return '';
+    let d = `M ${this.points[0].x.toFixed(1)} ${this.points[0].y.toFixed(1)} `;
+    for(let i=1;i<this.points.length;i++){
+      const p = this.points[i];
+      const prev = this.points[i-1];
+      const mx = (prev.x+p.x)/2, my = (prev.y+p.y)/2;
+      d += `Q ${prev.x.toFixed(1)} ${prev.y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+    }
+    const last = this.points[this.points.length-1];
+    d += `L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
+    return d;
+  }
+}
+
+// A jointed body skeleton — front / middle / rear segments, modeled as a real
+// dragged chain (like a snake/worm rig): the HEAD moves freely wherever the
+// organism's behavior decides, with no lag of its own. Each segment behind it
+// is then pulled to sit a fixed distance from the segment ahead, along the
+// direction it's being pulled from — not by chasing a target angle. That's
+// the key difference from a rotating-with-delay body: the head turns and
+// walks straight in its new direction immediately, and the trailing segments
+// only bend into the curve because the constraint pulls them after it a beat
+// later, exactly like a real worm's body sweeping through the turn its head
+// already committed to.
+class BodySkeleton{
+  constructor(segmentSpacing, opts){
+    opts = opts || {};
+    this.segmentSpacing = segmentSpacing; // rest distance between each joint, in world units
+    // 3 joints: [head, mid, tail] in WORLD space (not angles — real positions)
+    this.jointPos = [{x:0,y:0}, {x:0,y:0}, {x:0,y:0}];
+    this.wavePhase = Math.random()*Math.PI*2;
+    this._initialized = false;
+  }
+
+  // headX/headY: the WORLD position the head should be at this frame (this is
+  // just this.x/this.y from the organism — the head doesn't lag behind that
+  // at all, it IS that point). speedFactor drives the peristaltic wave speed.
+  update(dt, headX, headY, speedFactor){
+    if(!this._initialized){
+      // lay the body out straight behind the head on first frame
+      const ang = Math.atan2(headY - this.jointPos[0].y, headX - this.jointPos[0].x) || 0;
+      this.jointPos[0] = { x: headX, y: headY };
+      for(let i=1;i<3;i++){
+        this.jointPos[i] = {
+          x: headX - Math.cos(ang)*this.segmentSpacing*i,
+          y: headY - Math.sin(ang)*this.segmentSpacing*i
+        };
+      }
+      this._initialized = true;
+      return;
+    }
+
+    // head snaps straight to wherever the organism actually is — no lag, it leads
+    this.jointPos[0].x = headX;
+    this.jointPos[0].y = headY;
+
+    // each following joint gets pulled toward the joint ahead of it, clamped
+    // to stay exactly segmentSpacing away — this is what makes the body trail
+    // through a curve instead of rotating as a block
+    for(let i=1;i<3;i++){
+      const lead = this.jointPos[i-1], follow = this.jointPos[i];
+      const dx = follow.x - lead.x, dy = follow.y - lead.y;
+      const dist = Math.hypot(dx, dy) || 0.0001;
+      const nx = dx/dist, ny = dy/dist;
+      follow.x = lead.x + nx*this.segmentSpacing;
+      follow.y = lead.y + ny*this.segmentSpacing;
+    }
+
+    this.wavePhase += dt * (2.2 + speedFactor*3.5);
+  }
+
+  // world-space heading angle of the segment spanning joint[i] -> joint[i+1]
+  // (segment 0 = head->mid, segment 1 = mid->tail); this is what each drawn
+  // capsule should be rotated to, so it visually points along its own stretch
+  // of the trailing body rather than the organism's overall heading.
+  segmentAngle(i){
+    const a = this.jointPos[i], b = this.jointPos[i+1];
+    return Math.atan2(a.y-b.y, a.x-b.x);
+  }
+
+  // uniform whole-body breathing pulse — all segments scale together in sync
+  // (not a traveling wave with per-segment phase offset), same rhythm the
+  // organism's overall pulsePhase drives for every other flagellated species,
+  // so the Proteus reads as one breathing body made of 3 visible regions
+  // rather than a ripple running through it.
+  contraction(){
+    const wave = Math.sin(this.wavePhase);
+    return 1 + wave*0.11;
+  }
+}
+
+// Soft-body outline: N vertices around a base shape (ellipse-ish or rect-ish),
+// each with its own phase-shifted radial oscillation, so the membrane looks like
+// it's gently pulsing/squashing rather than a rigid die-cut outline.
+class SoftBlob{
+  constructor(vertexCount, opts){
+    opts = opts || {};
+    this.n = vertexCount;
+    this.ampBase = opts.amp !== undefined ? opts.amp : 0.09; // fraction of local radius
+    this.speedBase = opts.speed !== undefined ? opts.speed : 1.0;
+    this.phases = [];
+    this.speeds = [];
+    this.amps = [];
+    for(let i=0;i<vertexCount;i++){
+      this.phases.push(Math.random()*Math.PI*2);
+      this.speeds.push(this.speedBase * (0.7 + Math.random()*0.6));
+      this.amps.push(this.ampBase * (0.6 + Math.random()*0.8));
+    }
+  }
+
+  // radiusFn(i, t01) -> base local radius (or half-width) for vertex i at parametric
+  // position t01 (0..1 around the shape); returns the DEFORMED radius for this frame.
+  deformedRadius(i, baseR, t, squash){
+    const wobble = 1 + Math.sin(t*this.speeds[i] + this.phases[i]) * this.amps[i];
+    return baseR * wobble * (squash || 1);
+  }
+}
+
+class Organism {
+  constructor(species, fieldW, fieldH){
+    this.uid = ++ORG_UID;
+    this.species = species;
+    this.fieldW = fieldW;
+    this.fieldH = fieldH;
+
+    this.x = 10 + Math.random() * (fieldW - 20);
+    this.y = 10 + Math.random() * (fieldH - 20);
+    this.angle = Math.random() * Math.PI * 2; // "decision" heading — can snap instantly, drives movement/collision
+    this.displayAngle = this.angle; // what's actually drawn — chases this.angle with spring lag, so the visible body turns smoothly even when the decision snaps
+    this.displayAngleVel = 0;
+    this.speed = species.speed * (0.7 + Math.random()*0.6);
+    this.baseSpeed = this.speed;
+
+    this.phase = Math.random() * Math.PI * 2;
+    this.wobble = 0.4 + Math.random()*0.3;
+    // animation clocks (also needed by static thumbnails that never call update())
+    this._beatPhase = Math.random()*Math.PI*2;
+    this._rollPhase = Math.random()*Math.PI*2;
+    this._speedFactor = 0;
+
+    // whole-body breathing pulse — a uniform scale-up/down, not surface ripple.
+    // Only flagellated species get this (set up below, after species is known).
+    this.pulsePhase = Math.random() * Math.PI * 2;
+    // (legacy crawling-flagellate gait; swimming bacteria with flagella — run
+    // and tumble, smooth swimmers — use their own motility instead)
+    this.hasFlagella = !!(species.flagella && species.flagella !== 'none' && species.crawlGait);
+
+    this.runTimer = 1 + Math.random()*2;
+
+    // slug-like crawl cycle (flagellated species only): alternates a slow
+    // forward "step" with a near-still "rest", instead of gliding continuously
+    // like a free swimmer — the whole point being it reads as dragging itself
+    // along rather than floating.
+    this.crawlStepping = true;
+    this.crawlTimer = 0.3 + Math.random()*0.5;
+    this.crawlTurnPause = 0; // >0 while hesitating before committing to a new heading
+
+    this.fleeing = false;
+    this.fleeTimer = 0;
+    this.fleeAngle = 0;
+
+    this.caught = false;
+    this.escaped = false;
+    this.stuck = false; // trapped by drying edge
+
+    this.spawnFade = 0; // 0..1, fades in on birth
+    this.group = null;
+
+    this.tails = []; // { chain: TailChain, el: <path>, restAngleOffset, flutterPhase }
+    this.skeleton = null; // BodySkeleton instance if this species has a jointed peristaltic body
+    this.softBlob = null; // SoftBlob instance if this shape has a soft membrane outline
+
+    // bacteria get a motor model matching their flagella (see BACTERIA_MOTOR);
+    // it drives both how they move and how their flagella/body are drawn
+    const motor = BACTERIA_MOTOR[species.id];
+    if(motor){
+      const size = Math.max(species.length, species.width);
+      this._motor = Object.assign({
+        mode: 'run', t: 0, dir: 1, bundle: 1, ramp: 1, flick: 0, flickSide: 1, flexAmt: 0, turnRate: 0, burst: 1, switchT: 0,
+        timer: Math.max(0.3, expRand(motor.run || motor.fwd || 1)),
+        roll: Math.random()*Math.PI*2, flagPhase: Math.random()*10, angVel: 0, prevAng: null, lead: 1,
+        curve: (Math.random() < 0.5 ? -1 : 1) * (0.08 + Math.random()*0.22), // circling near the glass
+        D: 22 * 10/size,                                                         // translational diffusion, units^2/s
+        Dr: Math.max(0.004, Math.min(0.9, 0.9*Math.pow(10/size, 3))),           // rotational diffusion, rad^2/s
+        vx: 0, vy: 0, wob: 0
+      }, motor);
+    }
+    this._buildSVG();
+  }
+
+  _buildSVG(){
+    const s = this.species;
+    const g = el('g', { class:'organism', 'data-uid': this.uid, 'data-species': s.id });
+    const body = this._shapeSVG(s);
+    g.appendChild(body);
+    this.group = g;
+    this.bodyEl = body;
+    this._addRealism(s);
+    this._translucencyPass();
+
+    if(this.ciliaEl){
+      this._ciliaData = Array.from(this.ciliaEl.querySelectorAll('line')).map(l=>{
+        const x1=+l.getAttribute('x1'), y1=+l.getAttribute('y1');
+        return { el:l, x1, y1, dx:+l.getAttribute('x2')-x1, dy:+l.getAttribute('y2')-y1 };
+      });
+    }
+    this._rolls = ['ovoid-cilia','bean-cilia','ciliate-generic','blepharisma-shape','slipper-cilia','paramecium','euglena-flagellate'].includes(s.shape);
+  }
+
+  // In brightfield a living cell is almost transparent: you see it mostly by
+  // its refractive edge and a few inclusions, not by colour. This pass takes
+  // whatever a shape drew and pushes it that way — fills become faint
+  // washes, outlines get thinner and lighter, inclusions fade a little.
+  // Done generically so every one of the 22 shapes gets the same treatment.
+  _translucencyPass(){
+    const nodes = this.group.querySelectorAll('*');
+    nodes.forEach(n=>{
+      if(n === this._softRimEl || n === this._softGlowEl || n.hasAttribute('data-keep')) return;
+      const tagB = n.tagName;
+      if(n.getAttribute('fill') === this.species.color && ['path','ellipse','rect','circle'].includes(tagB)){
+        n.setAttribute('fill', `url(#bf-${this.species.id})`);
+        n.setAttribute('fill-opacity', '1');
+      } else {
+        const fo = n.getAttribute('fill-opacity');
+        if(fo !== null) n.setAttribute('fill-opacity', (parseFloat(fo)*0.42).toFixed(3));
+      }
+      const so = n.getAttribute('stroke-opacity');
+      if(so !== null) n.setAttribute('stroke-opacity', (parseFloat(so)*0.8).toFixed(3));
+      const tag = n.tagName;
+      if(n !== this._wormInnerEl && n.getAttribute('stroke') && n.getAttribute('stroke') !== 'none'){
+        const sw = parseFloat(n.getAttribute('stroke-width'));
+        // thin body outlines only — leave the deliberately thick worm strokes alone
+        if(!isNaN(sw) && sw <= 1.2 && tag !== 'line') n.setAttribute('stroke-width', (sw*0.75).toFixed(2));
+      }
+      const op = n.getAttribute('opacity');
+      if(op !== null && (tag === 'circle' || tag === 'ellipse' || tag === 'g' || tag === 'line')){
+        n.setAttribute('opacity', (parseFloat(op)*0.72).toFixed(3));
+      }
+    });
+  }
+
+  // Brightfield-microscopy realism applied on top of every shape:
+  //  * refraction halo — a soft bright fringe just outside the membrane, the
+  //    single strongest cue that makes a translucent cell read as "real under
+  //    a lens" rather than a flat drawing;
+  //  * cell interior — granular cytoplasm, food vacuoles and a contractile
+  //    vacuole for protozoa; green chloroplast discs for photosynthesizers;
+  //  * a visible gut line in the nematode.
+  _addRealism(s){
+    const L = s.length, W = s.width;
+    if(this._softPathEl){
+      // filter-free soft edge: a wide, barely-visible dark band under the
+      // outline fades the boundary into the background (a gradient edge, like
+      // real refraction), then the pale fringe sits just outside it.
+      const glow = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':2.6, 'stroke-opacity':0.07, 'stroke-linejoin':'round' });
+      const rim = el('path', { d:'', fill:'none', stroke:'#fbfaf2', 'stroke-width':1.8, 'stroke-opacity':0.34, 'stroke-linejoin':'round' });
+      this._softPathEl.parentNode.insertBefore(glow, this._softPathEl);
+      this._softPathEl.parentNode.insertBefore(rim, glow);
+      this._softRimEl = rim;
+      this._softGlowEl = glow;
+    }
+    const protozoa = ['ovoid-cilia','bean-cilia','ciliate-generic','blepharisma-shape','slipper-cilia','paramecium','vorticella-stalked','rotifer-crown'];
+    const greenCells = ['euglena-flagellate'];
+    const host = this._softPathEl ? this._softPathEl.parentNode : this.bodyEl;
+    const anchor = this._softPathEl ? this._softPathEl.nextSibling : null;
+    const add = (node)=>{ host.insertBefore(node, anchor); };
+    const inEllipse = (rx, ry)=>{ const a=Math.random()*Math.PI*2, r=Math.sqrt(Math.random()); return [Math.cos(a)*rx*r, Math.sin(a)*ry*r]; };
+
+    if(protozoa.includes(s.shape)){
+      const rx = L*0.36, ry = W*0.3;
+      // granular cytoplasm
+      for(let i=0;i<22;i++){
+        const [x,y] = inEllipse(rx, ry);
+        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:(0.25+Math.random()*0.45).toFixed(2), fill:s.colorDark, opacity:(0.18+Math.random()*0.22).toFixed(2) }));
+      }
+      // food vacuoles: small rounded inclusions, darker contents with a light rim
+      const nFood = 2 + Math.floor(Math.random()*3);
+      for(let i=0;i<nFood;i++){
+        const [x,y] = inEllipse(rx*0.85, ry*0.85);
+        const r = W*(0.07+Math.random()*0.05);
+        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:r.toFixed(2), fill:'#8a7a52', opacity:0.32, stroke:'#fbfaf2', 'stroke-width':0.3, 'stroke-opacity':0.5 }));
+      }
+      // contractile vacuole: clear, slightly bright bubble that slowly fills and empties
+      const cv = el('circle', { cx:(L*0.22).toFixed(1), cy:(-W*0.08).toFixed(1), r:(W*0.12).toFixed(2), fill:'#f4f2e8', opacity:0.5, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.5 });
+      add(cv);
+      this._contractileVac = { el: cv, baseR: W*0.12, phase: Math.random()*Math.PI*2 };
+    }
+    if(greenCells.includes(s.shape)){
+      for(let i=0;i<9;i++){
+        const [x,y] = inEllipse(L*0.3, W*0.28);
+        add(el('ellipse', { cx:x.toFixed(1), cy:y.toFixed(1), rx:(1.2+Math.random()*0.6).toFixed(2), ry:(0.7+Math.random()*0.3).toFixed(2), fill:'#7d9466', opacity:0.42 }));
+      }
+    }
+    if(s.shape === 'heliozoan-rays'){
+      // Actinophrys: foamy, vacuole-packed cytoplasm with a central nucleus
+      for(let i=0;i<11;i++){
+        const [x,y] = inEllipse(W*0.24, W*0.24);
+        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:(0.9+Math.random()*1.1).toFixed(2), fill:'#f6f4ea', 'fill-opacity':0.6, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.45 }));
+      }
+      add(el('circle', { cx:0, cy:0, r:(W*0.08).toFixed(2), fill:s.colorDark, opacity:0.35 }));
+    }
+    if(s.shape === 'testate-amoeba'){
+      // Arcella's shell is finely dotted (alveolate) and darkens with age
+      for(let i=0;i<26;i++){
+        const [x,y] = inEllipse(W*0.44, W*0.44);
+        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:0.35, fill:s.colorDark, opacity:0.35 }));
+      }
+    }
+    if(s.shape === 'nematode-worm' && this.waveEl){
+      const gut = el('path', { d:'', fill:'none', stroke:'#8f8466', 'stroke-width':W*0.22, 'stroke-opacity':0.55, 'stroke-linecap':'round' });
+      const shine = el('path', { d:'', fill:'none', stroke:'#fbfaf2', 'stroke-width':W*0.12, 'stroke-opacity':0.35, 'stroke-linecap':'round', transform:`translate(0,${(-W*0.22).toFixed(1)})` });
+      this.waveEl.parentNode.appendChild(gut);
+      this.waveEl.parentNode.appendChild(shine);
+      this._wormGutEl = gut;
+      this._wormShineEl = shine;
+    }
+  }
+
+  // realistic brightfield fill: pale, translucent, low-contrast, thin darker outline
+  _fillAttrs(s, opacity){
+    return {
+      fill: s.color,
+      'fill-opacity': opacity!==undefined ? opacity : 0.46,
+      stroke: s.colorDark,
+      'stroke-width': 0.7,
+      'stroke-opacity': 0.72
+    };
+  }
+
+  // Build a soft-edged rounded-rect-ish outline (bacillus body) as a closed path
+  // through 2*half+2 vertices so _shapeSVG can later wobble each one independently.
+  _softCapsulePath(L, W, vertsPerSide){
+    // vertices go around: right cap, top edge, left cap, bottom edge
+    const pts = [];
+    const capSteps = vertsPerSide;
+    // right cap (semi-circle from -90deg to +90deg around (L/2,0))
+    for(let i=0;i<=capSteps;i++){
+      const a = -Math.PI/2 + (i/capSteps)*Math.PI;
+      pts.push([L/2 + Math.cos(a)*W/2, Math.sin(a)*W/2]);
+    }
+    // left cap (from 90deg to 270deg around (-L/2,0))
+    for(let i=0;i<=capSteps;i++){
+      const a = Math.PI/2 + (i/capSteps)*Math.PI;
+      pts.push([-L/2 + Math.cos(a)*W/2, Math.sin(a)*W/2]);
+    }
+    return pts;
+  }
+
+  // Ring of fine radial cilia around an elliptical body (L long, W wide), the
+  // same decorative device paramecium already uses — factored out so every
+  // ciliated shape (slipper, ovoid, bean, ciliate, blepharisma, rotifer's
+  // corona, vorticella's collar) can reuse it. Returns the <g>; caller is
+  // expected to stash it as this.ciliaEl so render() spins it automatically.
+  _radialCilia(L, W, n, opacity, lenMul){
+    const cilia = el('g', { class:'cilia', opacity: opacity!==undefined?opacity:0.35 });
+    lenMul = lenMul !== undefined ? lenMul : 1;
+    for(let i=0;i<n;i++){
+      const t = (i/n)*Math.PI*2;
+      const rx = L*0.5, ry = W*0.5;
+      const px = Math.cos(t)*rx, py = Math.sin(t)*ry;
+      const nx = Math.cos(t), ny = Math.sin(t);
+      cilia.appendChild(el('line', {
+        x1:px, y1:py, x2: px+nx*2.3*lenMul, y2: py+ny*2.3*lenMul,
+        stroke: this.species.colorDark, 'stroke-width':0.22
+      }));
+    }
+    return cilia;
+  }
+
+  // Bacterial flagella, drawn procedurally: each filament is a thin helix (a
+  // wave travelling along it) on a centre line from its insertion on the
+  // cell to an end point the motor state moves around: bundled behind the
+  // cell in a run, flung apart in a tumble, buckled sideways in a flick.
+  // Real flagella are ~20 nm thick, barely visible in brightfield, so they
+  // stay thin and faint. g = the layer they go in (behind the body).
+  _addFlagellum(g, f){
+    f.el = el('path', { d:'', fill:'none', stroke:this.species.colorDark, 'stroke-width':(f.sw || 0.5),
+      'stroke-opacity':(f.op || 0.4), 'stroke-linecap':'round', 'stroke-linejoin':'round', 'data-keep':1 });
+    g.appendChild(f.el);
+    f.ph = Math.random()*Math.PI*2;
+    (this._flagella = this._flagella || []).push(f);
+    return f;
+  }
+  _bacterialFlagella(g, s, L, W){
+    if(!s.flagella || s.flagella === 'none') return;
+    if(s.flagella === 'polar'){
+      // a tuft of two at the rear pole, pushing (or, reversed, pulling)
+      [-1, 1].forEach(side=> this._addFlagellum(g, { kind:'polar', ax:-L/2 + W*0.12, ay:side*W*0.14, side,
+        len:L*1.25, amp:W*0.3, wl:W*3, spread:side*0.16 }));
+      return;
+    }
+    // peritrichous: inserted all over the flanks, front to back
+    const n = s.flagella === 'peritrichous-dense' ? 7 : 5;
+    for(let i=0;i<n;i++){
+      const side = i%2 ? 1 : -1, k = (i + 0.5)/n;
+      this._addFlagellum(g, { kind:'peri', ax:L*0.34 - k*L*0.68, ay:side*W*0.47, side,
+        len:L*(1.2 + Math.random()*0.4), amp:W*0.22, wl:W*2.6,
+        splay:0.8 + Math.random()*1.5, lane:(Math.random()-0.5)*W*0.7 });
+    }
+  }
+
+  // centre line of a filament as a quadratic curve (attach -> control -> end)
+  // with a travelling sine wave on top; returns the path d
+  _flagellumPath(ax, ay, cx, cy, ex, ey, f, amp, phase){
+    const K = 13, kWave = 2*Math.PI*f.len/f.wl;
+    let d = '';
+    for(let i=0;i<=K;i++){
+      const t = i/K, u = 1 - t;
+      const bx = u*u*ax + 2*u*t*cx + t*t*ex, by = u*u*ay + 2*u*t*cy + t*t*ey;
+      let tx = 2*u*(cx - ax) + 2*t*(ex - cx), ty = 2*u*(cy - ay) + 2*t*(ey - cy);
+      const tl = Math.hypot(tx, ty) || 1;
+      const env = Math.min(1, t/0.18) * (1 - 0.2*t);
+      const off = amp * env * Math.sin(kWave*t - phase);
+      d += (i ? 'L' : 'M') + (bx - ty/tl*off).toFixed(1) + ' ' + (by + tx/tl*off).toFixed(1) + ' ';
+    }
+    return d;
+  }
+
+  _renderFlagella(){
+    const m = this._motor || { bundle:1, angVel:0, flagPhase:0, dir:1, lead:1, flick:0, flickSide:1 };
+    const L = this.species.length, W = this.species.width;
+    const turn = Math.max(-2.5, Math.min(2.5, m.angVel || 0));
+    const t = m.flagPhase;
+    const dirS = this.speed < 0 ? -1 : 1;
+    for(const f of this._flagella){
+      let ax = f.ax, ay = f.ay;
+      if(f.attach) [ax, ay] = f.attach();
+      let cx, cy, ex, ey, amp = f.amp, phase = f.ph + t*dirS;
+      if(f.kind === 'peri'){
+        const b = m.bundle;
+        // bundled: every filament joins one cable trailing behind the rear pole
+        const bEx = -L/2 - f.len*0.72, bEy = f.lane*0.45;
+        const bCx = ax - f.len*0.32, bCy = ay*0.55;
+        // splayed (tumble): flung out on its own side at its own angle, flailing
+        const sa = Math.PI - f.side*(f.splay + 0.45*Math.sin(t*0.7 + f.ph));
+        const sEx = ax + Math.cos(sa)*f.len*0.82, sEy = ay + Math.sin(sa)*f.len*0.82;
+        const sCx = ax + Math.cos(sa + f.side*0.5)*f.len*0.3, sCy = ay + Math.sin(sa + f.side*0.5)*f.len*0.3;
+        ex = sEx + (bEx - sEx)*b; ey = sEy + (bEy - sEy)*b;
+        cx = sCx + (bCx - sCx)*b; cy = sCy + (bCy - sCy)*b;
+        amp *= 1 + 0.5*(1 - b);
+        if(b < 0.6) phase = f.ph + t*0.45; // apart, each filament turns on its own, slowly
+      } else if(f.kind === 'polar'){
+        // out of the rear pole; a flick buckles it sideways at the hook
+        const a = Math.PI + f.spread + m.flickSide*1.35*m.flick;
+        ex = ax + Math.cos(a)*f.len*0.95; ey = ay + Math.sin(a)*f.len*0.95;
+        const ca = Math.PI + f.spread*0.5 + m.flickSide*0.6*m.flick;
+        cx = ax + Math.cos(ca)*f.len*0.36; cy = ay + Math.sin(ca)*f.len*0.36;
+      } else {
+        // tufts / single filaments at both poles (Spirillum, Campylobacter):
+        // the trailing pole's filaments stream straight back; the leading
+        // pole's are swept back over the cell like an umbrella. lead = +1
+        // when swimming toward +x; it eases through 0 when both flip.
+        const p = f.pole, w = Math.max(0, Math.min(1, (p*m.lead + 1)/2)); // 1 = this pole leads
+        const out = p > 0 ? 0 : Math.PI, fan = f.fan || 0;
+        const tEx = ax + Math.cos(out + fan*0.55)*f.len, tEy = ay + Math.sin(out + fan*0.55)*f.len;
+        const tCx = ax + Math.cos(out + fan*0.2)*f.len*0.4, tCy = ay + Math.sin(out + fan*0.2)*f.len*0.4;
+        const sideY = (fan >= 0 ? 1 : -1);
+        const lEx = ax - p*f.len*0.62, lEy = ay + sideY*(W*0.75 + Math.abs(fan)*W*0.9);
+        const lCx = ax + p*f.len*0.3, lCy = ay + fan*W*0.35 + sideY*W*0.25;
+        ex = tEx + (lEx - tEx)*w; ey = tEy + (lEy - tEy)*w;
+        cx = tCx + (lCx - tCx)*w; cy = tCy + (lCy - tCy)*w;
+        phase = f.ph + t*m.lead;
+      }
+      // filaments lag behind a turn (their far end hasn't swung round yet)
+      ey -= turn*0.14*(ex - ax); cy -= turn*0.06*(cx - ax);
+      f.el.setAttribute('d', this._flagellumPath(ax, ay, cx, cy, ex, ey, f, amp, phase));
+    }
+  }
+
+  // Soft-membrane elliptical outline whose vertices get wobbled in render()
+  // via SoftBlob, with an asymmetry function so the same machinery can draw
+  // a plain oval, a kidney-bean curve, or any other smoothly-asymmetric blob
+  // just by varying how rx/ry are perturbed per angle.
+  _softEllipsePath(L, W, nverts, asymmetryFn){
+    const pts = [];
+    for(let i=0;i<nverts;i++){
+      const a = (i/nverts)*Math.PI*2;
+      const [rxMul, ryMul] = asymmetryFn ? asymmetryFn(a) : [1,1];
+      pts.push([Math.cos(a)*(L/2)*rxMul, Math.sin(a)*(W/2)*ryMul]);
+    }
+    return pts;
+  }
+
+  // Inside of a rod-shaped bacterium as it looks under the lens: the wall
+  // and membrane read as a double contour, the nucleoid as a faint darker
+  // cloud, refractile storage granules as bright dots, and the rounded body
+  // focuses light into a pale streak along its axis. The granules ride the
+  // cell's roll about its long axis (render), which sells it as a 3-D body.
+  _rodInterior(g, s, L, W){
+    const inset = W*0.13;
+    const inner = el('path', { d:'', fill:'none', stroke:'#fbfaf2', 'stroke-width':0.4, 'stroke-opacity':0.42,
+      transform:`scale(${((L - 2*inset)/L).toFixed(3)},${((W - 2*inset)/W).toFixed(3)})`, 'data-keep':1 });
+    g.appendChild(inner);
+    this._softInnerEl = inner;
+    const nl = (L - W)*0.32, nw = W*0.2;
+    g.appendChild(el('path', { d:`M ${(-nl).toFixed(2)} 0 C ${(-nl*0.6).toFixed(2)} ${(-nw*1.4).toFixed(2)} ${(nl*0.2).toFixed(2)} ${(-nw*0.6).toFixed(2)} ${(nl*0.5).toFixed(2)} ${(-nw*1.1).toFixed(2)} C ${(nl*1.1).toFixed(2)} ${(-nw*0.4).toFixed(2)} ${(nl*1.05).toFixed(2)} ${(nw*0.9).toFixed(2)} ${(nl*0.3).toFixed(2)} ${(nw*1.05).toFixed(2)} C ${(-nl*0.3).toFixed(2)} ${(nw*1.2).toFixed(2)} ${(-nl*1.1).toFixed(2)} ${(nw*0.8).toFixed(2)} ${(-nl).toFixed(2)} 0 Z`,
+      fill:s.colorDark, 'fill-opacity':0.09, 'data-keep':1 }));
+    g.appendChild(el('line', { x1:(-(L - W)*0.42).toFixed(2), y1:(-W*0.13).toFixed(2), x2:((L - W)*0.42).toFixed(2), y2:(-W*0.13).toFixed(2),
+      stroke:'#ffffff', 'stroke-width':(W*0.16).toFixed(2), 'stroke-opacity':0.26, 'stroke-linecap':'round', 'data-keep':1 }));
+    const gr = [];
+    const nG = 1 + Math.floor(Math.random()*3);
+    for(let i=0;i<nG;i++){
+      const c = el('circle', { cx:0, cy:0, r:(W*(0.07 + Math.random()*0.05)).toFixed(2), fill:'#fdfcf3', 'fill-opacity':0.75,
+        stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.4, 'data-keep':1 });
+      g.appendChild(c);
+      gr.push({ el:c, x:(Math.random() - 0.5)*(L - W)*0.95, r:W*(0.1 + Math.random()*0.18), ph:Math.random()*Math.PI*2 });
+    }
+    this._granules = gr;
+  }
+
+  // y of a helical cell's centre line at t (0 = rear end, 1 = front end), in
+  // the current rotation phase, including a spirochete's flexing
+  _helixY(t){
+    const h = this._helix, m = this._motor;
+    const roll = m ? m.roll : this.phase*2.2;
+    let y = h.A * Math.sin(2*Math.PI*h.turns*t + roll);
+    if(h.spiro && m){
+      const u = t - 0.5;
+      y += m.flexAmt * h.W * (2.4*Math.sin(Math.PI*t)*Math.sin(m.t*2.3) + 1.1*Math.sin(2*Math.PI*t + m.t*1.6));
+      y -= Math.max(-2, Math.min(2, m.angVel)) * 0.09 * h.L * u*u * Math.sign(u || 1); // the body follows its own turn
+    }
+    return y;
+  }
+
+  // one coccus: the cell plus the small bright spot its curved surface focuses
+  // (makes a pale outlined circle read as a glassy sphere)
+  _coccusCell(fa, r, s){
+    const cg = el('g', {});
+    cg.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:r.toFixed(2) }, fa)));
+    cg.appendChild(el('circle', { cx:(-r*0.24).toFixed(2), cy:(-r*0.28).toFixed(2), r:(r*0.36).toFixed(2), fill:'#ffffff', 'fill-opacity':0.32, 'data-keep':1 }));
+    cg.appendChild(el('circle', { cx:(r*0.08).toFixed(2), cy:(r*0.1).toFixed(2), r:(r*0.34).toFixed(2), fill:s.colorDark, 'fill-opacity':0.06, 'data-keep':1 }));
+    return cg;
+  }
+
+  _shapeSVG(s){
+    const L = s.length, W = s.width;
+    const fa = this._fillAttrs(s);
+    switch(s.shape){
+      case 'bacillus':
+      case 'bacillus-swarm': {
+        const g = el('g', {});
+
+        if(s.segmentedBody){
+          // jointed worm-like body: the head leads freely (it IS the organism's
+          // real position/heading, no lag), and two trailing joints (mid, tail)
+          // are dragged behind it at a fixed distance — so turning the head
+          // immediately sends it in the new direction, and the body sweeps
+          // through the curve a beat later instead of the whole thing pivoting
+          // as one rigid block. Drawn as 3 body regions: head, mid, tail.
+          const segLen = L/2.6;
+          this.skeleton = new BodySkeleton(segLen);
+          this._segments = [];
+          // draw tail first so head overlaps on top, like real overlapping body rings
+          for(let seg=2; seg>=0; seg--){
+            const segCapsuleLen = seg===1 ? segLen*1.05 : segLen*0.95;
+            const segWidth = seg===0 ? W*1.02 : seg===1 ? W : W*0.86; // head slightly widest, tail tapers
+            const basePts = this._softCapsulePath(segCapsuleLen, segWidth, 4);
+            const path = el('path', Object.assign({ d:'' }, fa));
+            g.appendChild(path);
+            this._segments[seg] = {
+              softBlob: new SoftBlob(basePts.length, { amp: 0.06, speed: 1.6 }),
+              basePts, pathEl: path
+            };
+          }
+          if(s.flagella && s.flagella.startsWith('peritrichous')){
+            const n = s.flagella === 'peritrichous-dense' ? 8 : 5;
+            for(let i=0;i<n;i++){
+              const t = (i/n) * Math.PI*2;
+              const attachX = Math.cos(t)*L*0.44, attachY = Math.sin(t)*W*0.85;
+              const outward = Math.atan2(attachY, attachX);
+              const chain = new TailChain(3, 2.6, { stiffness: 0.5, damping: 0.72 });
+              const tailEl = el('path', {
+                d:'', fill:'none', stroke: s.colorDark, 'stroke-width':0.75,
+                'stroke-opacity':0.55, 'stroke-linecap':'round'
+              });
+              g.appendChild(tailEl);
+              this.tails.push({
+                chain, el: tailEl,
+                localAttach: { x: attachX, y: attachY },
+                restAngle: outward,
+                flutterPhase: Math.random()*Math.PI*2,
+                flutterAmount: 1.3
+              });
+            }
+          }
+          return g;
+        }
+
+        // soft membrane body instead of a rigid <rect>: closed path through
+        // vertices around a capsule outline. A bacterial cell wall is stiff, so
+        // the wobble is kept small; the caps add W, hence L-W for an overall length L.
+        const basePts = this._softCapsulePath(Math.max(0.1, L-W), W, 5);
+        // flagella go in a layer under the body, so they seem to come out of it
+        const flagLayer = el('g', {});
+        g.appendChild(flagLayer);
+        const path = el('path', Object.assign({ d:'' }, fa));
+        g.appendChild(path);
+        this.softBlob = new SoftBlob(basePts.length, { amp: 0.025, speed: 1.0 });
+        this._softBasePts = basePts;
+        this._softPathEl = path;
+        this._rodInterior(g, s, L, W);
+        this._bacterialFlagella(flagLayer, s, L, W);
+        return g;
+      }
+      case 'bacillus-chain': {
+        // rods that stay attached end to end after dividing (lactobacilli,
+        // Bacillus), with a slight kink at each septum that flexes in render();
+        // spore-formers carry a bright refractile endospore in most cells
+        const g = el('g', {});
+        const n = s.chainCells || 3, gap = W*0.07;
+        const cellL = (L - gap*(n-1))/n;
+        const cells = [];
+        for(let i=0;i<n;i++){
+          const cg = el('g', {});
+          cg.appendChild(el('rect', Object.assign({
+            x:(-cellL/2).toFixed(2), y:(-W/2).toFixed(2), width:cellL.toFixed(2), height:W.toFixed(2), rx:(W*0.46).toFixed(2)
+          }, fa)));
+          // wall + membrane double contour and the axial light streak
+          const ins = W*0.13;
+          cg.appendChild(el('rect', { x:(-cellL/2 + ins).toFixed(2), y:(-W/2 + ins).toFixed(2), width:(cellL - 2*ins).toFixed(2), height:(W - 2*ins).toFixed(2),
+            rx:(W*0.33).toFixed(2), fill:'none', stroke:'#fbfaf2', 'stroke-width':0.4, 'stroke-opacity':0.4, 'data-keep':1 }));
+          cg.appendChild(el('line', { x1:(-(cellL - W)*0.4).toFixed(2), y1:(-W*0.13).toFixed(2), x2:((cellL - W)*0.4).toFixed(2), y2:(-W*0.13).toFixed(2),
+            stroke:'#ffffff', 'stroke-width':(W*0.15).toFixed(2), 'stroke-opacity':0.24, 'stroke-linecap':'round', 'data-keep':1 }));
+          if(s.spores && Math.random() < 0.75){
+            cg.appendChild(el('ellipse', {
+              cx:(cellL*(Math.random()<0.5 ? 0.14 : -0.04)).toFixed(2), cy:0, rx:(W*0.36).toFixed(2), ry:(W*0.26).toFixed(2),
+              fill:'#fdfcf5', opacity:1, stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.6
+            }));
+          }
+          g.appendChild(cg);
+          cells.push({ g:cg });
+        }
+        // a real kinematic chain: each septum is a flexible joint whose angle
+        // jiggles thermally around a small built-in kink (render)
+        this._chainKin = { cells, rod:true, link:cellL + gap,
+          rest: Array.from({length:n-1}, ()=> (Math.random() - 0.5)*0.2), theta: Array.from({length:n-1}, ()=> 0) };
+        return g;
+      }
+      case 'bifid-rod': {
+        // Bifidobacterium: an irregular rod that forks into a "Y" at one end,
+        // with slightly swollen (clubbed) tips. Drawn as a dark stroked layer
+        // with a narrower pale layer on top (translucent body, dark margins);
+        // each layer is a group so overlapping strokes don't double up.
+        const g = el('g', {});
+        const fork = L*0.08, tipX = L/2, spread = W*1.4;
+        const d = `M ${-L/2} 0 L ${fork} 0 Q ${((fork+tipX)/2).toFixed(2)} ${(-spread*0.2).toFixed(2)} ${tipX} ${(-spread).toFixed(2)} M ${fork} 0 Q ${((fork+tipX)/2).toFixed(2)} ${(spread*0.2).toFixed(2)} ${tipX} ${spread.toFixed(2)}`;
+        const clubs = `M ${-L/2} 0 l 0.01 0 M ${tipX} ${(-spread).toFixed(2)} l 0.01 0 M ${tipX} ${spread.toFixed(2)} l 0.01 0`;
+        const layer = (color, op, wBody, wClub)=>{
+          const lg = el('g', { opacity: op });
+          lg.appendChild(el('path', { d, fill:'none', stroke:color, 'stroke-width':wBody, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+          lg.appendChild(el('path', { d:clubs, fill:'none', stroke:color, 'stroke-width':wClub, 'stroke-linecap':'round' }));
+          return lg;
+        };
+        g.appendChild(layer(s.colorDark, 0.55, W, W*1.35));
+        g.appendChild(layer(s.color, 0.95, W*0.6, W*0.95));
+        return g;
+      }
+      case 'budding-yeast': {
+        // Yeast: a large oval mother cell with a vacuole and storage granules,
+        // and a daughter bud at one pole that slowly swells (see render) until
+        // it pinches off and a new one starts
+        const g = el('g', {});
+        const bud = el('circle', Object.assign({ cx: L*0.45, cy: 0, r: W*0.2 }, this._fillAttrs(s, 0.34)));
+        g.appendChild(bud);
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.34)));
+        g.appendChild(path);
+        const nverts = 16;
+        this._softBasePts = this._softEllipsePath(L*0.74, W, nverts);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.015, speed: 0.6 });
+        this._softPathEl = path;
+        g.appendChild(el('ellipse', { cx:(-L*0.06).toFixed(2), cy:(W*0.05).toFixed(2), rx:(W*0.24).toFixed(2), ry:(W*0.2).toFixed(2),
+          fill:'#f6f4ea', 'fill-opacity':0.7, stroke:s.colorDark, 'stroke-width':0.45, 'stroke-opacity':0.55 }));
+        for(let i=0;i<7;i++){
+          const a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random());
+          g.appendChild(el('circle', { cx:(Math.cos(a)*L*0.25*r).toFixed(2), cy:(Math.sin(a)*W*0.32*r).toFixed(2), r:(0.4+Math.random()*0.4).toFixed(2), fill:s.colorDark, opacity:0.4 }));
+        }
+        this._bud = { el: bud, L, W, t: Math.random() };
+        return g;
+      }
+      case 'coccus-cluster': {
+        // Staphylococcus: cells divide in several planes and stay stuck
+        // together in irregular, grape-like clusters. Hex-packed positions
+        // around a central cell, kept at random — an outer cell only if it
+        // still touches a kept neighbour, so the cluster never falls apart.
+        const g = el('g', {});
+        const step = W*0.8, r = W*0.44;
+        const kept = [[0,0]];
+        for(let ring=1; ring<=2; ring++){
+          for(let q=-2;q<=2;q++) for(let rr=-2;rr<=2;rr++){
+            const x = (q + rr/2)*step, y = rr*step*0.866, dist = Math.hypot(x,y)/step;
+            if(dist < ring-0.5 || dist >= ring+0.5) continue;
+            const touches = kept.some(([kx,ky])=> Math.hypot(kx-x, ky-y) < step*1.05);
+            if(touches && Math.random() < (ring===1 ? 0.85 : 0.35)) kept.push([x,y]);
+          }
+        }
+        kept.forEach(([x,y])=>{
+          const cg = this._coccusCell(fa, r*(0.92 + Math.random()*0.16), s);
+          cg.setAttribute('transform', `translate(${(x + (Math.random()-0.5)*W*0.08).toFixed(2)},${(y + (Math.random()-0.5)*W*0.08).toFixed(2)})`);
+          g.appendChild(cg);
+        });
+        return g;
+      }
+      case 'coccus-chain': {
+        // cocci dividing in one plane: a bead chain (Streptococcus) or, with
+        // chainCells: 2, a pair (diplococcus) that only sways a little
+        const g = el('g', {});
+        const n = s.chainCells || 5;
+        const cells = [];
+        for(let i=0;i<n;i++){
+          const cg = this._coccusCell(fa, W*0.42, s);
+          g.appendChild(cg);
+          cells.push({ g:cg });
+        }
+        // the cells are linked where they divided: flexible joints that jiggle
+        // thermally (a long Streptococcus chain snakes, a pair barely hinges)
+        this._chainKin = { cells, rod:false, link:W*0.82,
+          rest: Array.from({length:n-1}, ()=> (Math.random() - 0.5)*(n > 2 ? 0.5 : 0.1)), theta: Array.from({length:n-1}, ()=> 0) };
+        return g;
+      }
+      case 'giant-coccus': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.28)));
+        g.appendChild(path);
+        const basePts = [];
+        const nverts = 14;
+        for(let i=0;i<nverts;i++){
+          const a = (i/nverts)*Math.PI*2;
+          basePts.push([Math.cos(a)*W/2, Math.sin(a)*W/2]);
+        }
+        this.softBlob = new SoftBlob(nverts, { amp: 0.05, speed: 0.8 });
+        this._softBasePts = basePts;
+        this._softPathEl = path;
+        for(let i=0;i<10;i++){
+          const rr = Math.random()*W*0.35;
+          const tt = Math.random()*Math.PI*2;
+          g.appendChild(el('circle', {
+            cx: Math.cos(tt)*rr, cy: Math.sin(tt)*rr, r: 1.4+Math.random()*1.6,
+            fill: s.colorDark, opacity:0.35
+          }));
+        }
+        return g;
+      }
+      case 'spirillum':
+      case 'spirochete': {
+        // a helical cell seen from above: the centre line is a sine wave, and
+        // as the helix rotates the wave scrolls along the body. Segments on
+        // the near side of the coil are drawn darker/thicker than the far
+        // side, so the rotation reads in 3-D. Spirochetes are long, thin and
+        // flexible (render bends them); Spirillum/Campylobacter are rigid.
+        const g = el('g', {});
+        const spiro = s.shape === 'spirochete';
+        const turns = s.turns || (spiro ? 4 : 2.4);
+        const th = W*(spiro ? 0.32 : 0.37);
+        const flagLayer = el('g', {});
+        g.appendChild(flagLayer);
+        const mk = (stroke, op, w)=> el('path', { d:'', fill:'none', stroke, 'stroke-opacity':op, 'stroke-width':w.toFixed(2),
+          'stroke-linecap':'round', 'stroke-linejoin':'round', 'data-keep':1 });
+        const back = mk(s.colorDark, 0.4, th*0.84), front = mk(s.colorDark, 0.62, th), core = mk('#fbfaf2', 0.5, th*0.34);
+        g.appendChild(back); g.appendChild(front); g.appendChild(core);
+        this._helix = { turns, L, W, A:(W - th)/2, steps:Math.max(40, Math.round(turns*14)), back, front, core, spiro };
+        const motor = this._motor;
+        const poleY = p => ()=> [p*L/2, this._helixY(p > 0 ? 1 : 0)];
+        if(motor && motor.type === 'amphitrichous'){
+          // Campylobacter: one long flagellum at each pole
+          [-1, 1].forEach(p=> this._addFlagellum(flagLayer, { kind:'tuft', pole:p, fan:p*0.15, attach:poleY(p), len:L*1.05, amp:W*0.26, wl:W*2.8, sw:0.55 }));
+        } else if(!spiro){
+          // Spirillum: a tuft (fascicle) of filaments at each pole
+          [-1, 1].forEach(p=> [-1, 0, 1].forEach(j=> this._addFlagellum(flagLayer, { kind:'tuft', pole:p, fan:j*0.32 + 0.05, attach:poleY(p),
+            len:L*(0.34 + Math.random()*0.06), amp:W*0.12, wl:W*1.7, sw:0.45, op:0.38 })));
+        }
+        return g;
+      }
+      case 'stentor-trumpet': {
+        // Stentor: a soft trumpet — wide oral end in front (+x) ringed by the
+        // big membranellar cilia (the only cilia drawn, as seen under the
+        // lens), tapering to a narrow holdfast at the back; blue-green
+        // pigment stripes run lengthwise and the macronucleus is a bead chain
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.34)));
+        g.appendChild(path);
+        const nverts = 22;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => {
+          const c = Math.cos(a); // +1 front (mouth), -1 back (foot)
+          return c >= 0 ? [0.94 - 0.06*c*c, 0.78 + 0.22*Math.sqrt(c)] : [1, 0.78 + 0.66*c];
+        });
+        this.softBlob = new SoftBlob(nverts, { amp: 0.035, speed: 0.9 });
+        this._softPathEl = path;
+        for(let k=-3;k<=3;k++){
+          const y0 = k*W*0.13;
+          g.appendChild(el('path', { d:`M ${(L*0.42).toFixed(2)} ${y0.toFixed(2)} Q ${(L*0.05).toFixed(2)} ${(y0*0.75).toFixed(2)} ${(-L*0.44).toFixed(2)} ${(y0*0.08).toFixed(2)}`,
+            fill:'none', stroke:'#4f8696', 'stroke-width':0.7, 'stroke-opacity':0.3 }));
+        }
+        g.appendChild(el('ellipse', { cx:(L*0.43).toFixed(2), cy:0, rx:(L*0.05).toFixed(2), ry:(W*0.4).toFixed(2),
+          fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.5 })); // oral disc, edge-on
+        for(let i=0;i<7;i++){
+          const t = i/6;
+          g.appendChild(el('circle', { cx:(L*(0.2 - 0.42*t)).toFixed(2), cy:(Math.sin(t*Math.PI*1.4)*W*0.1).toFixed(2), r:(W*0.075).toFixed(2), fill:s.colorDark, opacity:0.32 }));
+        }
+        const cilia = el('g', { class:'cilia', opacity:0.5 });
+        for(let i=0;i<22;i++){
+          const a = (i/21 - 0.5)*1.9;
+          const px = L*0.43 + Math.cos(a)*L*0.04, py = Math.sin(a)*W*0.5;
+          cilia.appendChild(el('line', { x1:px.toFixed(2), y1:py.toFixed(2), x2:(px + Math.cos(a)*W*0.17).toFixed(2), y2:(py + Math.sin(a)*W*0.17).toFixed(2),
+            stroke:s.colorDark, 'stroke-width':0.4 }));
+        }
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        this._stentor = { k: 0 };
+        return g;
+      }
+      case 'biflagellate': {
+        // Chlamydomonas: oval cell with a cup-shaped chloroplast (pyrenoid at
+        // its base), a red eyespot, and two equal front flagella that beat
+        // like a breaststroke (render sweeps their rest angle)
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.36)));
+        g.appendChild(path);
+        const nverts = 16;
+        this._softBasePts = this._softEllipsePath(L*0.86, W, nverts, a => [1, 0.94 - 0.06*Math.cos(a)]);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.012, speed: 0.6 });
+        this._softPathEl = path;
+        g.appendChild(el('path', { d:`M ${(L*0.12).toFixed(2)} ${(-W*0.4).toFixed(2)} C ${(-L*0.5).toFixed(2)} ${(-W*0.5).toFixed(2)} ${(-L*0.5).toFixed(2)} ${(W*0.5).toFixed(2)} ${(L*0.12).toFixed(2)} ${(W*0.4).toFixed(2)} C ${(-L*0.12).toFixed(2)} ${(W*0.22).toFixed(2)} ${(-L*0.12).toFixed(2)} ${(-W*0.22).toFixed(2)} ${(L*0.12).toFixed(2)} ${(-W*0.4).toFixed(2)} Z`,
+          fill:'#6f8f58', 'fill-opacity':0.45 })); // cup chloroplast
+        g.appendChild(el('circle', { cx:(-L*0.2).toFixed(2), cy:0, r:(W*0.13).toFixed(2), fill:'none', stroke:'#3f5a33', 'stroke-width':0.45, 'stroke-opacity':0.6 })); // pyrenoid
+        g.appendChild(el('circle', { cx:(L*0.14).toFixed(2), cy:(-W*0.34).toFixed(2), r:(W*0.07).toFixed(2), fill:'#b5523f', opacity:0.7 })); // eyespot
+        this._breast = [];
+        [-1, 1].forEach(side=>{
+          const chain = new TailChain(6, L*0.22, { stiffness: 0.42, damping: 0.72 });
+          const tailEl = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.55, 'stroke-opacity':0.6, 'stroke-linecap':'round' });
+          g.appendChild(tailEl);
+          const tail = { chain, el: tailEl, localAttach: { x: L*0.42, y: side*W*0.06 }, restAngle: side*0.6,
+                         flutterPhase: Math.random()*Math.PI*2, flutterAmount: 0.8 };
+          this.tails.push(tail);
+          this._breast.push({ tail, side });
+        });
+        return g;
+      }
+      case 'vibrio': {
+        const g = el('g', {});
+        // a translucent curved tube: dark refractive margins (wide dark stroke),
+        // a pale body inside it, and a light streak along the axis
+        const vd = `M ${-L/2} 0 Q 0 ${-W*1.4} ${L/2} 0`;
+        const path = el('path', { d:vd, fill:'none', stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':(W*0.8).toFixed(2), 'stroke-linecap':'round', 'data-keep':1 });
+        g.appendChild(path);
+        const overlay = el('path', { d:vd, fill:'none', stroke:s.color, 'stroke-opacity':0.92, 'stroke-width':(W*0.56).toFixed(2), 'stroke-linecap':'round', 'data-keep':1 });
+        g.appendChild(overlay);
+        const shine = el('path', { d:vd, fill:'none', stroke:'#ffffff', 'stroke-opacity':0.4, 'stroke-width':(W*0.16).toFixed(2), 'stroke-linecap':'round',
+          transform:`translate(0,${(-W*0.1).toFixed(2)}) scale(0.82)`, 'data-keep':1 });
+        g.appendChild(shine);
+        // remember the rest-pose curve control points so render() can redraw
+        // the strokes each frame (pulse, rotation)
+        this._vibrioCurve = { L, W, mainEl: path, overlayEl: overlay, shineEl: shine };
+        // a single sheathed flagellum at the rear pole (drawn under the body)
+        const flagLayer = el('g', {});
+        g.insertBefore(flagLayer, path);
+        this._addFlagellum(flagLayer, { kind:'polar', ax:-L/2, ay:0, side:1, len:L*1.4, amp:W*0.38, wl:W*3.4, spread:0, sw:0.6, op:0.45 });
+        return g;
+      }
+      case 'ovoid-cilia':
+      case 'bean-cilia':
+      case 'ciliate-generic':
+      case 'blepharisma-shape': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' },
+          { fill: s.color, 'fill-opacity':0.32, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 }
+        ));
+        g.appendChild(path);
+        const nverts = 18;
+        // each shape differs only in how it distorts the base ellipse:
+        // plain oval, kidney-bean curve, generic oval, or blepharisma's
+        // tapered-posterior silhouette.
+        const asymmetry = s.shape==='bean-cilia'
+          ? (a => [0.82 + 0.22*Math.cos(a-0.6), 0.8 + 0.3*Math.sin(a*2+1)])
+          : s.shape==='blepharisma-shape'
+          ? (a => [0.78 + 0.22*Math.cos(a-2.4), 0.88 + 0.12*Math.sin(a*2)])
+          : (a => [0.94 + 0.06*Math.cos(a*3), 0.94 + 0.06*Math.sin(a*3+1)]); // ovoid / generic ciliate: near-plain oval
+        const baseOutline = this._softEllipsePath(L, W, nverts, asymmetry);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.1 });
+        this._softBasePts = baseOutline;
+        this._softPathEl = path;
+
+        g.appendChild(el('ellipse', { cx: -L*0.08, cy:1, rx: W*0.17, ry: W*0.13, fill: s.colorDark, opacity:0.3 }));
+        const cilia = this._radialCilia(L, W, 24, 0.32);
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        return g;
+      }
+      case 'spirogyra-filament': {
+        // One continuous cylindrical filament with straight cross-walls; inside
+        // each cell the ribbon chloroplast winds in a helix (seen from above as
+        // a band crossing the cell), studded with pyrenoids, plus a faint nucleus.
+        const g = el('g', {});
+        g.appendChild(el('rect', { x:-L/2, y:-W/2, width:L, height:W, rx:W*0.42,
+          fill:s.color, 'fill-opacity':0.3, stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':0.5 }));
+        const nCells = 4, cellLen = L/nCells;
+        for(let c=1;c<nCells;c++){
+          const x = -L/2 + c*cellLen;
+          g.appendChild(el('line', { x1:x, y1:-W/2+0.3, x2:x, y2:W/2-0.3, stroke:s.colorDark, 'stroke-width':0.35, opacity:0.45 }));
+        }
+        for(let c=0;c<nCells;c++){
+          const x0 = -L/2 + c*cellLen + W*0.12, x1 = x0 + cellLen - W*0.24;
+          const steps = 30, turns = 1.3, ph0 = c*0.9;
+          const pts = [];
+          for(let i=0;i<=steps;i++){
+            const t = i/steps, ph = t*Math.PI*2*turns + ph0;
+            pts.push([x0 + t*(x1-x0), Math.sin(ph)*W*0.34]);
+          }
+          g.appendChild(el('polyline', { points: pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),
+            fill:'none', stroke:s.colorDark, 'stroke-width':1.5, 'stroke-opacity':0.34, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+          for(let k=0;k<4;k++){
+            const t = (k+0.5)/4, ph = t*Math.PI*2*turns + ph0;
+            g.appendChild(el('circle', { cx:(x0+t*(x1-x0)).toFixed(1), cy:(Math.sin(ph)*W*0.34).toFixed(1), r:0.75, fill:s.colorDark, opacity:0.38 }));
+          }
+          g.appendChild(el('ellipse', { cx:((x0+x1)/2).toFixed(1), cy:0, rx:W*0.14, ry:W*0.11, fill:'none', stroke:s.colorDark, 'stroke-width':0.25, opacity:0.3 }));
+        }
+        return g;
+      }
+      case 'oscillatoria-filament': {
+        // A continuous trichome (not a string of beads): one smooth cylinder whose
+        // cells are shorter than wide, separated by fine cross-walls; drawn each
+        // frame in render() so the free tip can sway like the real filament.
+        const g = el('g', {});
+        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.5 });
+        g.appendChild(body);
+        const walls = [];
+        const nWalls = Math.round(L/(W*0.6));
+        for(let i=1;i<nWalls;i++){
+          const ln = el('line', { x1:0, y1:0, x2:0, y2:0, stroke:s.colorDark, 'stroke-width':0.3, opacity:0.42 });
+          g.appendChild(ln); walls.push({ el:ln, t:i/nWalls });
+        }
+        this._osc = { L, W, body, walls };
+        return g;
+      }
+      case 'nematode-worm': {
+        const g = el('g', {});
+        // translucent tube: a faint dark stroke for the two refractive edges,
+        // with a slightly narrower pale stroke on top so the body reads as
+        // clear cuticle with dark margins — not an opaque grey sausage.
+        const path = el('path', {
+          d:'', fill:'none', stroke: s.colorDark, 'stroke-opacity':0.5, 'stroke-width': W*0.82, 'stroke-linecap':'round'
+        });
+        g.appendChild(path);
+        const inner = el('path', {
+          d:'', fill:'none', stroke: s.color, 'stroke-opacity':0.85, 'stroke-width': W*0.6, 'stroke-linecap':'round'
+        });
+        g.appendChild(inner);
+        this._wormInnerEl = inner;
+        const steps = 24;
+        this.wavePoints = { turns: 1, steps, L, W, basePts: Array.from({length:steps+1},(_,i)=>{
+          const t = i/steps; return [-L/2+t*L, 0];
+        })};
+        this.waveEl = path;
+        this._wormWave = true; // flag: render as a smooth S-curve path, not a jagged polyline
+        return g;
+      }
+      case 'segmented-worm': {
+        // Aeolosoma: a continuous, slightly tapering worm body (broad head lobe in
+        // front), faint segment boundaries, tiny bristle (chaetae) pairs at each
+        // segment, a gut line, and its hallmark epidermal oil droplets. Outline is
+        // rebuilt each frame in render() so a peristaltic bulge can travel along it.
+        const g = el('g', {});
+        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.35, stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':0.5 });
+        g.appendChild(body);
+        const gut = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':W*0.16, 'stroke-opacity':0.3, 'stroke-linecap':'round' });
+        g.appendChild(gut);
+        const nSeg = 9, segLines = [], chaetae = [];
+        for(let i=1;i<nSeg;i++){
+          const ln = el('line', { stroke:s.colorDark, 'stroke-width':0.28, opacity:0.32 });
+          const c1 = el('line', { stroke:s.colorDark, 'stroke-width':0.22, opacity:0.42 });
+          const c2 = el('line', { stroke:s.colorDark, 'stroke-width':0.22, opacity:0.42 });
+          g.appendChild(ln); g.appendChild(c1); g.appendChild(c2);
+          segLines.push({ el:ln, t:i/nSeg }); chaetae.push({ a:c1, b:c2, t:i/nSeg });
+        }
+        const drops = [];
+        for(let i=0;i<10;i++){
+          const c = el('circle', { r:(0.55+Math.random()*0.6).toFixed(2), fill:'#a29f78', opacity:0.32 });
+          g.appendChild(c); drops.push({ el:c, t:0.08+Math.random()*0.82, off:(Math.random()-0.5)*0.7 });
+        }
+        this._worm2 = { L, W, body, gut, segLines, chaetae, drops };
+        return g;
+      }
+      case 'diatom-pennate': {
+        // rigid silica shell — no SoftBlob wobble, diatoms don't flex. A long
+        // oval with the raphe (central slit) running its length and fine
+        // cross-striae, the two features that identify pennate diatoms.
+        const g = el('g', {});
+        g.appendChild(el('ellipse', Object.assign({ cx:0, cy:0, rx:L/2, ry:W/2 }, this._fillAttrs(s, 0.32))));
+        g.appendChild(el('line', { x1:-L*0.42,y1:0, x2:L*0.42,y2:0, stroke:s.colorDark, 'stroke-width':0.6, opacity:0.6 }));
+        const nStriae = 14;
+        for(let i=1;i<nStriae;i++){
+          const t = i/nStriae - 0.5;
+          const xx = t*L*0.9;
+          const halfW = Math.sqrt(Math.max(0, 1-(t*2)*(t*2))) * W*0.46;
+          g.appendChild(el('line', { x1:xx,y1:-halfW, x2:xx,y2:halfW, stroke:s.colorDark, 'stroke-width':0.3, opacity:0.3 }));
+        }
+        return g;
+      }
+      case 'diatom-centric': {
+        const g = el('g', {});
+        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W/2 }, this._fillAttrs(s, 0.3))));
+        g.appendChild(el('circle', { cx:0, cy:0, r:W*0.3, fill:'none', stroke:s.colorDark, 'stroke-width':0.4, opacity:0.4 }));
+        const nRays = 16;
+        for(let i=0;i<nRays;i++){
+          const a = (i/nRays)*Math.PI*2;
+          g.appendChild(el('line', {
+            x1:Math.cos(a)*W*0.32, y1:Math.sin(a)*W*0.32, x2:Math.cos(a)*W*0.48, y2:Math.sin(a)*W*0.48,
+            stroke:s.colorDark, 'stroke-width':0.3, opacity:0.4
+          }));
+        }
+        return g;
+      }
+      case 'diatom-rect': {
+        // Girdle (side) view of a boat-shaped diatom: a rectangle with rounded
+        // corners, the overlapping girdle bands as faint lines along the long
+        // sides, two plate-like plastids against the walls, a clear central area.
+        const g = el('g', {});
+        g.appendChild(el('rect', Object.assign({ x:-L/2, y:-W/2, width:L, height:W, rx:W*0.34 }, this._fillAttrs(s, 0.32))));
+        [-W*0.29, W*0.29].forEach(yy=> g.appendChild(el('line', { x1:-L*0.43, y1:yy, x2:L*0.43, y2:yy, stroke:s.colorDark, 'stroke-width':0.28, opacity:0.4 })));
+        g.appendChild(el('line', { x1:-L*0.46, y1:0, x2:L*0.46, y2:0, stroke:s.colorDark, 'stroke-width':0.22, opacity:0.22 }));
+        [-1,1].forEach(sg=> g.appendChild(el('ellipse', { cx:0, cy:sg*W*0.13, rx:L*0.34, ry:W*0.1, fill:'#9c8a62', opacity:0.3 })));
+        g.appendChild(el('circle', { cx:0, cy:0, r:W*0.11, fill:'#f4f1e6', opacity:0.45 }));
+        return g;
+      }
+      case 'diatom-tri': {
+        // Triceratium: a triangular valve with convex sides and rounded corners,
+        // a honeycomb of fine areolae (pores) across the silica, and the small
+        // rounded ocelli at each corner.
+        const g = el('g', {});
+        const r = L/2;
+        const P = [0,1,2].map(k=>{ const a = -Math.PI/2 + k*2*Math.PI/3; return [Math.cos(a)*r, Math.sin(a)*r]; });
+        const lerp = (A,B,t)=>[A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t];
+        let d = '';
+        for(let k=0;k<3;k++){
+          const A = P[k], B = P[(k+1)%3], C = P[(k+2)%3];
+          const a1 = lerp(A,B,0.1), b1 = lerp(B,A,0.1), b2 = lerp(B,C,0.1);
+          const mx = (A[0]+B[0])/2, my = (A[1]+B[1])/2, ml = Math.hypot(mx,my)||1;
+          const qc = [mx + mx/ml*r*0.2, my + my/ml*r*0.2];
+          if(k===0) d += `M ${a1[0].toFixed(2)} ${a1[1].toFixed(2)} `;
+          d += `Q ${qc[0].toFixed(2)} ${qc[1].toFixed(2)} ${b1[0].toFixed(2)} ${b1[1].toFixed(2)} `;
+          d += `Q ${B[0].toFixed(2)} ${B[1].toFixed(2)} ${b2[0].toFixed(2)} ${b2[1].toFixed(2)} `;
+        }
+        d += 'Z';
+        g.appendChild(el('path', Object.assign({ d }, this._fillAttrs(s, 0.32))));
+        const inside = (x,y,m)=>{
+          const Q = P.map(p=>[p[0]*m, p[1]*m]);
+          const sgn = (p1,p2,p3)=> (p1[0]-p3[0])*(p2[1]-p3[1]) - (p2[0]-p3[0])*(p1[1]-p3[1]);
+          const d1 = sgn([x,y],Q[0],Q[1]), d2 = sgn([x,y],Q[1],Q[2]), d3 = sgn([x,y],Q[2],Q[0]);
+          return !(((d1<0)||(d2<0)||(d3<0)) && ((d1>0)||(d2>0)||(d3>0)));
+        };
+        const sp = r*0.13;
+        for(let row=0, yy=-r; yy<=r; yy+=sp*0.87, row++){
+          for(let xx=-r; xx<=r; xx+=sp){
+            const x = xx + (row%2 ? sp/2 : 0);
+            if(inside(x, yy, 0.8)) g.appendChild(el('circle', { cx:x.toFixed(2), cy:yy.toFixed(2), r:(sp*0.22).toFixed(2), fill:s.colorDark, opacity:0.2 }));
+          }
+        }
+        P.forEach(p=> g.appendChild(el('circle', { cx:(p[0]*0.78).toFixed(2), cy:(p[1]*0.78).toFixed(2), r:(r*0.09).toFixed(2), fill:'none', stroke:s.colorDark, 'stroke-width':0.32, opacity:0.45 })));
+        return g;
+      }
+      case 'closterium-crescent': {
+        // Closterium: a smooth crescent tapering to rounded points, two long
+        // chloroplasts (one per half) with a clear central zone for the nucleus,
+        // and the terminal vacuoles at each tip with tiny dancing gypsum crystals.
+        const g = el('g', {});
+        const tip = L/2, off = W*0.55;
+        const outerC = -W*2.2 + off, innerC = -W*0.2 + off;
+        const d = `M ${-tip} ${off.toFixed(2)} Q 0 ${outerC.toFixed(2)} ${tip} ${off.toFixed(2)} Q 0 ${innerC.toFixed(2)} ${-tip} ${off.toFixed(2)} Z`;
+        g.appendChild(el('path', Object.assign({ d, 'stroke-linejoin':'round' }, this._fillAttrs(s, 0.3))));
+        const midC = (outerC + innerC)/2;
+        const q = t => [ (1-t)*(1-t)*(-tip) + t*t*tip, (1-t)*(1-t)*off + 2*(1-t)*t*midC + t*t*off ];
+        [[0.13,0.44],[0.56,0.87]].forEach(([t0,t1])=>{
+          let pd = '';
+          for(let i=0;i<=12;i++){ const p = q(t0 + (t1-t0)*i/12); pd += (i?'L ':'M ')+p[0].toFixed(2)+' '+p[1].toFixed(2)+' '; }
+          g.appendChild(el('path', { d:pd, fill:'none', stroke:'#7b9466', 'stroke-width':W*0.5, 'stroke-opacity':0.26, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+        });
+        const n = q(0.5);
+        g.appendChild(el('circle', { cx:n[0].toFixed(2), cy:n[1].toFixed(2), r:(W*0.2).toFixed(2), fill:'#f4f2e8', opacity:0.45 }));
+        [0.05, 0.95].forEach(t=>{
+          const p = q(t);
+          g.appendChild(el('circle', { cx:p[0].toFixed(2), cy:p[1].toFixed(2), r:(W*0.17).toFixed(2), fill:'#f4f2e8', opacity:0.5, stroke:s.colorDark, 'stroke-width':0.2, 'stroke-opacity':0.4 }));
+          for(let k=0;k<3;k++) g.appendChild(el('circle', { cx:(p[0]+(Math.random()-0.5)*W*0.16).toFixed(2), cy:(p[1]+(Math.random()-0.5)*W*0.16).toFixed(2), r:0.28, fill:s.colorDark, opacity:0.5 }));
+        });
+        return g;
+      }
+      case 'spiny-desmid': {
+        // Micrasterias: a flat disc split into two mirror-image semicells by deep
+        // notches (sinuses) on each side, each semicell cut into radiating lobes
+        // whose tips end in fine teeth; the chloroplast fills most of the cell.
+        const g = el('g', {});
+        const R = W/2;
+        const N = 200;
+        const outline = [];
+        for(let i=0;i<N;i++){
+          const th = (i/N)*Math.PI*2;
+          let r = 0.7 + 0.3*Math.pow(Math.abs(Math.cos(th*5)), 0.4);
+          const dA = Math.atan2(Math.sin(th), Math.cos(th));
+          const dB = Math.atan2(Math.sin(th-Math.PI), Math.cos(th-Math.PI));
+          r *= 1 - 0.8*(Math.exp(-dA*dA/0.006) + Math.exp(-dB*dB/0.006));
+          r += 0.03*Math.sin(th*44)*Math.pow(Math.abs(Math.cos(th*5)), 3);
+          outline.push([Math.cos(th)*R*1.08*r, Math.sin(th)*R*r]);
+        }
+        const toD = (pts, k)=> 'M ' + pts.map(p=>(p[0]*k).toFixed(2)+' '+(p[1]*k).toFixed(2)).join(' L ') + ' Z';
+        g.appendChild(el('path', Object.assign({ d: toD(outline,1), 'stroke-linejoin':'round' }, this._fillAttrs(s, 0.3))));
+        g.appendChild(el('path', { d: toD(outline,0.8), fill:'#7b9466', 'fill-opacity':0.2, stroke:'none' }));
+        g.appendChild(el('line', { x1:(-R*0.2).toFixed(2), y1:0, x2:(R*0.2).toFixed(2), y2:0, stroke:s.colorDark, 'stroke-width':0.35, opacity:0.45 }));
+        return g;
+      }
+      case 'heliozoan-rays': {
+        const g = el('g', {});
+        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W*0.32 }, this._fillAttrs(s, 0.35))));
+        const nRays = 18;
+        const rayLines = [];
+        for(let i=0;i<nRays;i++){
+          const a = (i/nRays)*Math.PI*2;
+          const line = el('line', {
+            x1:Math.cos(a)*W*0.3, y1:Math.sin(a)*W*0.3, x2:Math.cos(a)*W*0.62, y2:Math.sin(a)*W*0.62,
+            stroke:s.colorDark, 'stroke-width':0.26, opacity:0.4
+          });
+          g.appendChild(line);
+          rayLines.push({ el: line, angle: a });
+        }
+        this._heliozoanRays = { rayLines, W };
+        return g;
+      }
+      case 'euglena-flagellate': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.34)));
+        g.appendChild(path);
+        const nverts = 16;
+        const baseOutline = this._softEllipsePath(L, W, nverts, a => [0.86+0.14*Math.cos(a-2.6), 0.9+0.1*Math.sin(a*2)]);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.06, speed: 1.3 });
+        this._softBasePts = baseOutline;
+        this._softPathEl = path;
+        g.appendChild(el('circle', { cx:L*0.3, cy:-W*0.12, r:1.4, fill:'#9a5a4c', opacity:0.5 })); // eyespot (stigma)
+
+        const chain = new TailChain(5, L*0.11, { stiffness: 0.42, damping: 0.72 });
+        const tailEl = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.7, 'stroke-opacity':0.6, 'stroke-linecap':'round' });
+        g.appendChild(tailEl);
+        this.tails.push({
+          chain, el: tailEl, localAttach: { x: L/2, y: 0 }, restAngle: 0,
+          flutterPhase: Math.random()*Math.PI*2, flutterAmount: 1.8
+        });
+        return g;
+      }
+      case 'medusa-bell': {
+        // outer g carries the organism's heading; the inner g is turned 90°
+        // so the bell dome faces the direction of travel and the tentacles
+        // trail behind — the way a jellyfish actually swims (bell-first).
+        const g = el('g', {});
+        const inner = el('g', { transform:'rotate(90)' });
+        g.appendChild(inner);
+        const bell = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.28)));
+        inner.appendChild(bell);
+        const nverts = 14;
+        this.softBlob = new SoftBlob(nverts, { amp: 0.07, speed: 1.6 }); // bell pulsing
+        this._softBasePts = this._softEllipsePath(W, L*0.7, nverts, a => a > 0 ? [1, 0.5] : [1,1]);
+        this._softPathEl = bell;
+        // radial canals and the manubrium (mouth stalk) seen through the clear bell
+        for(let i=0;i<4;i++){
+          const a = -Math.PI*0.85 + i*(Math.PI*0.7/3);
+          inner.appendChild(el('line', { x1:0, y1:0, x2:(Math.cos(a)*W*0.42).toFixed(1), y2:(Math.sin(a)*L*0.3).toFixed(1), stroke:s.colorDark, 'stroke-width':0.35, opacity:0.4 }));
+        }
+        inner.appendChild(el('ellipse', { cx:0, cy:L*0.02, rx:W*0.08, ry:L*0.12, fill:s.colorDark, opacity:0.3 }));
+        const nTent = 9;
+        for(let i=0;i<nTent;i++){
+          const tx = (i/(nTent-1) - 0.5) * W*0.8;
+          inner.appendChild(el('path', {
+            d:`M ${tx.toFixed(1)} ${(L*0.1).toFixed(1)} q ${((Math.random()-0.5)*4).toFixed(1)} ${(L*0.2).toFixed(1)} ${((Math.random()-0.5)*3).toFixed(1)} ${(L*0.38+Math.random()*5).toFixed(1)}`,
+            fill:'none', stroke:s.colorDark, 'stroke-width':0.4, opacity:0.42
+          }));
+        }
+        return g;
+      }
+      case 'rotifer-crown': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.3)));
+        g.appendChild(path);
+        const nverts = 16;
+        this._softBasePts = this._softEllipsePath(L*0.62, W, nverts, a => [0.9+0.1*Math.cos(a), 1]);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.05, speed: 1.2 });
+        this._softPathEl = path;
+        const crownCx = -L*0.3;
+        const cilia = el('g', { class:'cilia', opacity:0.4 });
+        const nC = 14;
+        for(let i=0;i<nC;i++){
+          const a = (i/nC - 0.5) * Math.PI*1.3;
+          cilia.appendChild(el('line', {
+            x1: crownCx+Math.cos(a)*W*0.4, y1: Math.sin(a)*W*0.4,
+            x2: crownCx+Math.cos(a)*W*0.6, y2: Math.sin(a)*W*0.6,
+            stroke: s.colorDark, 'stroke-width':0.4
+          }));
+        }
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        // posterior "foot"
+        // tapering, faintly ringed foot ending in two small toes
+        g.appendChild(el('path', { d:`M ${(L*0.24).toFixed(2)} ${(-W*0.2).toFixed(2)} Q ${(L*0.38).toFixed(2)} ${(-W*0.12).toFixed(2)} ${(L*0.48).toFixed(2)} ${(-W*0.06).toFixed(2)} L ${(L*0.48).toFixed(2)} ${(W*0.06).toFixed(2)} Q ${(L*0.38).toFixed(2)} ${(W*0.12).toFixed(2)} ${(L*0.24).toFixed(2)} ${(W*0.2).toFixed(2)} Z`,
+          fill:s.color, 'fill-opacity':0.35, stroke:s.colorDark, 'stroke-opacity':0.45, 'stroke-width':0.4 }));
+        [0.3, 0.36, 0.42].forEach(t=> g.appendChild(el('line', { x1:(L*t).toFixed(2), y1:(-W*0.15+ (t-0.24)*W*0.5).toFixed(2), x2:(L*t).toFixed(2), y2:(W*0.15-(t-0.24)*W*0.5).toFixed(2), stroke:s.colorDark, 'stroke-width':0.2, opacity:0.35 })));
+        [-1,1].forEach(sg=> g.appendChild(el('path', { d:`M ${(L*0.48).toFixed(2)} ${(sg*W*0.04).toFixed(2)} l ${(L*0.05).toFixed(2)} ${(sg*W*0.05).toFixed(2)}`, fill:'none', stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.5, 'stroke-linecap':'round' })));
+        return g;
+      }
+      case 'vorticella-stalked': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.3)));
+        g.appendChild(path);
+        const nverts = 16;
+        this._softBasePts = this._softEllipsePath(L*0.8, W, nverts, a => [1, a<0 ? 0.8 : 1]); // bell-ish, narrower top
+        this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.0 });
+        this._softPathEl = path;
+        const cilia = this._radialCilia(L*0.75, W, 20, 0.3, 0.8);
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        // contractile stalk — drawn as a simple spiral line trailing from the body
+        const stalk = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.5, 'stroke-linejoin':'round', 'stroke-linecap':'round' });
+        g.appendChild(stalk);
+        this._vorticellaStalk = { el: stalk, L, W };
+        return g;
+      }
+      case 'testate-amoeba': {
+        const g = el('g', {});
+        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W/2 }, this._fillAttrs(s, 0.3))));
+        g.appendChild(el('circle', { cx:0, cy:W*0.1, r:W*0.14, fill:'none', stroke:s.colorDark, 'stroke-width':0.5, opacity:0.5 })); // aperture
+        const nPseudo = 5;
+        const pseudoLines = [];
+        for(let i=0;i<nPseudo;i++){
+          const line = el('line', { x1:0,y1:W*0.2, x2:0,y2:W*0.2, stroke:s.colorDark, 'stroke-width':0.5, opacity:0.4 });
+          g.appendChild(line);
+          pseudoLines.push(line);
+        }
+        this._pseudopods = { lines: pseudoLines, W };
+        return g;
+      }
+      case 'tardigrade': {
+        // Tardigrade (water bear): plump, translucent, segmented body (head +
+        // four trunk segments); four pairs of stubby lobopod legs ending in
+        // claws, the fourth pair pointing backward; buccal tube and round
+        // pharyngeal bulb in the head, two eyespots, a gut with greenish
+        // contents and free-floating storage cells in the body cavity.
+        // +x is the head end. Everything sits in an inner group so the
+        // cryptobiotic "tun" can be shown by contracting it.
+        const outer = el('g', {});
+        const g = el('g', {});
+        outer.appendChild(g);
+        this._tardInner = g;
+
+        // legs first so the body overlaps their bases
+        const legs = [];
+        const legDefs = [
+          { x: L*0.20, side:-1, base:-Math.PI/2 }, { x: L*0.20, side:1, base:Math.PI/2 },
+          { x: L*0.02, side:-1, base:-Math.PI/2 }, { x: L*0.02, side:1, base:Math.PI/2 },
+          { x:-L*0.16, side:-1, base:-Math.PI/2 }, { x:-L*0.16, side:1, base:Math.PI/2 },
+          { x:-L*0.38, side:-1, base:-Math.PI*0.8 }, { x:-L*0.38, side:1, base:Math.PI*0.8 },
+        ];
+        legDefs.forEach((ld, i)=>{
+          const lg = el('g', {});
+          const len = W*0.33, w0 = W*0.14;
+          // stubby, conical lobopod: wide at the body, tapering to a rounded tip
+          lg.appendChild(el('path', {
+            d:`M 0 ${-w0} C ${(len*0.45).toFixed(2)} ${-w0} ${(len*0.82).toFixed(2)} ${(-w0*0.62).toFixed(2)} ${len.toFixed(2)} ${(-w0*0.38).toFixed(2)} Q ${(len*1.14).toFixed(2)} 0 ${len.toFixed(2)} ${(w0*0.38).toFixed(2)} C ${(len*0.82).toFixed(2)} ${(w0*0.62).toFixed(2)} ${(len*0.45).toFixed(2)} ${w0} 0 ${w0} Z`,
+            fill:s.color, 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':0.45
+          }));
+          // four small claws at the tip
+          for(let c=0;c<4;c++){
+            const a = (c-1.5)*0.35;
+            lg.appendChild(el('path', {
+              d:`M ${len*1.02} ${(Math.sin(a)*w0*0.5).toFixed(2)} q ${(Math.cos(a)*1.6).toFixed(2)} ${(Math.sin(a)*1.6).toFixed(2)} ${(Math.cos(a)*2.2).toFixed(2)} ${(Math.sin(a)*2.2+0.9).toFixed(2)}`,
+              fill:'none', stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.6, 'stroke-linecap':'round'
+            }));
+          }
+          g.appendChild(lg);
+          const by = ld.side * W*0.36;
+          legs.push({ el: lg, bx: ld.x, by, base: ld.base, phase: (i>>1)*Math.PI/2 + (ld.side>0 ? Math.PI : 0) });
+        });
+        this._tardLegs = legs;
+
+        // body: soft outline with shallow segment constrictions, narrower head
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.35)));
+        g.appendChild(path);
+        const nverts = 34;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => {
+          const t = Math.cos(a); // -1 tail .. +1 head
+          let ry = 1 - 0.07*Math.cos(t*Math.PI*4.5);
+          if(t > 0.55) ry -= 0.22*(t-0.55)/0.45;   // head tapers
+          if(t < -0.7) ry -= 0.12*(-0.7-t)/0.3;    // rounded rear
+          return [1, ry];
+        });
+        this.softBlob = new SoftBlob(nverts, { amp: 0.025, speed: 0.7 });
+        this._softPathEl = path;
+
+        // faint segment boundaries across the back
+        [0.26, 0.07, -0.12, -0.31].forEach(f=>{
+          g.appendChild(el('path', { d:`M ${(L*f).toFixed(2)} ${(-W*0.4).toFixed(2)} Q ${(L*f+1.2).toFixed(2)} 0 ${(L*f).toFixed(2)} ${(W*0.4).toFixed(2)}`,
+            fill:'none', stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.22 }));
+        });
+        // gut with greenish-brown food contents
+        g.appendChild(el('ellipse', { cx:(-L*0.06).toFixed(2), cy:0, rx:(L*0.27).toFixed(2), ry:(W*0.19).toFixed(2), fill:'#8f8d63', opacity:0.28 }));
+        for(let i=0;i<9;i++){
+          g.appendChild(el('circle', { cx:(-L*0.06 + (Math.random()-0.5)*L*0.46).toFixed(2), cy:((Math.random()-0.5)*W*0.28).toFixed(2), r:(0.5+Math.random()*0.7).toFixed(2), fill:'#6f7a4c', opacity:0.32 }));
+        }
+        // free-floating storage cells in the body cavity
+        for(let i=0;i<14;i++){
+          const x = (Math.random()-0.5)*L*0.7, yMax = W*0.38*Math.sqrt(Math.max(0,1-Math.pow(x/(L*0.4),2)));
+          g.appendChild(el('circle', { cx:x.toFixed(2), cy:((Math.random()*2-1)*yMax).toFixed(2), r:(0.9+Math.random()*0.6).toFixed(2),
+            fill:'#f2f0e6', opacity:0.42, stroke:s.colorDark, 'stroke-width':0.2, 'stroke-opacity':0.4 }));
+        }
+        // head: buccal tube running back to the round pharyngeal bulb (with placoids), eyespots
+        g.appendChild(el('line', { x1:(L*0.47).toFixed(2), y1:0, x2:(L*0.31).toFixed(2), y2:0, stroke:s.colorDark, 'stroke-width':0.45, opacity:0.55 }));
+        g.appendChild(el('circle', { cx:(L*0.27).toFixed(2), cy:0, r:(W*0.13).toFixed(2), fill:s.color, 'fill-opacity':0.3, stroke:s.colorDark, 'stroke-width':0.4, 'stroke-opacity':0.5 }));
+        [-0.5, 0, 0.5].forEach(k=> g.appendChild(el('ellipse', { cx:(L*0.27).toFixed(2), cy:(k*W*0.08).toFixed(2), rx:0.7, ry:0.35, fill:s.colorDark, opacity:0.45 })));
+        [-1,1].forEach(sg=> g.appendChild(el('circle', { cx:(L*0.38).toFixed(2), cy:(sg*W*0.13).toFixed(2), r:0.65, fill:'#3d3b33', opacity:0.55 })));
+        return outer;
+      }
+      case 'paramecium':
+      case 'slipper-cilia': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' },
+          { fill: s.color, 'fill-opacity':0.32, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 }
+        ));
+        g.appendChild(path);
+        // slipper-shaped base outline, sampled as vertices for soft wobble
+        const baseOutline = [];
+        const nverts = 18;
+        for(let i=0;i<nverts;i++){
+          const a = (i/nverts)*Math.PI*2;
+          // slipper shape: squashed ellipse with a notch feel via slight asymmetry
+          const rx = L/2 * (0.86 + 0.14*Math.cos(a - 0.5));
+          const ry = W/2 * (0.86 + 0.14*Math.sin(a*2));
+          baseOutline.push([Math.cos(a)*rx, Math.sin(a)*ry]);
+        }
+        this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.1 });
+        this._softBasePts = baseOutline;
+        this._softPathEl = path;
+
+        g.appendChild(el('path', {
+          d:`M ${-L*0.05} ${-W*0.08} Q ${L*0.12} 0 ${-L*0.05} ${W*0.2}`,
+          stroke: s.colorDark, 'stroke-width':0.9, fill:'none', opacity:0.4
+        }));
+        g.appendChild(el('ellipse', { cx:0, cy:2, rx: W*0.16, ry: W*0.12, fill: s.colorDark, opacity:0.32 }));
+        const cilia = el('g', { class:'cilia', opacity:0.35 });
+        const n = 26;
+        for(let i=0;i<n;i++){
+          const t = (i/n)*Math.PI*2;
+          const rx = L*0.5, ry = W*0.5;
+          const px = Math.cos(t)*rx, py = Math.sin(t)*ry;
+          const nx = Math.cos(t), ny = Math.sin(t);
+          cilia.appendChild(el('line', {
+            x1:px, y1:py, x2: px+nx*2.3, y2: py+ny*2.3,
+            stroke: s.colorDark, 'stroke-width':0.22
+          }));
+        }
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        return g;
+      }
+      case 'volvox': {
+        const g = el('g', {});
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.2)));
+        g.appendChild(path);
+        const basePts = [];
+        const nverts = 20;
+        for(let i=0;i<nverts;i++){
+          const a = (i/nverts)*Math.PI*2;
+          basePts.push([Math.cos(a)*W/2, Math.sin(a)*W/2]);
+        }
+        this.softBlob = new SoftBlob(nverts, { amp: 0.04, speed: 0.6 });
+        this._softBasePts = basePts;
+        this._softPathEl = path;
+
+        // a hollow ball of cells: points spread evenly over a sphere
+        // (Fibonacci lattice) plus a few daughter colonies inside; render()
+        // spins the sphere and projects it, so cells on the far side shrink
+        // and fade while the near ones grow — it reads as a 3-D rolling ball
+        const cells = [];
+        const n = 64;
+        for(let i=0;i<n;i++){
+          const y = 1 - 2*(i+0.5)/n, r = Math.sqrt(1 - y*y), a = i*2.39996;
+          const c = el('circle', { cx:0, cy:0, r:1.2, fill:s.colorDark, opacity:0.4 });
+          g.appendChild(c);
+          cells.push({ el:c, p:[Math.cos(a)*r, y, Math.sin(a)*r], R:W*0.46, size:1.25 });
+        }
+        for(let i=0;i<3;i++){
+          const a = Math.random()*Math.PI*2, b = Math.acos(2*Math.random()-1);
+          const c = el('circle', { cx:0, cy:0, r:W*0.1, fill:s.color, 'fill-opacity':0.5, stroke:'#5f7650', 'stroke-width':0.5, 'stroke-opacity':0.5, opacity:0.5 });
+          g.appendChild(c);
+          cells.push({ el:c, p:[Math.sin(b)*Math.cos(a), Math.cos(b), Math.sin(b)*Math.sin(a)], R:W*0.2, size:W*0.1, daughter:true });
+        }
+        this._volvox3d = { cells, tilt: 0.35 + Math.random()*0.5 };
+        return g;
+      }
+      default: {
+        const g = el('g', {});
+        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r: W/2 }, fa)));
+        return g;
+      }
+    }
+  }
+
+  update(dt, bounds){
+    if(this.caught || this.escaped) return;
+    if(this._hitT > 0) this._hitT -= dt; // recoiling from a blow in a fight
+
+    if(this.spawnFade < 1){
+      this.spawnFade = Math.min(1, this.spawnFade + dt/1.8); // slow fade-in: drifts into the field of view
+    }
+
+    // dying (stranded outside the drop as it dries): no more movement, only
+    // the death fade that render() draws; the game removes it when done.
+    if(this.dying){
+      this.dyingT += dt;
+      if(this.dyingT >= Organism.DEATH_TIME) this.dead = true;
+      return;
+    }
+
+    // swapped out by the scene renewal / entity limit: just fades away
+    if(this.vanishing){
+      this.vanishT += dt;
+      if(this.vanishT >= Organism.VANISH_TIME) this.dead = true;
+      return;
+    }
+
+    if(this.tun) return; // cryptobiosis: metabolism suspended, completely still
+
+    // being swallowed by a predator: drawn into it, shrinking (game removes it)
+    if(this.beingEaten){
+      const e = this.beingEaten, pred = e.by;
+      e.t += dt;
+      const k = Math.min(1, dt*4);
+      this.x += (pred.x - this.x)*k; this.y += (pred.y - this.y)*k;
+      if(e.t >= Organism.EAT_TIME) this.dead = true;
+      return;
+    }
+
+    // dividing (binary fission): the two daughter cells slide apart along
+    // the split axis, without swimming off until they've separated
+    if(this._split){
+      const sp = this._split, step = Math.min(dt, Organism.SPLIT_TIME - sp.t);
+      sp.t += dt;
+      this.x += Math.cos(sp.axis) * sp.dir * (sp.dist/2) * step/Organism.SPLIT_TIME;
+      this.y += Math.sin(sp.axis) * sp.dir * (sp.dist/2) * step/Organism.SPLIT_TIME;
+      if(sp.t >= Organism.SPLIT_TIME) this._split = null;
+      return;
+    }
+
+    const mot = this.species.motility;
+    // organisms with no real escape locomotion (anchored Vorticella, inert
+    // diatoms/desmids drifting passively) can't "dart away" — a startled
+    // Vorticella only contracts its stalk, which render() shows via fleeing.
+    const canDart = !(mot === 'stalked' || mot === 'brownian');
+
+    if(this.fleeing){
+      this.fleeTimer -= dt;
+      this.speed = canDart ? this.baseSpeed * 3.0 : 0;
+      this.angle = canDart ? this.fleeAngle : this.angle;
+      if(this.fleeTimer <= 0){
+        this.fleeing = false;
+        this.speed = this.baseSpeed;
+      }
+    } else {
+      this._behaviorUpdate(dt);
+    }
+
+    // ---- caught in the pipette's suction: it panics and struggles to get
+    // away, jerking in new directions — the player has to follow it with the
+    // tip. Things that can't swim only shake (see render).
+    if(this.suction && canDart){
+      this._struggleT = (this._struggleT || 0) - dt;
+      if(this._struggleT <= 0){
+        this.angle = this.displayAngle + (Math.random()-0.5)*2.6;
+        this._struggleT = 0.25 + Math.random()*0.35;
+      }
+      this.speed = this.baseSpeed * 1.8;
+    }
+
+    // ---- purposeful behaviour (scene option "Caçar e lutar"): squaring up to
+    // an opponent, or heading for the food / prey the game picked for it
+    if(this.engaged){ this.angle = this.engaged.face; this.speed = 0; }
+    else if(this.steerTo != null && !this.fleeing && !this.suction){
+      this.angle = this.displayAngle + Math.atan2(Math.sin(this.steerTo - this.displayAngle), Math.cos(this.steerTo - this.displayAngle));
+    }
+    this.steerTo = null;
+
+    // ---- turning: the drawn body (displayAngle) eases toward the intended
+    // heading (this.angle) with a capped angular speed that depends on how the
+    // organism moves — a ciliate pivots briskly, a crawling amoeba or a
+    // gliding diatom turns slowly. No overshoot, frame-rate independent.
+    const TURN_RATE = { cilia:2.6, 'flagellate-whip':2.2, 'flagella-colony':0.9, crawl:1.1, gliding:0.7, stalked:1.0, brownian:3.0,
+                        'flagella-run-tumble':6.0, 'flagella-smooth':3.2 };
+    let delta = this.angle - this.displayAngle;
+    delta = Math.atan2(Math.sin(delta), Math.cos(delta));
+    {
+      // species can override (long bacterial chains and clusters jiggle in
+      // place but don't spin around like a small free cell would)
+      const rate = ((this._motor && this._motor.turnRate) || this.species.turnRate || TURN_RATE[mot] || 2.0) * (this.fleeing ? 3 : this.suction ? 2.5 : 1);
+      const eased = delta * (1 - Math.exp(-dt*5));
+      const maxStep = rate * dt;
+      this.displayAngle += Math.max(-maxStep, Math.min(maxStep, eased));
+    }
+
+    // ---- move along the direction the body is actually pointing (a cell
+    // can't slide sideways), slowing down while it is still mid-turn.
+    const turnSlow = 1 - 0.55*Math.min(1, Math.abs(delta)/1.4);
+    const moveMul = (this.suction ? (canDart ? 0.3 : 0.1) : 1) * turnSlow;
+    const boost = this.speedBoost || 1; this.speedBoost = 1; // chasing food or prey: a short burst
+    this.x += Math.cos(this.displayAngle) * this.speed * dt * 26 * moveMul * boost;
+    this.y += Math.sin(this.displayAngle) * this.speed * dt * 26 * moveMul * boost;
+
+    // ---- the drying edge: motile organisms sense the thinning water film and
+    // turn back before reaching it; passive ones (drifting diatoms/algae,
+    // the anchored Vorticella) can't, and get stranded — the game kills those.
+    const passive = (mot === 'brownian' || mot === 'stalked' || mot === 'gliding');
+    const cx = bounds.cx, cy = bounds.cy;
+    if(!passive && typeof bounds.isInsideMargin === 'function'){
+      if(!bounds.isInsideMargin(this.x, this.y, 0.96)){
+        const normalAngle = Math.atan2(this.y-cy, this.x-cx);
+        this.angle = normalAngle + Math.PI + (Math.random()-0.5)*0.8;
+        if(this._avoid) this._avoid = null;
+        if(this._motor){
+          const m = this._motor;
+          m.dir = 1; m.lead = 1;
+          if(m.mode === 'back' || m.mode === 'pause1' || m.mode === 'pause2'){ m.mode = 'fwd'; m.timer = 0.8; }
+        }
+        if(this.speed < 0) this.speed = -this.speed;
+        let px = this.x, py = this.y;
+        for(let i=0;i<6 && !bounds.isInsideMargin(px,py,0.96); i++){
+          px -= Math.cos(normalAngle)*2;
+          py -= Math.sin(normalAngle)*2;
+        }
+        this.x = px; this.y = py;
+      }
+    }
+
+    // bacterial motor clocks: how fast the heading is turning (flagella lag
+    // behind a turn), the body's roll / the helix's rotation, the flagellar
+    // wave, and the small precession wobble the roll gives the body
+    if(this._motor){
+      const m = this._motor;
+      if(m.prevAng === null) m.prevAng = this.displayAngle;
+      const da = Math.atan2(Math.sin(this.displayAngle - m.prevAng), Math.cos(this.displayAngle - m.prevAng));
+      m.prevAng = this.displayAngle;
+      m.angVel += (da/Math.max(dt, 1e-3) - m.angVel) * Math.min(1, dt*10);
+      const sp = this.speed*26*moveMul, dirS = this.speed < 0 ? -1 : 1;
+      if(this._helix){
+        // a rotating helix: its wave scrolls backward ~1.6x faster than the cell swims
+        const k = 2*Math.PI*this._helix.turns/this._helix.L;
+        m.roll += dt*(k*Math.abs(sp)*1.6 + (m.type === 'endoflagella' ? 3 : 2))*dirS;
+      } else if(m.type !== 'brownian'){
+        m.roll += dt*(3 + 9*Math.min(1, Math.abs(sp)/30))*dirS; // the body counter-rotates against the flagella
+      }
+      m.flagPhase += dt*2*Math.PI*(m.type === 'peritrichous' ? 1.2 + 2.6*m.bundle : 3.4);
+      m.wob = (m.type === 'brownian' || (this._helix && m.type !== 'amphitrichous')) ? 0
+        : m.type === 'amphitrichous' ? 3.5*Math.sin(m.roll*0.5)
+        : 1.2*Math.sin(m.roll) + (m.type === 'peritrichous' ? (1 - m.bundle)*7*Math.sin(m.t*31) : 0);
+    }
+
+    // locomotion-driven animation clocks: body undulation/beat speeds up with
+    // actual swimming speed, so a cell visibly "works" while it travels.
+    const speedFactor = this.baseSpeed > 0 ? Math.abs(this.speed)/this.baseSpeed : 0;
+    this._speedFactor = speedFactor * moveMul;
+    this.phase += dt * (mot === 'cilia' ? 6 : 4) * (0.6 + 0.6*this._speedFactor);
+    this._beatPhase = (this._beatPhase||0) + dt * (9 + 9*this._speedFactor);
+    this._rollPhase = (this._rollPhase||0) + dt * (1.1 + 1.6*this._speedFactor);
+
+    if(this.hasFlagella){
+      this.pulsePhase += dt * (2.2 + speedFactor*3.5);
+    }
+
+    if(this.skeleton){
+      const speedFactor = this.baseSpeed > 0 ? this.speed/this.baseSpeed : 0;
+      // head joint IS the organism's real world position — no lag, it leads freely
+      this.skeleton.update(dt, this.x, this.y, this.stuck ? 0 : speedFactor);
+    }
+  }
+
+  _behaviorUpdate(dt){
+    const s = this.species;
+
+    if(this.hasFlagella){
+      this._crawlUpdate(dt);
+      return;
+    }
+    if(this._motor){
+      this._motorUpdate(dt);
+      return;
+    }
+
+    switch(s.motility){
+      case 'flagella-run-tumble': {
+        // E. coli-style chemotaxis gait: straight "runs" with the flagella
+        // bundled behind, broken by brief "tumbles" — the bundle flies apart,
+        // the cell almost stops and re-points at random before the next run
+        if(this._tumble > 0){
+          this._tumble -= dt;
+          this.speed = this.baseSpeed*0.08;
+          if(this._tumble <= 0){
+            this.angle = this.displayAngle + (Math.random()-0.5) * Math.PI * 1.6;
+            this.runTimer = 0.6 + Math.random()*1.8;
+          }
+          break;
+        }
+        this.speed = this.baseSpeed;
+        this.runTimer -= dt;
+        this.angle += (Math.random()-0.5)*0.04;
+        if(this.runTimer <= 0) this._tumble = 0.18 + Math.random()*0.25;
+        break;
+      }
+      case 'flagella-smooth': {
+        this.angle += (Math.random()-0.5)*0.06;
+        break;
+      }
+      case 'flagella-colony': {
+        this.angle += 0.25*dt;
+        break;
+      }
+      case 'cilia': {
+        // Ciliates: steady forward swim along a gently curving path, plus the
+        // classic "avoiding reaction" — reverse the ciliary beat and back up,
+        // pivot slowly in place, then swim off in the new direction.
+        if(this._avoid){
+          const a = this._avoid; a.t += dt;
+          if(a.t < 0.5){ this.speed = -this.baseSpeed*0.45; }
+          else if(a.t < 1.2){ this.speed = this.baseSpeed*0.12; this.angle = this.displayAngle + a.dir*0.9; }
+          else { this._avoid = null; this.speed = this.baseSpeed; }
+          break;
+        }
+        this.speed = this.baseSpeed;
+        // slowly wandering curvature: offset ≈ angular velocity / 5, so ±0.07
+        // gives gentle arcs (~0.35 rad/s at most), never tight circles
+        this._curve = (this._curve||0) + (Math.random()-0.5)*0.12*dt;
+        this._curve = Math.max(-0.07, Math.min(0.07, this._curve));
+        this.angle = this.displayAngle + this._curve;
+        if(Math.random() < 0.002) this._avoid = { t:0, dir: Math.random()<0.5 ? -1 : 1 };
+        break;
+      }
+      case 'flagellate-whip': {
+        // Euglena: swims forward with a slow helical wobble; now and then it
+        // stops and does "metaboly" (squirms in place) before swimming on.
+        if(this._metaboly > 0){
+          this._metaboly -= dt;
+          this.speed = this.baseSpeed*0.05;
+          break;
+        }
+        this.speed = this.baseSpeed;
+        this.angle += Math.sin(this.phase*0.9)*0.012 + (Math.random()-0.5)*0.03;
+        // (only euglenids squirm — Chlamydomonas has a rigid cell wall)
+        if(s.shape === 'euglena-flagellate' && Math.random() < 0.0015) this._metaboly = 1.2 + Math.random()*1.5;
+        break;
+      }
+      case 'gliding': {
+        // Diatoms / Oscillatoria / Closterium glide along their long axis by
+        // secreting mucilage: a slow straight run, a pause, then usually the
+        // same path *in reverse* — the cell never turns around, it just slides
+        // backward. Modelled as a sign flip on speed, not a rotation.
+        if(this._glideTimer === undefined){ this._glideTimer = 2+Math.random()*3; this._gliding = true; this._glideSign = Math.random()<0.5?1:-1; }
+        this._glideTimer -= dt;
+        if(this._gliding){
+          // ease in/out of each run instead of starting/stopping instantly
+          const runEase = Math.min(1, (this._runT = (this._runT||0) + dt) / 0.6);
+          this.speed = this.baseSpeed * this._glideSign * runEase;
+          this.angle = this.displayAngle + (Math.random()-0.5)*0.01;
+          if(this._glideTimer <= 0){ this._gliding = false; this._glideTimer = 0.8+Math.random()*1.4; }
+        } else {
+          this.speed *= Math.exp(-dt*4); // decelerate smoothly to a stop
+          if(this._glideTimer <= 0){
+            this._gliding = true; this._runT = 0; this._glideTimer = 2+Math.random()*3;
+            if(Math.random() < 0.7) this._glideSign *= -1;           // back the way it came
+            else this.angle = this.displayAngle + (Math.random()-0.5)*0.4; // or a slight new heading
+          }
+        }
+        break;
+      }
+      case 'crawl': {
+        // amoebae, heliozoans, nematodes, small worms: slow, steady, with
+        // gentle meandering — and occasional stops to "probe" the surroundings.
+        if(this._crawlStop > 0){ this._crawlStop -= dt; this.speed = this.baseSpeed*0.08; break; }
+        this.speed = this.baseSpeed * (0.75 + Math.sin(this.phase*0.7)*0.25);
+        this.angle += (Math.random()-0.5)*0.05 + Math.sin(this.phase*0.3)*0.006;
+        if(Math.random() < 0.003) this._crawlStop = 0.8 + Math.random()*1.6;
+        break;
+      }
+      case 'stalked': {
+        // Vorticella: anchored by its stalk — doesn't travel at all, only
+        // sways gently around its attachment point.
+        this.speed = 0;
+        this.angle += Math.sin(this.phase*0.5)*0.004;
+        break;
+      }
+      case 'brownian':
+      default: {
+        this.speed = this.baseSpeed * (0.6 + Math.random()*0.8);
+        this.angle += (Math.random()-0.5)*1.2;
+        break;
+      }
+    }
+  }
+
+  // Bacteria: the motor model for their kind of flagella (BACTERIA_MOTOR).
+  // Sets this.speed (negative = backing up along the body axis) and
+  // this.angle; brownian cells are displaced directly by thermal noise.
+  _motorUpdate(dt){
+    const m = this._motor, base = this.baseSpeed;
+    m.t = (m.t || 0) + dt;
+    m.timer -= dt;
+    m.turnRate = 0;
+    const steering = this.steerTo != null; // heading for food/prey: keep running forward
+    const noise = Dr => gauss()*Math.sqrt(2*Dr*dt);
+    switch(m.type){
+      case 'brownian': {
+        // thermal motion: random steps whose size grows like sqrt(time),
+        // larger for small cells, plus a slow drift of the liquid itself
+        this.speed = 0;
+        const sd = Math.sqrt(2*m.D*dt);
+        m.vx += -m.vx*dt/4 + gauss()*0.85*Math.sqrt(dt);
+        m.vy += -m.vy*dt/4 + gauss()*0.85*Math.sqrt(dt);
+        this.x += gauss()*sd + m.vx*dt;
+        this.y += gauss()*sd + m.vy*dt;
+        this.displayAngle += noise(m.Dr);
+        this.angle = this.displayAngle;
+        m.roll += noise(m.Dr*3); // and it turns over about its own axis, too
+        break;
+      }
+      case 'peritrichous': {
+        if(m.mode === 'tumble'){
+          this.speed = base*0.05;
+          m.turnRate = 7;
+          if(m.timer <= 0){ m.mode = 'run'; m.timer = Math.max(0.25, expRand(m.run)); m.ramp = 0.25; }
+        } else {
+          m.ramp = Math.min(1, m.ramp + dt*3);
+          this.speed = base*m.ramp;
+          this.angle = this.displayAngle + noise(0.08) + m.curve*dt;
+          if(m.timer <= 0 && !steering){
+            // a motor reverses: the bundle flies apart and the cell tumbles;
+            // the new heading is random, typically 60-90 degrees away
+            m.mode = 'tumble'; m.timer = Math.max(0.08, expRand(m.tumble));
+            this.angle = this.displayAngle + (Math.random() < 0.5 ? -1 : 1) * Math.PI*(0.12 + 0.75*Math.pow(Math.random(), 1.3));
+          }
+        }
+        m.bundle += ((m.mode === 'tumble' ? 0 : 1) - m.bundle) * Math.min(1, dt*(m.mode === 'tumble' ? 14 : 5));
+        break;
+      }
+      case 'push-pull':
+      case 'flick': {
+        // forward, pause, backward, pause, (flick), forward...
+        if(steering && m.dir < 0){ m.mode = 'fwd'; m.dir = 1; m.timer = 1; }
+        switch(m.mode){
+          case 'run': case 'fwd':
+            m.dir = 1; m.ramp = Math.min(1, m.ramp + dt*4);
+            this.speed = base*m.ramp;
+            this.angle = this.displayAngle + noise(0.06);
+            if(m.timer <= 0 && !steering){ m.mode = 'pause1'; m.timer = 0.06; }
+            break;
+          case 'pause1':
+            this.speed = 0;
+            if(m.timer <= 0){ m.mode = 'back'; m.dir = -1; m.ramp = 0.3; m.timer = Math.max(0.15, expRand(m.back)); this.angle = this.displayAngle + gauss()*0.15; }
+            break;
+          case 'back':
+            m.ramp = Math.min(1, m.ramp + dt*4);
+            this.speed = -base*0.85*m.ramp;
+            this.angle = this.displayAngle + noise(0.06);
+            if(m.timer <= 0){ m.mode = 'pause2'; m.timer = 0.05; }
+            break;
+          case 'pause2':
+            this.speed = 0;
+            if(m.timer <= 0){
+              if(m.type === 'flick'){
+                m.mode = 'flick'; m.timer = 0.16; m.flickSide = Math.random() < 0.5 ? -1 : 1;
+                this.angle = this.displayAngle + m.flickSide*(1.15 + Math.random()*0.75);
+              } else {
+                m.mode = 'fwd'; m.ramp = 0.3; m.timer = Math.max(0.3, expRand(m.fwd));
+                this.angle = this.displayAngle + gauss()*0.2;
+              }
+            }
+            break;
+          case 'flick':
+            m.dir = 1; m.turnRate = 13;
+            this.speed = base*0.35;
+            if(m.timer <= 0){ m.mode = 'fwd'; m.ramp = 0.4; m.timer = Math.max(0.25, expRand(m.fwd)); }
+            break;
+        }
+        // the hook buckles during the flick and springs back afterwards
+        m.flick += ((m.mode === 'flick' ? 1 : 0) - m.flick) * Math.min(1, dt*(m.mode === 'flick' ? 22 : 7));
+        break;
+      }
+      case 'amphitrichous': {
+        // darting corkscrew: a run usually ends with the other pole taking the
+        // lead (a reversal, no turn); now and then it veers instead
+        if(steering) m.dir = 1;
+        if(m.mode === 'switch'){
+          this.speed = 0;
+          m.switchT -= dt;
+          if(m.switchT <= 0){ m.dir = -m.dir; m.mode = 'run'; }
+        } else {
+          m.burst = m.burst || 1;
+          this.speed = base*m.dir*m.burst;
+          this.angle = this.displayAngle + noise(0.35);
+          if(m.timer <= 0){
+            m.timer = Math.max(0.15, expRand(m.run));
+            m.burst = 0.75 + Math.random()*0.6;
+            if(steering || Math.random() < 0.3) this.angle = this.displayAngle + gauss()*0.7;
+            else { m.mode = 'switch'; m.switchT = 0.04; }
+          }
+        }
+        m.lead += (m.dir - m.lead) * Math.min(1, dt*18);
+        break;
+      }
+      case 'rigid-helix': {
+        // both polar tufts flip together, the rigid spiral stops and backs up
+        if(m.mode === 'flip'){
+          this.speed = base*m.dir*Math.max(0, m.timer/0.22 - 0.3);
+          if(m.timer <= 0){
+            if(Math.random() < 0.8) m.dir = -m.dir; else this.angle = this.displayAngle + gauss()*0.5;
+            m.mode = 'run'; m.timer = Math.max(0.8, expRand(m.run));
+          }
+        } else {
+          this.speed = base*m.dir;
+          this.angle = this.displayAngle + noise(0.05);
+          if(m.timer <= 0 && !steering){ m.mode = 'flip'; m.timer = 0.22; }
+        }
+        if(steering) m.dir = 1;
+        m.lead += ((m.mode === 'flip' ? 0 : m.dir) - m.lead) * Math.min(1, dt*9);
+        break;
+      }
+      case 'endoflagella': {
+        // the whole flexible cell rotates and travels; it reverses by
+        // reversing its internal flagella, or stops to bend and flex
+        if(m.mode === 'flex'){
+          this.speed = base*0.06*m.dir;
+          if(m.timer <= 0){ m.mode = 'run'; m.timer = Math.max(0.8, expRand(m.run)); }
+        } else {
+          this.speed = base*m.dir;
+          this.angle = this.displayAngle + noise(0.12) + Math.sin(m.t*0.8)*0.15*dt;
+          if(m.timer <= 0 && !steering){
+            const r = Math.random();
+            if(r < 0.35){ m.mode = 'flex'; m.timer = 1 + Math.random()*0.9; }
+            else if(r < 0.7){ m.dir = -m.dir; m.timer = Math.max(0.8, expRand(m.run)); }
+            else { this.angle = this.displayAngle + gauss()*0.4; m.timer = Math.max(0.8, expRand(m.run)); }
+          }
+        }
+        if(steering) m.dir = 1;
+        m.flexAmt += ((m.mode === 'flex' ? 1 : 0.06) - m.flexAmt) * Math.min(1, dt*3);
+        break;
+      }
+    }
+  }
+
+  // Slug-crawl: pulses between a slow forward step and a near-still rest,
+  // and only reconsiders heading during that rest (with a brief hesitation
+  // before committing) — never a continuous glide or a smooth mid-step turn.
+  // How wide the turn can swing, and how twitchy the rest pauses are, still
+  // varies by motility so species keep some distinct character while crawling.
+  _crawlUpdate(dt){
+    const s = this.species;
+    const turnSpread = s.motility === 'flagella-run-tumble' ? Math.PI*0.9   // e.g. E. coli, Proteus: sharper reorientations
+                      : s.motility === 'cilia' ? Math.PI*0.5                 // paramecium: gentler
+                      : Math.PI*0.35;                                        // smooth swimmers (vibrio, spirillum): mostly forward
+
+    if(this.crawlTurnPause > 0){
+      this.crawlTurnPause -= dt;
+      this.speed = 0; // fully still while "deciding" — reads as a deliberate pause, not a glitch
+      if(this.crawlTurnPause <= 0){
+        this.angle += (Math.random()-0.5) * turnSpread;
+      }
+      return;
+    }
+
+    this.crawlTimer -= dt;
+    if(this.crawlStepping){
+      // forward step: slow, deliberate — nowhere near free-swim speed
+      this.speed = this.baseSpeed * 0.22;
+      if(this.crawlTimer <= 0){
+        this.crawlStepping = false;
+        this.crawlTimer = 0.35 + Math.random()*0.4;
+      }
+    } else {
+      // rest beat between steps
+      this.speed = this.baseSpeed * 0.04;
+      if(this.crawlTimer <= 0){
+        this.crawlStepping = true;
+        this.crawlTimer = 0.4 + Math.random()*0.6;
+        // small chance to pause-and-reorient right as a new step would begin,
+        // instead of every single cycle — keeps most steps just plodding ahead
+        if(Math.random() < 0.4){
+          this.crawlTurnPause = 0.15 + Math.random()*0.2;
+        }
+      }
+    }
+  }
+
+  // Cryptobiosis (tardigrades): as the water disappears it withdraws its head
+  // and legs and contracts into a barrel-shaped "tun", losing most of its
+  // water — it doesn't die, it waits to be rehydrated.
+  enterTun(){
+    if(this.tun || this.caught) return;
+    this.tun = true; this.fleeing = false; this.suction = false; this.speed = 0;
+    if(this._tardInner) this._tardInner.setAttribute('transform', 'scale(0.62,0.9)');
+    if(this._tardLegs) this._tardLegs.forEach(lg=> lg.el.style.opacity = '0'); // legs fully withdrawn
+    this.group.style.filter = 'brightness(0.9) contrast(1.08)';
+  }
+
+  // stranded by the receding water: greys out, shrivels and fades.
+  startDying(){
+    if(this.dying || this.caught) return;
+    this.dying = true; this.dyingT = 0;
+    this.fleeing = false; this.suction = false;
+    this.group.style.filter = 'grayscale(0.85) brightness(0.82)';
+  }
+
+  vanish(){
+    if(this.vanishing || this.caught) return;
+    this.vanishing = true; this.vanishT = 0;
+    this.suction = false; this.fleeing = false;
+  }
+
+  triggerFlee(fromX, fromY){
+    if(this.caught || this.escaped || this.dying || this.vanishing) return;
+    const dx = this.x - fromX, dy = this.y - fromY;
+    this.fleeAngle = Math.atan2(dy, dx) + (Math.random()-0.5)*0.5;
+    this.fleeing = true;
+    this.fleeTimer = 0.5 + Math.random()*0.4;
+  }
+
+  render(dt){
+    if(this.caught || this.escaped) return;
+    dt = dt || 0.016;
+    // small side-to-side wag, scaled by how hard it's swimming (a resting
+    // cell barely wags; a dying one doesn't at all)
+    const sf = this._speedFactor || 0;
+    // struggling in the pipette's suction: a fast, hard wag plus a jitter
+    const struggling = (this.suction || this._hitT > 0) && !this.dying;
+    const wig = this.dying ? 0 : struggling ? Math.sin(this.phase*3.1) * 7 * this.wobble
+      : this._motor ? this._motor.wob
+      : Math.sin(this.phase) * (this.fleeing ? 3 : 0.6 + 1.2*Math.min(1,sf)) * this.wobble;
+    const angDeg = this.displayAngle * 180/Math.PI;
+    const angRad = this.displayAngle + wig*Math.PI/180;
+    const jx = struggling ? (Math.random()-0.5)*1.4 : 0, jy = struggling ? (Math.random()-0.5)*1.4 : 0;
+    // death: shrivels a little while it fades out; being eaten: shrinks away inside the predator
+    const deathK = this.dying ? Math.min(1, this.dyingT / Organism.DEATH_TIME) : 0;
+    const eatK = this.beingEaten ? Math.min(1, this.beingEaten.t / Organism.EAT_TIME) : 0;
+    const vanK = this.vanishing ? Math.min(1, this.vanishT / Organism.VANISH_TIME) : 0;
+    const shrink = (1 - 0.22*deathK) * (1 - 0.8*eatK) * (1 - 0.15*vanK);
+    this.group.setAttribute('transform',
+      `translate(${(this.x+jx).toFixed(2)},${(this.y+jy).toFixed(2)}) rotate(${angDeg.toFixed(1)}) rotate(${wig.toFixed(2)})` + (shrink !== 1 ? ` scale(${shrink.toFixed(3)})` : '')
+    );
+    this.group.style.opacity = (this.spawnFade * (1 - deathK) * (1 - 0.85*eatK) * (1 - vanK)).toFixed(3);
+    if(this.dying || this.beingEaten || this.vanishing) return; // frozen: no beating, no breathing
+
+    // metachronal ciliary beat: each cilium sweeps back and forth with a phase
+    // lag relative to its neighbour, so a wave runs around the cell — the way
+    // real cilia beat (not a rigid ring spinning like a wheel).
+    if(this._ciliaData){
+      const amp = 0.45 + 0.4*Math.min(1, sf);
+      for(let i=0;i<this._ciliaData.length;i++){
+        const c = this._ciliaData[i];
+        const a = Math.sin(this._beatPhase - i*0.55) * amp;
+        const ca = Math.cos(a), sa = Math.sin(a);
+        const dx = c.dx*ca - c.dy*sa, dy = c.dx*sa + c.dy*ca;
+        c.el.setAttribute('x2', (c.x1+dx).toFixed(2));
+        c.el.setAttribute('y2', (c.y1+dy).toFixed(2));
+      }
+    }
+
+    // rolling: ciliates and Euglena rotate about their long axis as they swim,
+    // seen from above as a slow rhythmic narrowing/widening of the body.
+    if(this._rolls && this.bodyEl){
+      const roll = 0.9 + 0.1*Math.cos(this._rollPhase*2);
+      this.bodyEl.setAttribute('transform', `scale(1,${roll.toFixed(3)})`);
+    }
+
+    // segmented worm: a peristaltic contraction wave runs head-to-tail
+    // Aeolosoma: rebuild the tapered body outline each frame, with a
+    // peristaltic bulge travelling from tail to head and a gentle body wave.
+    if(this._worm2){
+      const { L, W, body, gut, segLines, chaetae, drops } = this._worm2;
+      const N = 26;
+      const cy = t => Math.sin(this.phase*0.8 - t*4.2) * W*0.22;
+      const hw = t => (W/2) * (0.42 + 0.58*Math.pow(Math.sin(Math.PI*(0.12 + 0.8*t)), 0.6))
+                              * (1 + 0.13*Math.sin(this.phase*1.6 - t*10));
+      const X = t => -L/2 + t*L;
+      const top = [], bot = [];
+      for(let i=0;i<=N;i++){ const t=i/N, y=cy(t), w=hw(t); top.push([X(t), y-w]); bot.push([X(t), y+w]); }
+      let d = `M ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} `;
+      for(let i=1;i<=N;i++) d += `L ${top[i][0].toFixed(2)} ${top[i][1].toFixed(2)} `;
+      d += `A ${hw(1).toFixed(2)} ${hw(1).toFixed(2)} 0 0 1 ${bot[N][0].toFixed(2)} ${bot[N][1].toFixed(2)} `;
+      for(let i=N;i>=0;i--) d += `L ${bot[i][0].toFixed(2)} ${bot[i][1].toFixed(2)} `;
+      d += `A ${hw(0).toFixed(2)} ${hw(0).toFixed(2)} 0 0 1 ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} Z`;
+      body.setAttribute('d', d);
+      let gd = '';
+      for(let i=0;i<=14;i++){ const t = 0.06 + 0.84*i/14; gd += (i?'L ':'M ') + X(t).toFixed(2)+' '+cy(t).toFixed(2)+' '; }
+      gut.setAttribute('d', gd);
+      segLines.forEach(sgm=>{ const t=sgm.t, x=X(t), y=cy(t), w=hw(t)*0.86;
+        sgm.el.setAttribute('x1', x.toFixed(2)); sgm.el.setAttribute('x2', x.toFixed(2));
+        sgm.el.setAttribute('y1', (y-w).toFixed(2)); sgm.el.setAttribute('y2', (y+w).toFixed(2)); });
+      chaetae.forEach(c=>{ const t=c.t, x=X(t), y=cy(t), w=hw(t);
+        c.a.setAttribute('x1', x.toFixed(2)); c.a.setAttribute('y1', (y-w).toFixed(2));
+        c.a.setAttribute('x2', (x-1.3).toFixed(2)); c.a.setAttribute('y2', (y-w-1.5).toFixed(2));
+        c.b.setAttribute('x1', x.toFixed(2)); c.b.setAttribute('y1', (y+w).toFixed(2));
+        c.b.setAttribute('x2', (x-1.3).toFixed(2)); c.b.setAttribute('y2', (y+w+1.5).toFixed(2)); });
+      drops.forEach(dr=>{ dr.el.setAttribute('cx', X(dr.t).toFixed(2)); dr.el.setAttribute('cy', (cy(dr.t)+dr.off*hw(dr.t)).toFixed(2)); });
+    }
+    if(this._volvox3d){
+      const { cells, tilt } = this._volvox3d;
+      const th = this.phase*0.35, ct = Math.cos(th), st = Math.sin(th), cf = Math.cos(tilt), sf = Math.sin(tilt);
+      cells.forEach(c=>{
+        const [x, y, z] = c.p;
+        const x1 = x*ct + z*st, z1 = -x*st + z*ct;          // spin about the vertical axis
+        const y2 = y*cf - z1*sf, z2 = y*sf + z1*cf;         // tilted spin axis
+        const near = (z2 + 1)/2;                            // 0 far side .. 1 near side
+        c.el.setAttribute('cx', (x1*c.R).toFixed(2));
+        c.el.setAttribute('cy', (y2*c.R).toFixed(2));
+        c.el.setAttribute('r', (c.size*(0.65 + 0.55*near)).toFixed(2));
+        c.el.setAttribute('opacity', ((c.daughter ? 0.25 : 0.1) + (c.daughter ? 0.35 : 0.5)*near).toFixed(3));
+      });
+    }
+    // Stentor: contracts into a ball when poked or sucked, then slowly re-extends
+    if(this._stentor && this.bodyEl){
+      const k = this._stentor.k += (((this.fleeing || this.suction) ? 1 : 0) - this._stentor.k) * Math.min(1, dt*((this.fleeing || this.suction) ? 9 : 1.2));
+      this.bodyEl.setAttribute('transform', `scale(${(1 - 0.45*k).toFixed(3)},${(1 + 0.22*k).toFixed(3)})`);
+    }
+    // Chlamydomonas breaststroke: both flagella sweep from forward-out to backward
+    if(this._breast){
+      const sweep = 0.5 + 0.5*Math.sin(this._beatPhase*0.55);
+      this._breast.forEach(b=>{ b.tail.restAngle = b.side*(0.35 + 1.9*sweep); });
+    }
+    // bacterial chains: each septum is a joint whose angle jiggles thermally
+    // (a random walk pulled back toward its rest kink); the cells are then
+    // laid out link by link and re-centred, so the whole chain flexes and
+    // snakes instead of waving like a sine
+    if(this._chainKin){
+      const c = this._chainKin, n = c.cells.length;
+      if(!c.init){ c.theta = c.rest.slice(); c.init = true; }
+      const flex = (this._motor && this._motor.flex) || 0.1, k = 1.6, h = Math.min(dt, 0.05);
+      const sig = flex*Math.sqrt(2*k)*Math.sqrt(h);
+      for(let i=0;i<n-1;i++) c.theta[i] += (c.rest[i] - c.theta[i])*k*h + sig*gauss();
+      const pts = [], angs = [];
+      let x = 0, y = 0, a = 0;
+      for(let i=0;i<n;i++){
+        if(i){
+          const a0 = a; a += c.theta[i-1];
+          x += (Math.cos(a0) + Math.cos(a))*c.link/2; y += (Math.sin(a0) + Math.sin(a))*c.link/2;
+        }
+        pts.push([x, y]); angs.push(a);
+      }
+      let mx = 0, my = 0, ma = 0;
+      for(let i=0;i<n;i++){ mx += pts[i][0]; my += pts[i][1]; ma += angs[i]; }
+      mx /= n; my /= n; ma /= n;
+      const ca = Math.cos(-ma), sa = Math.sin(-ma);
+      for(let i=0;i<n;i++){
+        const dx = pts[i][0] - mx, dy = pts[i][1] - my;
+        const rx = dx*ca - dy*sa, ry = dx*sa + dy*ca;
+        c.cells[i].g.setAttribute('transform', `translate(${rx.toFixed(2)},${ry.toFixed(2)})` + (c.rod ? ` rotate(${((angs[i] - ma)*57.2958).toFixed(1)})` : ''));
+      }
+    }
+    // budding yeast: the bud swells over ~25 s, then pinches off and restarts
+    if(this._bud){
+      const b = this._bud;
+      b.t = (b.t + dt*0.04) % 1;
+      const r = b.W*(0.12 + 0.3*b.t);
+      b.el.setAttribute('r', r.toFixed(2));
+      b.el.setAttribute('cx', (b.L*0.37 + r*0.7).toFixed(2));
+    }
+
+    // soft membrane wobble: perturb each base vertex radially by its own phase,
+    // plus — for flagellated species — a uniform whole-body breathing pulse
+    // (every vertex scales together, not each on its own phase) synced to swim speed.
+    if(this.softBlob && this._softBasePts && this._softPathEl){
+      const fleeStretch = this.fleeing ? 1.06 : 1; // slight stretch when darting away
+      const breathePulse = this.hasFlagella ? (1 + Math.sin(this.pulsePhase)*0.11) : 1;
+      const squash = fleeStretch * breathePulse;
+      let d = '';
+      // Euglena "metaboly": while paused, the pellicle squirms — a bulge that
+      // travels along the body, very characteristic of living euglenids.
+      const meta = this._metaboly > 0 ? 0.24 : 0;
+      const nV = this._softBasePts.length;
+      const pts = this._softBasePts.map((p,i)=>{
+        const baseLen = Math.hypot(p[0], p[1]) || 0.0001;
+        const nx = p[0]/baseLen, ny = p[1]/baseLen;
+        let deformedLen = this.softBlob.deformedRadius(i, baseLen, this.phase, squash);
+        if(meta) deformedLen *= 1 + meta*Math.sin((i/nV)*Math.PI*4 - this.phase*1.4);
+        return [nx*deformedLen, ny*deformedLen];
+      });
+      d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
+      for(let i=0;i<pts.length;i++){
+        const p0 = pts[i], p1 = pts[(i+1)%pts.length];
+        const mx = (p0[0]+p1[0])/2, my = (p0[1]+p1[1])/2;
+        d += `Q ${p0[0].toFixed(1)} ${p0[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+      }
+      d += 'Z';
+      this._softPathEl.setAttribute('d', d);
+      if(this._softRimEl) this._softRimEl.setAttribute('d', d);
+      if(this._softGlowEl) this._softGlowEl.setAttribute('d', d);
+      if(this._softInnerEl) this._softInnerEl.setAttribute('d', d);
+    }
+    // storage granules ride the cell's roll about its long axis: they slide
+    // across the width and dim as they pass to the far side
+    if(this._granules){
+      const roll = this._motor ? this._motor.roll : this.phase;
+      for(const gr of this._granules){
+        const a = roll + gr.ph;
+        gr.el.setAttribute('cx', gr.x.toFixed(2));
+        gr.el.setAttribute('cy', (gr.r*Math.sin(a)).toFixed(2));
+        gr.el.setAttribute('fill-opacity', (0.45 + 0.35*Math.cos(a)).toFixed(2));
+      }
+    }
+
+    // vibrio: redraw its curved comma-shape scaled by the breathing pulse
+    // (it has no SoftBlob outline — it's two overlaid stroked arcs — so the
+    // pulse is applied directly to the arc's control-point geometry)
+    if(this._vibrioCurve){
+      const { L, W, mainEl, overlayEl } = this._vibrioCurve;
+      const pulse = this.hasFlagella ? (1 + Math.sin(this.pulsePhase)*0.11) : 1;
+      // the curved cell rotates about its axis as it swims: seen from above
+      // its curvature breathes a little
+      const bowMul = this._motor ? 0.82 + 0.18*Math.cos(this._motor.roll) : 1;
+      const halfL = (L/2)*pulse, bow = (W*1.4)*pulse*bowMul;
+      const d = `M ${(-halfL).toFixed(1)} 0 Q 0 ${(-bow).toFixed(1)} ${halfL.toFixed(1)} 0`;
+      mainEl.setAttribute('d', d);
+      overlayEl.setAttribute('d', d);
+      if(this._vibrioCurve.shineEl) this._vibrioCurve.shineEl.setAttribute('d', d);
+    }
+
+    // jointed worm body: the skeleton simulates 3 real WORLD-space joints
+    // (head/mid/tail) with the head leading freely and the trailing joints
+    // dragged behind at fixed distance. Each drawn segment spans two joints
+    // and is oriented along that actual world vector, then converted back
+    // into the <g>'s local space (which already carries this organism's
+    // overall translate+rotate) via the same inverse-transform trick used
+    // for the flagella tails below.
+    if(this.skeleton && this._segments){
+      const invCos = Math.cos(-angRad), invSin = Math.sin(-angRad);
+      const toLocal = (wx, wy) => {
+        const dx = wx - this.x, dy = wy - this.y;
+        return [dx*invCos - dy*invSin, dx*invSin + dy*invCos];
+      };
+
+      // segment 0 spans joint[0]->joint[1] (head region), segment 1 spans
+      // joint[1]->joint[2] (mid region); we also draw a small tail cap
+      // beyond joint[2] so the rear actually reads as its own tapered part
+      // rather than just ending flush at the last joint.
+      const j = this.skeleton.jointPos;
+      const segSpans = [
+        { from: j[0], to: j[1] }, // head->mid
+        { from: j[1], to: j[2] }, // mid->tail
+      ];
+
+      this._segments.forEach((seg, idx)=>{
+        const contraction = this.skeleton.contraction();
+        let worldCx, worldCy, worldAngle;
+        if(idx < 2){
+          const span = segSpans[idx];
+          worldCx = (span.from.x + span.to.x)/2;
+          worldCy = (span.from.y + span.to.y)/2;
+          worldAngle = Math.atan2(span.to.y - span.from.y, span.to.x - span.from.x);
+        } else {
+          // tail cap: sits just past the last joint, continuing the mid->tail direction
+          const dirAngle = Math.atan2(j[2].y - j[1].y, j[2].x - j[1].x);
+          worldCx = j[2].x + Math.cos(dirAngle)*this.skeleton.segmentSpacing*0.4;
+          worldCy = j[2].y + Math.sin(dirAngle)*this.skeleton.segmentSpacing*0.4;
+          worldAngle = dirAngle;
+        }
+
+        const [localCx, localCy] = toLocal(worldCx, worldCy);
+        const localAngle = worldAngle - angRad;
+        const cosA = Math.cos(localAngle), sinA = Math.sin(localAngle);
+
+        const pts = seg.basePts.map((p,i)=>{
+          const baseLen = Math.hypot(p[0], p[1]) || 0.0001;
+          const nx = p[0]/baseLen, ny = p[1]/baseLen;
+          const deformedLen = seg.softBlob.deformedRadius(i, baseLen, this.phase, contraction);
+          const lx = nx*deformedLen, ly = ny*deformedLen;
+          return [localCx + lx*cosA - ly*sinA, localCy + lx*sinA + ly*cosA];
+        });
+        let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
+        for(let i=0;i<pts.length;i++){
+          const p0 = pts[i], p1 = pts[(i+1)%pts.length];
+          const mx = (p0[0]+p1[0])/2, my = (p0[1]+p1[1])/2;
+          d += `Q ${p0[0].toFixed(1)} ${p0[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+        }
+        d += 'Z';
+        seg.pathEl.setAttribute('d', d);
+      });
+    }
+
+    // spirillum/spirochete: gentle traveling wave along the helix, body-local
+    // wobble, plus — for flagellated species — a uniform breathing pulse that
+    // scales the whole helix's length (and its wave amplitude with it) in and out.
+    if(this.wavePoints && this.waveEl && !this._wormWave){
+      const { steps, basePts, travel, turns, W } = this.wavePoints;
+      const pulse = this.hasFlagella ? (1 + Math.sin(this.pulsePhase)*0.11) : 1;
+      const pts = basePts.map(([xx,yy], i)=>{
+        if(travel) yy = Math.sin((i/steps)*Math.PI*2*turns - this.phase*2.2) * (W/2);
+        const localWave = Math.sin(this.phase*1.4 + (i/steps)*Math.PI*2*1.6) * 0.6;
+        return `${(xx*pulse).toFixed(1)},${((yy+localWave)*pulse).toFixed(1)}`;
+      });
+      this.waveEl.setAttribute('points', pts.join(' '));
+    }
+
+    // helical bacteria: rebuild the centre line each frame in the current
+    // rotation phase; near-side segments go to the darker, thicker path and
+    // far-side ones to the faint path, with a light core on the near side
+    if(this._helix){
+      const h = this._helix, N = h.steps;
+      const roll = this._motor ? this._motor.roll : this.phase*2.2;
+      let dF = '', dB = '', dC = '', side = 0;
+      let px = -h.L/2, py = this._helixY(0);
+      for(let i=1;i<=N;i++){
+        const t = i/N, x = -h.L/2 + t*h.L, y = this._helixY(t);
+        const near = Math.cos(2*Math.PI*h.turns*(i - 0.5)/N + roll) > 0;
+        const seg = `L${x.toFixed(1)} ${y.toFixed(1)} `, start = `M${px.toFixed(1)} ${py.toFixed(1)} `;
+        if(near){ if(side !== 1){ dF += start; dC += start; } dF += seg; dC += seg; side = 1; }
+        else { if(side !== -1) dB += start; dB += seg; side = -1; }
+        px = x; py = y;
+      }
+      h.front.setAttribute('d', dF); h.back.setAttribute('d', dB); h.core.setAttribute('d', dC);
+    }
+
+    // nematode: a single slow, low-frequency S-curve sweeping along the body
+    // (the real "whole-body undulation" gait of a nematode under a lens),
+    // drawn as a smooth <path> rather than a jagged polyline.
+    if(this._wormWave && this.wavePoints && this.waveEl){
+      const { steps, basePts } = this.wavePoints;
+      const pts = basePts.map(([xx,yy], i)=>{
+        const t = i/steps;
+        const localWave = Math.sin(this.phase*1.1 + t*Math.PI*1.8) * (this.species.width*0.9);
+        return [xx, yy+localWave];
+      });
+      let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
+      for(let i=1;i<pts.length;i++){
+        const prev = pts[i-1], p = pts[i];
+        const mx = (prev[0]+p[0])/2, my = (prev[1]+p[1])/2;
+        d += `Q ${prev[0].toFixed(1)} ${prev[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+      }
+      this.waveEl.setAttribute('d', d);
+      if(this._wormInnerEl) this._wormInnerEl.setAttribute('d', d);
+      if(this._wormGutEl) this._wormGutEl.setAttribute('d', d);
+      if(this._wormShineEl) this._wormShineEl.setAttribute('d', d);
+    }
+
+    // oscillatoria: the filament's tip sways side to side (gliding motion),
+    // the rest of the cells trail that sway with a damped lag toward the base.
+    // Oscillatoria: one continuous trichome; the free end sways side to side
+    // (the oscillation it's named after) while the base stays nearly still.
+    if(this._osc){
+      const { L, W, body, walls } = this._osc;
+      const N = 22;
+      const sway = t => Math.sin(this.phase*1.6 - t*1.5) * W*1.5 * Math.pow(t, 1.6);
+      const top = [], bot = [];
+      for(let i=0;i<=N;i++){ const t=i/N, x=-L/2+t*L, y=sway(t); top.push([x, y-W/2]); bot.push([x, y+W/2]); }
+      let d = `M ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} `;
+      for(let i=1;i<=N;i++) d += `L ${top[i][0].toFixed(2)} ${top[i][1].toFixed(2)} `;
+      d += `A ${(W/2).toFixed(2)} ${(W/2).toFixed(2)} 0 0 1 ${bot[N][0].toFixed(2)} ${bot[N][1].toFixed(2)} `;
+      for(let i=N;i>=0;i--) d += `L ${bot[i][0].toFixed(2)} ${bot[i][1].toFixed(2)} `;
+      d += `A ${(W/2).toFixed(2)} ${(W/2).toFixed(2)} 0 0 1 ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} Z`;
+      body.setAttribute('d', d);
+      walls.forEach(w=>{ const x=-L/2+w.t*L, y=sway(w.t);
+        w.el.setAttribute('x1', x.toFixed(2)); w.el.setAttribute('x2', x.toFixed(2));
+        w.el.setAttribute('y1', (y-W/2+0.4).toFixed(2)); w.el.setAttribute('y2', (y+W/2-0.4).toFixed(2)); });
+    }
+
+    // heliozoan: axopodia ray length pulses slightly, as if probing/vibrating
+    // to sense and capture prey brushing against them — not a swim motion.
+    if(this._heliozoanRays){
+      const { rayLines, W } = this._heliozoanRays;
+      rayLines.forEach((r,i)=>{
+        const pulse = 1 + Math.sin(this.phase*1.8 + i*0.7)*0.12;
+        r.el.setAttribute('x2', (Math.cos(r.angle)*W*0.62*pulse).toFixed(1));
+        r.el.setAttribute('y2', (Math.sin(r.angle)*W*0.62*pulse).toFixed(1));
+      });
+    }
+
+    // vorticella: the contractile stalk is drawn as a tightening/relaxing
+    // spiral trailing behind the body — mostly loose, snapping into a tight
+    // coil briefly whenever the organism "flees" (its real startle response).
+    // Vorticella's stalk: a fine thread, almost straight and long when the
+    // cell is relaxed; when startled the contractile spasmoneme snaps it into
+    // a short tight helix (the famous Vorticella "spring").
+    if(this._vorticellaStalk){
+      const { el: stalkEl, L, W } = this._vorticellaStalk;
+      const k = this._stalkK = (this._stalkK === undefined ? 0 : this._stalkK) + ((this.fleeing ? 1 : 0) - (this._stalkK||0)) * 0.25;
+      const len = L*(1.6 - 1.15*k), amp = W*(0.04 + 0.2*k), turns = 1.5 + 5*k;
+      const steps = 36;
+      let d = `M ${(L*0.38).toFixed(2)} 0 `;
+      for(let i=1;i<=steps;i++){
+        const t = i/steps;
+        const x = L*0.38 + t*len;
+        const y = Math.sin(t*Math.PI*2*turns + this.phase*0.3*(1-k)) * amp;
+        d += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
+      }
+      stalkEl.setAttribute('d', d);
+    }
+
+    // testate amoeba (Arcella): fine pseudopods extend from the aperture and
+    // retract, the only visible motion since the shell itself never deforms.
+    if(this._pseudopods){
+      const { lines, W } = this._pseudopods;
+      lines.forEach((line,i)=>{
+        const extend = (Math.sin(this.phase*0.8 + i*1.3) + 1)/2; // 0..1
+        const a = (i/lines.length - 0.5)*Math.PI*0.7;
+        const len = W*0.15 + extend*W*0.35;
+        line.setAttribute('x2', (Math.sin(a)*len).toFixed(1));
+        line.setAttribute('y2', (W*0.2 + Math.cos(a)*len*0.4).toFixed(1));
+        line.setAttribute('opacity', (0.2+extend*0.4).toFixed(2));
+      });
+    }
+
+    // contractile vacuole: swells slowly, then empties abruptly (systole) —
+    // the rhythmic pulse that's one of the most recognizable things seen in a
+    // living freshwater protozoan.
+    if(this._contractileVac){
+      const cv = this._contractileVac;
+      cv.phase += dt*0.9;
+      const cyc = (cv.phase % (Math.PI*2)) / (Math.PI*2); // 0..1
+      const fill = cyc < 0.85 ? cyc/0.85 : (1-cyc)/0.15;   // slow fill, quick collapse
+      cv.el.setAttribute('r', (cv.baseR*(0.35+0.75*fill)).toFixed(2));
+    }
+
+    // tardigrade: the eight legs step in a wave (alternating sides), swinging
+    // further the faster it walks; tucked in when it's a cryptobiotic tun.
+    if(this._tardLegs){
+      const sf2 = Math.min(1, this._speedFactor || 0);
+      this._tardLegs.forEach(lg=>{
+        const swing = this.tun ? 0 : Math.sin(this.phase*1.3 + lg.phase) * (0.18 + 0.38*sf2);
+        const ang = (lg.base + swing) * 180/Math.PI;
+        lg.el.setAttribute('transform', `translate(${lg.bx.toFixed(2)},${lg.by.toFixed(2)}) rotate(${ang.toFixed(1)})`);
+      });
+    }
+
+    if(this._flagella) this._renderFlagella();
+
+    // tail/flagella physics: convert each tail's local attach point + rest angle into
+    // WORLD space (since the chain simulates in world coordinates so inertia/lag reads
+    // correctly as the body moves and turns), step the chain, draw it back in local space
+    // via a compensating inverse-transform on the tail's own <path> element.
+    if(this.tails.length){
+      const cosA = Math.cos(angRad), sinA = Math.sin(angRad);
+      this.tails.forEach(tail=>{
+        const localX = tail.localAttach.x, localY = tail.localAttach.y;
+        const worldAttachX = this.x + (localX*cosA - localY*sinA);
+        const worldAttachY = this.y + (localX*sinA + localY*cosA);
+        const worldRestAngle = angRad + tail.restAngle;
+
+        tail.flutterPhase += dt * 5;
+        tail.chain.update(dt, worldAttachX, worldAttachY, worldRestAngle, 0, {
+          phase: tail.flutterPhase, amount: tail.flutterAmount
+        });
+
+        // the tail <path> lives inside this.group, which already has the world
+        // translate+rotate transform applied — so draw the chain in LOCAL space by
+        // inverse-transforming each world point back through (x,y,angRad).
+        const invCos = Math.cos(-angRad), invSin = Math.sin(-angRad);
+        let d = '';
+        const localPts = tail.chain.points.map(p=>{
+          const dx = p.x - this.x, dy = p.y - this.y;
+          return [dx*invCos - dy*invSin, dx*invSin + dy*invCos];
+        });
+        d = `M ${localPts[0][0].toFixed(1)} ${localPts[0][1].toFixed(1)} `;
+        for(let i=1;i<localPts.length;i++){
+          const prev = localPts[i-1], p = localPts[i];
+          const mx = (prev[0]+p[0])/2, my = (prev[1]+p[1])/2;
+          d += `Q ${prev[0].toFixed(1)} ${prev[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+        }
+        tail.el.setAttribute('d', d);
+      });
+    }
+  }
+}
+
+Organism.DEATH_TIME = 1.8;
+Organism.EAT_TIME = 0.9;   // seconds for prey to be drawn in and swallowed
+Organism.SPLIT_TIME = 1.6; // seconds for two daughter cells to slide apart
+Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
+
+(function(){
+  const droppletSvg = document.getElementById('droplet-svg');
+  const dropletClip = document.getElementById('droplet-clip');
+  const captureProgress = document.getElementById('capture-progress');
+  const captureBar = captureProgress.querySelector('.bar');
+  const toast = document.getElementById('toast');
+  const reel = document.getElementById('reel');
+  const driedOverlay = document.getElementById('dried-overlay');
+  const driedSummary = document.getElementById('dried-summary');
+  const driedTitle = document.getElementById('dried-title');
+  const restartBtn = document.getElementById('restart-btn');
+  const shapeListEl = document.getElementById('shape-list');
+
+  const hudDepthName = document.getElementById('hud-depth-name');
+  const hudDepthLevel = document.getElementById('hud-depth-level');
+  const hudZoom = document.getElementById('hud-zoom');
+  const hudFieldCount = document.getElementById('hud-field-count');
+  const hudLifeActive = document.getElementById('hud-life-active');
+  const hudOrgCount = document.getElementById('hud-org-count');
+  const hudJarCount = document.getElementById('hud-jar-count');
+  const hudDryPct = document.getElementById('hud-dry-pct');
+  const hudDryBar = document.getElementById('hud-dry-bar');
+  const hudDryRow = document.getElementById('hud-dry-row');
+  const hudDryLabel = document.getElementById('hud-dry-label');
+  const hudMilkLot = document.getElementById('hud-milk-lot');
+  const hudMilkGood = document.getElementById('hud-milk-good');
+  const hudMilkSpoil = document.getElementById('hud-milk-spoil');
+  const hudMilkBad = document.getElementById('hud-milk-bad');
+  const hudMilkRisk = document.getElementById('hud-milk-risk');
+  const hudMilkRiskRow = document.getElementById('hud-milk-risk-row');
+  const laudoBtn = document.getElementById('laudo-btn');
+
+  const panelOverlay = document.getElementById('panel-overlay');
+  const panelClose = document.getElementById('panel-close');
+  const introEl = document.getElementById('intro');
+  const startBtn = document.getElementById('start-btn');
+
+  const MAX_DEPTH = 4;
+
+  // ---- MAP: exactly 20x the area of a 1080p screen. At a fixed scale of
+  // PX_PER_UNIT screen pixels per map unit, a 1920x1080 window shows
+  // 800x450 units; the map is √20 times that on each side (3578x2012).
+  // The visible window (VIEW_W x VIEW_H) follows the real window size, so the
+  // game fills the whole screen and organisms keep the same on-screen size. ----
+  const PX_PER_UNIT = 2.4;
+  const MAP_W = Math.round(1920/PX_PER_UNIT*Math.sqrt(20)), MAP_H = Math.round(1080/PX_PER_UNIT*Math.sqrt(20));
+  const CENTER = { x: MAP_W/2, y: MAP_H/2 };
+  const MAX_WET_R = 1150; // starting droplet base radius, before irregular blob deformation
+  let VIEW_W = 800, VIEW_H = 450;
+  function computeView(){
+    const r = dropletClip.getBoundingClientRect();
+    // a phone shows a little less magnification, so the field isn't too
+    // narrow; the scale stays the same in both directions (no empty bands)
+    const ppu = Math.min(PX_PER_UNIT, r.width/180, r.height/120);
+    VIEW_W = r.width / ppu;
+    VIEW_H = r.height / ppu;
+  }
+  computeView();
+
+  let camera = { x: CENTER.x - VIEW_W/2, y: CENTER.y - VIEW_H/2 };
+
+  let currentDepth = 1;
+  let wetR = MAX_WET_R;
+  const DRY_DURATION = 300; // seconds for full evaporation (5 min — doubled)
+  let deathsAtEdge = 0;
+  let tunToastShown = false;
+  let dryElapsed = 0;
+  let dryPaused = false; // "pausar secagem": the drop stops evaporating
+  let gameOver = false;
+  let simTime = 0;
+  let currentSlide = 'water'; // 'water' | 'soil' | 'milk'
+  const SLIDE_INFO = {
+    water: { label:'Lâmina 01 · Água de lagoa', hud:'água de lagoa', liquid:'água',
+             tint:['#c3ccc0','#aab4a5','#8f9a8a'] },
+    soil:  { label:'Lâmina 02 · Solo úmido',     hud:'solo úmido', liquid:'água',
+             tint:['#cfc6ad','#b5a886','#958665'] },
+    milk:  { label:'Lâmina 03 · Leite cru',      hud:'leite cru', liquid:'leite',
+             tint:['#f2eee2','#e4ddca','#d2c9b2'] },
+  };
+
+  // ---- milk quality-control session: one hidden lot profile per milk slide,
+  // and what the analyst collected from it (feeds the HUD and the final report)
+  let milkSession = null;
+  function newMilkLot(){
+    milkSession = {
+      lot: MILK_LOTS[Math.floor(Math.random()*MILK_LOTS.length)],
+      number: String(1000 + Math.floor(Math.random()*9000)),
+      caught: {}
+    };
+  }
+  newMilkLot();
+
+  function clampCamera(){
+    camera.x = Math.max(0, Math.min(MAP_W - VIEW_W, camera.x));
+    camera.y = Math.max(0, Math.min(MAP_H - VIEW_H, camera.y));
+  }
+  clampCamera();
+
+  function applyViewBox(){
+    droppletSvg.setAttribute('viewBox', `${camera.x.toFixed(1)} ${camera.y.toFixed(1)} ${VIEW_W.toFixed(1)} ${VIEW_H.toFixed(1)}`);
+    if(typeof fitLayerFilters === 'function' && layerGroupsReady) fitLayerFilters();
+  }
+  let layerGroupsReady = false;
+  applyViewBox();
+  window.addEventListener('resize', ()=>{
+    // keep the same point centred while the window changes shape
+    const cx = camera.x + VIEW_W/2, cy = camera.y + VIEW_H/2;
+    computeView();
+    camera.x = cx - VIEW_W/2; camera.y = cy - VIEW_H/2;
+    clampCamera(); applyViewBox();
+  });
+
+  let mouseMap = { x: CENTER.x, y: CENTER.y };
+
+  function svgPointFromEvent(e){
+    const pt = droppletSvg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    const ctm = droppletSvg.getScreenCTM().inverse();
+    const loc = pt.matrixTransform(ctm);
+    return { x: loc.x, y: loc.y };
+  }
+
+  function el(tag, attrs){
+    const e = document.createElementNS(SVG_NS, tag);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // ---- svg defs ----
+  const defs = el('defs', {});
+  droppletSvg.appendChild(defs);
+
+  // ---- organic irregular blob shape for the droplet edge ----
+  const BLOB_POINTS = 16;
+  const blobNoise = [];
+  for(let i=0;i<BLOB_POINTS;i++){
+    blobNoise.push({
+      base: 0.82 + Math.random()*0.36,
+      driftPhase: Math.random()*Math.PI*2,
+      driftSpeed: 0.05 + Math.random()*0.08,
+      driftAmt: 0.05 + Math.random()*0.06
+    });
+  }
+  function blobRadiusAt(angleIdx, t){
+    const n = blobNoise[angleIdx];
+    return n.base + Math.sin(t*n.driftSpeed + n.driftPhase) * n.driftAmt;
+  }
+  function buildBlobPath(cx, cy, baseR, t){
+    const pts = [];
+    for(let i=0;i<BLOB_POINTS;i++){
+      const ang = (i/BLOB_POINTS) * Math.PI*2;
+      const rMul = blobRadiusAt(i, t);
+      const r = baseR * rMul;
+      pts.push([cx + Math.cos(ang)*r, cy + Math.sin(ang)*r]);
+    }
+    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
+    for(let i=0;i<BLOB_POINTS;i++){
+      const p0 = pts[i];
+      const p1 = pts[(i+1)%BLOB_POINTS];
+      const mx = (p0[0]+p1[0])/2, my = (p0[1]+p1[1])/2;
+      d += `Q ${p0[0].toFixed(1)} ${p0[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+    }
+    d += 'Z';
+    return d;
+  }
+
+  // grain / debris texture across the whole map — rebuilt per slide type
+  const grainGroup = el('g', { class:'grain' });
+  droppletSvg.appendChild(grainGroup);
+
+  function buildDebris(slide){
+    while(grainGroup.firstChild) grainGroup.removeChild(grainGroup.firstChild);
+    const R = Math.random;
+    // fine particulate everywhere (every slide): tiny out-of-focus specks
+    // (in milk: the haze of casein micelles and tiny fat droplets)
+    const fineN = slide==='soil' ? 1400 : 1000;
+    for(let i=0;i<fineN;i++){
+      grainGroup.appendChild(el('circle', {
+        cx:(R()*MAP_W).toFixed(1), cy:(R()*MAP_H).toFixed(1), r:(0.3+R()*0.9).toFixed(2),
+        fill: slide==='soil' ? (R()<0.5?'#7d6e52':'#9a8a68') : slide==='milk' ? (R()<0.5?'#a39b84':'#bdb59e') : (R()<0.5?'#8a8677':'#a8a493'),
+        opacity:(0.12+R()*0.2).toFixed(2)
+      }));
+    }
+    // organic fibers (plant debris / root hairs in soil); none in milk
+    const fiberN = slide==='soil' ? 200 : slide==='milk' ? 0 : 120;
+    for(let i=0;i<fiberN;i++){
+      const x1 = R()*MAP_W, y1 = R()*MAP_H, ang = R()*Math.PI*2, len = 30+R()*90;
+      const bend = (R()-0.5)*30;
+      const mx = x1+Math.cos(ang)*len/2 + Math.cos(ang+Math.PI/2)*bend, my = y1+Math.sin(ang)*len/2 + Math.sin(ang+Math.PI/2)*bend;
+      grainGroup.appendChild(el('path', {
+        d:`M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${mx.toFixed(1)} ${my.toFixed(1)} ${(x1+Math.cos(ang)*len).toFixed(1)} ${(y1+Math.sin(ang)*len).toFixed(1)}`,
+        fill:'none', stroke: slide==='soil' ? '#6f5f42' : '#8f8b78', 'stroke-width':(0.5+R()*1.1).toFixed(2), opacity: slide==='soil'?0.3:0.18
+      }));
+    }
+    if(slide==='soil'){
+      // angular mineral grains: clear quartz (bright facets, dark edges) and
+      // brownish clay/iron-stained grains — irregular polygons, not circles.
+      for(let i=0;i<760;i++){
+        const cx = R()*MAP_W, cy = R()*MAP_H, size = 2+Math.pow(R(),2)*14;
+        const n = 5+Math.floor(R()*3), rot = R()*Math.PI*2;
+        let d = '';
+        for(let k=0;k<n;k++){
+          const a = rot + (k/n)*Math.PI*2, rr = size*(0.6+R()*0.5);
+          d += (k?'L ':'M ') + (cx+Math.cos(a)*rr).toFixed(1)+' '+(cy+Math.sin(a)*rr).toFixed(1)+' ';
+        }
+        d += 'Z';
+        const quartz = R()<0.45;
+        grainGroup.appendChild(el('path', {
+          d, fill: quartz ? '#eeeadb' : (R()<0.5?'#a88a5c':'#8a6f48'),
+          'fill-opacity': quartz ? 0.55 : 0.5,
+          stroke: quartz ? '#6f6650' : '#5a4630', 'stroke-width':0.5, 'stroke-opacity':0.6
+        }));
+      }
+      // dark humus / organic matter flecks
+      for(let i=0;i<420;i++){
+        grainGroup.appendChild(el('ellipse', {
+          cx:(R()*MAP_W).toFixed(1), cy:(R()*MAP_H).toFixed(1),
+          rx:(1+R()*5).toFixed(1), ry:(0.8+R()*3).toFixed(1),
+          fill:'#4a3a26', opacity:(0.25+R()*0.3).toFixed(2), transform:`rotate(${(R()*180).toFixed(0)})`
+        }));
+      }
+    } else if(slide==='milk'){
+      // milk is an emulsion: thousands of fat globules of every size, each a
+      // bright refractile sphere with a thin dark rim — the signature look of
+      // a drop of milk under the objective
+      for(let i=0;i<2300;i++){
+        const r = 1.2 + Math.pow(R(), 2.4)*13;
+        const cx = R()*MAP_W, cy = R()*MAP_H;
+        grainGroup.appendChild(el('circle', {
+          cx:cx.toFixed(1), cy:cy.toFixed(1), r:r.toFixed(1),
+          fill:'#fffef8', 'fill-opacity':0.5,
+          stroke:'#857d68', 'stroke-width':(0.3 + r*0.07).toFixed(2), 'stroke-opacity':0.36
+        }));
+        if(r > 6) grainGroup.appendChild(el('circle', { cx:(cx-r*0.3).toFixed(1), cy:(cy-r*0.3).toFixed(1), r:(r*0.25).toFixed(1), fill:'#ffffff', opacity:0.5 }));
+      }
+      // somatic cells (mostly leucocytes with a lobed nucleus): a few are
+      // normal, a lot of them means the udder is inflamed (mastitis) — the
+      // CCS the dairy counts on every batch
+      const somatic = (milkSession && milkSession.lot.somatic) || 20;
+      for(let i=0;i<somatic;i++){
+        const cx = R()*MAP_W, cy = R()*MAP_H, r = 7 + R()*3;
+        grainGroup.appendChild(el('circle', { cx:cx.toFixed(1), cy:cy.toFixed(1), r:r.toFixed(1),
+          fill:'#f1ede1', 'fill-opacity':0.55, stroke:'#6a624f', 'stroke-width':0.6, 'stroke-opacity':0.5 }));
+        for(let k=0;k<8;k++){
+          const a = R()*Math.PI*2, rr = Math.sqrt(R())*r*0.8;
+          grainGroup.appendChild(el('circle', { cx:(cx+Math.cos(a)*rr).toFixed(1), cy:(cy+Math.sin(a)*rr).toFixed(1), r:0.35, fill:'#6a624f', opacity:0.35 }));
+        }
+        const lobes = 3 + Math.floor(R()*2), rot = R()*Math.PI*2;
+        for(let k=0;k<lobes;k++){
+          const a = rot + (k - (lobes-1)/2)*0.85;
+          grainGroup.appendChild(el('ellipse', {
+            cx:(cx + Math.cos(a)*r*0.42).toFixed(1), cy:(cy + Math.sin(a)*r*0.42).toFixed(1),
+            rx:(r*0.26).toFixed(1), ry:(r*0.19).toFixed(1), fill:'#7a6f8a', opacity:0.42,
+            transform:`rotate(${(a*57.3).toFixed(0)} ${(cx + Math.cos(a)*r*0.42).toFixed(1)} ${(cy + Math.sin(a)*r*0.42).toFixed(1)})`
+          }));
+        }
+      }
+    } else {
+      // pond water: occasional trapped air bubbles — thick dark ring, bright
+      // centre, exactly how bubbles look under a brightfield objective.
+      for(let i=0;i<60;i++){
+        const cx = R()*MAP_W, cy = R()*MAP_H, r = 4+R()*12;
+        grainGroup.appendChild(el('circle', { cx:cx.toFixed(1), cy:cy.toFixed(1), r:r.toFixed(1), fill:'#f6f5ee', 'fill-opacity':0.35, stroke:'#5f6058', 'stroke-width':(r*0.18).toFixed(1), 'stroke-opacity':0.35 }));
+      }
+      // bits of detritus / dead algae
+      for(let i=0;i<270;i++){
+        grainGroup.appendChild(el('ellipse', {
+          cx:(R()*MAP_W).toFixed(1), cy:(R()*MAP_H).toFixed(1),
+          rx:(1+R()*4).toFixed(1), ry:(0.6+R()*2).toFixed(1),
+          fill: R()<0.5 ? '#7d8a62' : '#8a7f5e', opacity:(0.18+R()*0.25).toFixed(2)
+        }));
+      }
+    }
+  }
+  buildDebris(currentSlide);
+
+  // depth layer groups with blur filters
+  const layerGroups = {};
+  for(let d=1; d<=MAX_DEPTH; d++){
+    const filterId = `blur-d${d}`;
+    // userSpaceOnUse + a region matched to the camera window (see
+    // fitLayerFilters) keeps the blur buffer screen-sized, never map-sized
+    const filter = el('filter', { id: filterId, filterUnits:'userSpaceOnUse', x:0, y:0, width:MAP_W, height:MAP_H });
+    filter.appendChild(el('feGaussianBlur', { stdDeviation: '0' }));
+    defs.appendChild(filter);
+    const g = el('g', { class:`layer layer-${d}`, filter:`url(#${filterId})` });
+    droppletSvg.appendChild(g);
+    layerGroups[d] = { g, filter, feBlur: filter.firstChild };
+  }
+  layerGroupsReady = true;
+  fitLayerFilters();
+
+  // dry rim overlay (mask for the shrinking, irregular wet blob)
+  const dryMaskId = 'dry-mask';
+  const dryMask = el('mask', { id: dryMaskId });
+  const wetBlobMaskPath = el('path', { d:'', fill:'#fff' });
+  dryMask.appendChild(el('rect', { x:0, y:0, width:MAP_W, height:MAP_H, fill:'#000' }));
+  dryMask.appendChild(wetBlobMaskPath);
+  defs.appendChild(dryMask);
+
+  // the drop's edge (meniscus): under a real objective it's a faint, soft,
+  // slightly darker band — not a bold outline. Blurred, thin, low contrast.
+  const edgeSoft = el('filter', { id:'edge-soft', x:'-5%', y:'-5%', width:'110%', height:'110%' });
+  edgeSoft.appendChild(el('feGaussianBlur', { stdDeviation:'1.6' }));
+  defs.appendChild(edgeSoft);
+  // shared sub-pixel softening for every organism (organisms reference it by id,
+  // including the thumbnails in the vials and the specimen sheet)
+  const softEdge = el('filter', { id:'soft-edge', x:'-15%', y:'-15%', width:'130%', height:'130%' });
+  softEdge.appendChild(el('feGaussianBlur', { stdDeviation:'0.32' }));
+  defs.appendChild(softEdge);
+  // volumetric body fill per species: a living cell under brightfield is clear
+  // in the middle and grows slightly darker toward its margin (where the light
+  // path bends most), ending in a thin dark edge — that gradient is what makes
+  // it read as a 3-D transparent body instead of an outline drawing.
+  SPECIES.forEach(sp=>{
+    const rg = el('radialGradient', { id:`bf-${sp.id}`, cx:'50%', cy:'47%', r:'56%' });
+    [['0%', sp.color, 0.10], ['62%', sp.color, 0.16], ['86%', sp.colorDark, 0.17], ['100%', sp.colorDark, 0.32]]
+      .forEach(([off,c,a])=> rg.appendChild(el('stop', { offset:off, 'stop-color':c, 'stop-opacity':a })));
+    defs.appendChild(rg);
+  });
+  // three stacked faint strokes fake a soft gradient edge without a blur
+  // filter (a filter here would rasterize a buffer the size of the whole drop)
+  const dryRing = el('g', {});
+  const dryRingStrokes = [[7,0.035],[3.5,0.06],[1.2,0.11]].map(([w,o])=>{
+    const p = el('path', { d:'', fill:'none', stroke:'#5f6157', 'stroke-width':w, opacity:o, 'stroke-linejoin':'round' });
+    dryRing.appendChild(p); return p;
+  });
+  droppletSvg.appendChild(dryRing);
+
+  const dryFieldBg = el('rect', { x:0, y:0, width:MAP_W, height:MAP_H, fill:'var(--dried)', opacity:0 });
+  droppletSvg.insertBefore(dryFieldBg, grainGroup);
+
+  const wetTintGrad = el('radialGradient', { id:'wet-tint-grad', cx:'45%', cy:'40%', r:'65%' });
+  const wetTintStops = [
+    el('stop', { offset:'0%', 'stop-color':'#c3ccc0', 'stop-opacity':'0.5' }),
+    el('stop', { offset:'70%', 'stop-color':'#aab4a5', 'stop-opacity':'0.42' }),
+    el('stop', { offset:'100%', 'stop-color':'#8f9a8a', 'stop-opacity':'0.5' })
+  ];
+  wetTintStops.forEach(s=> wetTintGrad.appendChild(s));
+  defs.appendChild(wetTintGrad);
+  const wetTint = el('path', { d:'', fill: 'url(#wet-tint-grad)' });
+  droppletSvg.insertBefore(wetTint, grainGroup);
+
+  // residue speckles left behind as the rim dries
+  const residueGroup = el('g', { class:'residue' });
+  const residueSpecks = [];
+  for(let i=0;i<640;i++){
+    const ang = Math.random()*Math.PI*2;
+    const rr = MAX_WET_R * (0.55 + Math.random()*0.45);
+    const cx = CENTER.x + Math.cos(ang)*rr, cy = CENTER.y + Math.sin(ang)*rr;
+    const spot = el('circle', {
+      cx, cy, r: 0.6+Math.random()*2.2,
+      fill:'#8f8564', opacity:0
+    });
+    residueGroup.appendChild(spot);
+    residueSpecks.push({ el: spot, rr });
+  }
+  droppletSvg.insertBefore(residueGroup, grainGroup);
+
+  // clip everything living to the wet blob
+  const wetClipId = 'wet-clip';
+  const wetClipPath = el('clipPath', { id: wetClipId });
+  const wetClipShape = el('path', { d:'' });
+  wetClipPath.appendChild(wetClipShape);
+  defs.appendChild(wetClipPath);
+  const livingRoot = el('g', { 'clip-path': `url(#${wetClipId})` });
+  droppletSvg.removeChild(grainGroup);
+  for(let d=1; d<=MAX_DEPTH; d++) droppletSvg.removeChild(layerGroups[d].g);
+  livingRoot.appendChild(grainGroup);
+  // the focal planes share one parent, so the click ripple can bend the
+  // organisms without the static debris (thousands of elements in soil and
+  // milk, which would have to be re-rasterized on every frame of the ripple)
+  const lifeLayers = el('g', { class:'life-layers' });
+  for(let d=1; d<=MAX_DEPTH; d++) lifeLayers.appendChild(layerGroups[d].g);
+  livingRoot.appendChild(lifeLayers);
+  droppletSvg.appendChild(livingRoot);
+  // organisms stranded on the dry glass but still alive (tardigrade tuns)
+  // live here: outside the wet-drop clip so they stay visible and clickable,
+  // with one sub-layer per focal plane so focus blur still applies to them.
+  const strandedRoot = el('g', { class:'stranded' });
+  droppletSvg.appendChild(strandedRoot);
+  const strandedLayers = {};
+  for(let d=1; d<=MAX_DEPTH; d++){ strandedLayers[d] = el('g', {}); strandedRoot.appendChild(strandedLayers[d]); }
+  droppletSvg.appendChild(dryRing);
+
+  // ripple group for click/hold water-wave effect
+  const rippleGroup = el('g', { class:'ripples' });
+  droppletSvg.appendChild(rippleGroup);
+
+  // ---- "stone in the water" ripple ----
+  // A displacement-map filter bends everything around the click — organisms
+  // and debris alike — as a packet of circular waves runs outward and dies
+  // away, the way a pond's surface refracts what lies under it. The map is
+  // one pre-rendered wave packet (red/green = radial push) that the filter
+  // stretches outward over time while its strength fades.
+  const RIPPLE_MAP = (()=>{
+    const N = 256, cv = document.createElement('canvas');
+    cv.width = cv.height = N;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(N, N);
+    const smooth = (a, b, x)=>{ const t = Math.max(0, Math.min(1, (x-a)/(b-a))); return t*t*(3-2*t); };
+    for(let j=0;j<N;j++) for(let i=0;i<N;i++){
+      const x = (i+0.5)/N*2 - 1, y = (j+0.5)/N*2 - 1, r = Math.hypot(x, y);
+      let d = 0;
+      if(r > 0.001 && r < 1){
+        const env = smooth(0, 0.85, r) * (1 - smooth(0.86, 1, r)) * (0.3 + 0.7*r); // leading crest strongest
+        d = Math.sin((r - 0.86) * Math.PI*2 * 3.2) * env;
+      }
+      const k = (j*N + i)*4;
+      img.data[k]   = Math.round(128 + 127*(r ? x/r : 0)*d);
+      img.data[k+1] = Math.round(128 + 127*(r ? y/r : 0)*d);
+      img.data[k+2] = 128; img.data[k+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return cv.toDataURL('image/png');
+  })();
+  let rippleSeq = 0;
+  // target: the group to bend; region(): the box (in svgEl's units) the
+  // filter must cover — the visible area, since a filter clips to its region
+  function createRippleFX(svgEl, target, region){
+    const id = `water-ripple-${++rippleSeq}`;
+    // sRGB so the neutral grey (128) really means "no displacement"
+    const f = el('filter', { id, filterUnits:'userSpaceOnUse', primitiveUnits:'userSpaceOnUse', 'color-interpolation-filters':'sRGB', x:0, y:0, width:1, height:1 });
+    f.appendChild(el('feFlood', { 'flood-color':'rgb(128,128,128)', result:'flat' }));
+    const wave = el('feImage', { x:0, y:0, width:1, height:1, preserveAspectRatio:'none', result:'wave' });
+    wave.setAttribute('href', RIPPLE_MAP);
+    wave.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', RIPPLE_MAP);
+    f.appendChild(wave);
+    const merge = el('feMerge', { result:'map' });
+    merge.appendChild(el('feMergeNode', { in:'flat' }));
+    merge.appendChild(el('feMergeNode', { in:'wave' }));
+    f.appendChild(merge);
+    const disp = el('feDisplacementMap', { in:'SourceGraphic', in2:'map', scale:0, xChannelSelector:'R', yChannelSelector:'G' });
+    f.appendChild(disp);
+    let d = svgEl.querySelector(':scope > defs');
+    if(!d){ d = el('defs', {}); svgEl.insertBefore(d, svgEl.firstChild); }
+    d.appendChild(f);
+    let active = null;
+    function frame(now){
+      if(!active) return;
+      const p = (now - active.t0) / active.dur;
+      if(p >= 1){ active = null; target.removeAttribute('filter'); return; }
+      const R = active.R * (0.12 + 0.88*(1 - Math.pow(1 - p, 2.2))); // fast at first, then slowing
+      wave.setAttribute('x', (active.x - R).toFixed(1)); wave.setAttribute('y', (active.y - R).toFixed(1));
+      wave.setAttribute('width', (2*R).toFixed(1)); wave.setAttribute('height', (2*R).toFixed(1));
+      disp.setAttribute('scale', (active.S * Math.pow(1 - p, 1.4)).toFixed(2));
+      const b = region();
+      f.setAttribute('x', b.x.toFixed(0)); f.setAttribute('y', b.y.toFixed(0));
+      f.setAttribute('width', b.w.toFixed(0)); f.setAttribute('height', b.h.toFixed(0));
+      requestAnimationFrame(frame);
+    }
+    return {
+      // R: how far the waves travel; S: displacement strength (both in svg units)
+      trigger(x, y, R, S, dur){
+        const idle = !active;
+        active = { x, y, R, S, dur: dur || 1400, t0: performance.now() };
+        target.setAttribute('filter', `url(#${id})`);
+        if(idle) requestAnimationFrame(frame);
+      }
+    };
+  }
+  const waterFX = createRippleFX(droppletSvg, lifeLayers, ()=>({ x: camera.x - 40, y: camera.y - 40, w: VIEW_W + 80, h: VIEW_H + 80 }));
+
+  // the visible surface rings (bright crest + dark trough, three of them,
+  // staggered) on top of the refraction the filter does underneath
+  function waterRings(group, x, y, rMax, width){
+    for(let k=0;k<3;k++){
+      const delay = k*140, dur = 1300 - k*150, rr = rMax*(1 - k*0.22);
+      [['#fbfbf4', 0.55, 1.6*width, 0], ['#4d564c', 0.28, 1.1*width, -2.2*width]].forEach(([col, op, sw, off])=>{
+        const c = el('circle', { cx:x, cy:y, r:2, fill:'none', stroke:col, 'stroke-width':sw, opacity:0 });
+        group.appendChild(c);
+        c.animate([{ r: 2, opacity: op }, { r: Math.max(3, rr + off), opacity: 0 }],
+                  { duration: dur, delay, easing:'cubic-bezier(.15,.6,.3,1)' }).onfinish = ()=> c.remove();
+      });
+    }
+  }
+  function spawnRipple(x, y){
+    waterRings(rippleGroup, x, y, 20, 1);
+    waterFX.trigger(x, y, 30, 15, 2000);
+  }
+
+  function updateStaticBlobShapes(t){
+    const wetPath = buildBlobPath(CENTER.x, CENTER.y, wetR, t);
+    wetBlobMaskPath.setAttribute('d', wetPath);
+    dryRingStrokes.forEach(p=> p.setAttribute('d', wetPath));
+    wetTint.setAttribute('d', wetPath);
+    wetClipShape.setAttribute('d', wetPath);
+  }
+  updateStaticBlobShapes(0);
+  let blobRefreshT = 0;
+
+  // keep each blurred plane's filter region matched to what's on screen
+  function fitLayerFilters(){
+    const m = 60;
+    for(let d=1; d<=MAX_DEPTH; d++){
+      const f = layerGroups[d].filter;
+      f.setAttribute('x', (camera.x-m).toFixed(0)); f.setAttribute('y', (camera.y-m).toFixed(0));
+      f.setAttribute('width', (VIEW_W+2*m).toFixed(0)); f.setAttribute('height', (VIEW_H+2*m).toFixed(0));
+    }
+  }
+
+  // ---- state ----
+  const organisms = [];
+  const caughtLog = {};
+  const discoveredShapes = new Set();
+  const discoveredIds = new Set(); // same, by species id (insertion order = order of discovery)
+
+  function speciesForDepth(depth){ return SPECIES.filter(s => s.depth === depth && s.habitat.includes(currentSlide)); }
+
+  // spawn weight: rarity, scaled on the milk slide by the hidden lot profile
+  // (a mastitis lot is full of S. aureus, a well-kept lot has no pathogens...)
+  function speciesWeight(sp){
+    let w = RARITY_INFO[sp.rarity].weight;
+    if(currentSlide === 'milk' && milkSession){
+      const b = milkSession.lot.boost[sp.id];
+      if(b !== undefined) w *= b;
+    }
+    return w;
+  }
+
+  // species with a maxInView cap (e.g. tardigrades) are skipped once that
+  // many are already in the field of view
+  function availableSpecies(depth){
+    return speciesForDepth(depth).filter(sp=>{
+      if(speciesWeight(sp) <= 0) return false;
+      if(!sp.maxInView) return true;
+      const n = organisms.filter(o=> o.species.id===sp.id && !o.dying && !o.vanishing &&
+        o.x > camera.x-60 && o.x < camera.x+VIEW_W+60 && o.y > camera.y-60 && o.y < camera.y+VIEW_H+60).length;
+      return n < sp.maxInView;
+    });
+  }
+
+  function pickWeightedSpecies(depth){
+    const pool = availableSpecies(depth);
+    if(pool.length === 0) return null;
+    const total = pool.reduce((sum,s)=> sum + speciesWeight(s), 0);
+    let r = Math.random()*total;
+    for(const s of pool){
+      r -= speciesWeight(s);
+      if(r <= 0) return s;
+    }
+    return pool[pool.length-1];
+  }
+
+  function isInsideWetBlob(x, y, t, marginMul){
+    marginMul = marginMul===undefined ? 1 : marginMul;
+    const dx = x-CENTER.x, dy = y-CENTER.y;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    if(dist < 1) return true;
+    const ang = Math.atan2(dy, dx);
+    const idxF = ((ang/(Math.PI*2))+1)%1 * BLOB_POINTS;
+    const i0 = Math.floor(idxF)%BLOB_POINTS, i1 = (i0+1)%BLOB_POINTS;
+    const frac = idxF - Math.floor(idxF);
+    const r0 = blobRadiusAt(i0, t), r1 = blobRadiusAt(i1, t);
+    const rMul = r0 + (r1-r0)*frac;
+    return dist < wetR * rMul * marginMul;
+  }
+
+  const POP_TARGET_PER_DEPTH = { 1:28, 2:22, 3:14, 4:8 };
+
+  function spawnOrganismNear(depth, nearX, nearY, spreadR){
+    if(gameOver) return;
+    const species = pickWeightedSpecies(depth);
+    if(!species) return;
+    const org = new Organism(species, MAP_W, MAP_H);
+    let placed = false;
+    for(let attempt=0; attempt<8; attempt++){
+      const ang = Math.random()*Math.PI*2;
+      const rr = Math.random()*spreadR;
+      const px = nearX + Math.cos(ang)*rr;
+      const py = nearY + Math.sin(ang)*rr;
+      if(isInsideWetBlob(px, py, simTime, 0.85)){
+        org.x = px; org.y = py;
+        placed = true;
+        break;
+      }
+    }
+    if(!placed) return;
+    org.depthLevel = depth;
+    org.spawnFade = 0;
+    organisms.push(org);
+    layerGroups[depth].g.appendChild(org.group);
+    attachInteraction(org);
+  }
+
+  function spawnOrganismAnywhere(depth){
+    if(gameOver) return;
+    const species = pickWeightedSpecies(depth);
+    if(!species) return;
+    const org = new Organism(species, MAP_W, MAP_H);
+    let placed = false;
+    for(let attempt=0; attempt<10; attempt++){
+      const ang = Math.random()*Math.PI*2;
+      const rr = Math.random()*wetR*0.85;
+      const px = CENTER.x + Math.cos(ang)*rr;
+      const py = CENTER.y + Math.sin(ang)*rr;
+      if(isInsideWetBlob(px, py, simTime, 0.85)){
+        org.x = px; org.y = py;
+        placed = true;
+        break;
+      }
+    }
+    if(!placed){ org.x = CENTER.x; org.y = CENTER.y; }
+    org.depthLevel = depth;
+    org.spawnFade = 0;
+    organisms.push(org);
+    layerGroups[depth].g.appendChild(org.group);
+    attachInteraction(org);
+  }
+
+  let spawnCheckTimer = 0.2;
+  // ---- field of view: organisms drift into view gradually ----
+  // New organisms appear one at a time, fading in slowly, near the pipette
+  // (if it's over the slide) or around the centre of the field of view.
+  // Ones that wander far outside the view are quietly retired, so the drop
+  // always feels populated wherever you're looking without simulating
+  // hundreds of cells across the whole 20-screen slide.
+  const VIEW_TARGET = { 1:14, 2:12, 3:8, 4:5 }; // per focal plane, within the (full-screen) field of view
+  let mouseOverSlide = false;
+  dropletClip.addEventListener('pointerenter', ()=> mouseOverSlide = true);
+  dropletClip.addEventListener('pointerleave', ()=> mouseOverSlide = false);
+
+  function inView(o, margin){
+    return o.x > camera.x-margin && o.x < camera.x+VIEW_W+margin &&
+           o.y > camera.y-margin && o.y < camera.y+VIEW_H+margin;
+  }
+
+  function maybeSpawnInView(dt){
+    spawnCheckTimer -= dt;
+    if(spawnCheckTimer > 0) return;
+    spawnCheckTimer = 0.25 + Math.random()*0.3;
+
+    const viewC = { x: camera.x + VIEW_W/2, y: camera.y + VIEW_H/2 };
+    const focus = (mouseOverSlide && Math.random() < 0.7) ? mouseMap : viewC;
+
+    // pick the focal plane furthest below its target (the plane you're
+    // focused on gets priority), skipping planes this sample has no life in
+    let best = 0, bestScore = 0;
+    for(let d=1; d<=MAX_DEPTH; d++){
+      if(!availableSpecies(d).length) continue;
+      const n = organisms.filter(o=>o.depthLevel===d && !o.dying && !o.vanishing && inView(o, 40)).length;
+      // relative deficit, with a strong bonus for the plane in focus: whatever
+      // you're looking at fills first; the other planes fill proportionally.
+      const score = (VIEW_TARGET[d] - n) / VIEW_TARGET[d] + (d===currentDepth ? 1.0 : 0);
+      if(VIEW_TARGET[d] - n > 0 && score > bestScore){ best = d; bestScore = score; }
+    }
+    if(best && !atEntityLimit()){
+      const ang = Math.random()*Math.PI*2, r = 40 + Math.random()*190;
+      spawnOrganismNear(best, focus.x + Math.cos(ang)*r, focus.y + Math.sin(ang)*r, 20);
+    }
+
+    // retire organisms that drifted far outside the field of view
+    const far = VIEW_W*1.6;
+    for(let i=organisms.length-1; i>=0; i--){
+      const o = organisms[i];
+      if(o === holding || o.caught) continue;
+      if(Math.hypot(o.x-viewC.x, o.y-viewC.y) > far){
+        if(o.group.parentNode) o.group.parentNode.removeChild(o.group);
+        organisms.splice(i,1);
+      }
+    }
+  }
+
+  // ---- shape rail (left) ----
+  // the rail lists every species in SPECIES, by its displayName — one row per
+  // real organism, not a decorative shape taxonomy — grouped by sample.
+  // small single-color line-art glyphs, same thin-stroke language as the organisms
+  // themselves, so the rail reads as a specimen index rather than a plain checklist.
+  const SHAPE_ICONS = {
+    ovoid:       '<ellipse cx="8" cy="8" rx="5.4" ry="4"/>',
+    bean:        '<path d="M4.5 9.5c-1-2.5.5-5.5 3.5-5.8 3.2-.3 5.5 1.8 5.3 4.3-.2 2.6-2.6 3.8-4.8 3.8-2 0-3.2-.7-4-2.3z"/>',
+    round:       '<circle cx="8" cy="8" r="4.8"/>',
+    slipper:     '<path d="M3 8c0-2.6 2.6-4.6 5.6-4.2 2.6.3 4.7 2 4.3 4.4-.4 2.5-3 3.8-5.6 3.6C4.8 11.6 3 10.3 3 8z"/>',
+    segmented:   '<circle cx="4.3" cy="8" r="2.3"/><circle cx="8" cy="8" r="2.3"/><circle cx="11.7" cy="8" r="2.3"/>',
+    ciliate:     '<ellipse cx="8" cy="8" rx="5" ry="3.6"/><path d="M3.4 5.4l-1-1.2M3 8h-1.3M3.4 10.6l-1 1.2M12.6 5.4l1-1.2M13 8h1.3M12.6 10.6l1 1.2" stroke-width=".7"/>',
+    blepharisma: '<path d="M4 4.5c3-1.4 7-1 8 2 1 3-1.5 6.3-5 6.8C4 13.8 2.3 11 3 8.4c.4-1.6 1-2.5 1-3.9z"/>',
+    colony:      '<circle cx="6" cy="6" r="2"/><circle cx="10.2" cy="6" r="2"/><circle cx="8" cy="9.8" r="2"/>',
+    crescent:    '<path d="M5 3.5c2.8 0 5 2 5 4.5s-2.2 4.5-5 4.5c3.6-.6 5.6-8.4 0-9z"/>',
+    trumpet:     '<path d="M6.2 3l4.6 3.6c1.6 1.3 1.4 3.7-.4 4.7-2 1.1-4.4.2-4.9-2L4 4.6"/>',
+    spirochete:  '<path d="M2.5 8c.8-1.6 1.6 1.6 2.4 0s1.6-1.6 2.4 0 1.6 1.6 2.4 0 1.6-1.6 2.4 0 1.6 1.6 2.4 0" fill="none" stroke-width="1"/>',
+    nematode:    '<path d="M3 5.5c3 0 2 5 5 5s2-5 5-5" fill="none" stroke-width="1"/>',
+    spirogyra:   '<path d="M2.5 8c1.2-2.4 2.4 2.4 3.6 0s2.4 2.4 3.6 0 2.4 2.4 3.6 0" fill="none" stroke-width="1"/><line x1="2.5" y1="8" x2="13.3" y2="8" stroke-width=".4" opacity=".5"/>',
+    oscillatoria:'<path d="M2.5 6.3c3.5 2 7.5 2 11 0M2.5 9.7c3.5-2 7.5-2 11 0" fill="none" stroke-width="1"/>',
+    diatomP:     '<rect x="4" y="3.5" width="8" height="9" rx="4"/><line x1="8" y1="4.2" x2="8" y2="11.8" stroke-width=".5" opacity=".5"/>',
+    diatomC:     '<circle cx="8" cy="8" r="4.6"/><circle cx="8" cy="8" r="2.4" opacity=".5"/>',
+    diatomR:     '<rect x="3.2" y="5" width="9.6" height="6" rx="1.2"/>',
+    diatomT:     '<path d="M8 3.2l4 9.2H4z"/>',
+    closterium:  '<path d="M4 4c4-1.2 8-1.2 8 4s-4 5.2-8 4c1.6-2.6 1.6-5.4 0-8z"/>',
+    spiny:       '<circle cx="8" cy="8" r="3.4"/><path d="M8 4.6V2M8 13.4v-2.6M4.6 8H2M13.4 8h-2.6M5.4 5.4L3.6 3.6M12.4 12.4l-1.8-1.8M5.4 10.6l-1.8 1.8M12.4 3.6l-1.8 1.8" stroke-width=".7"/>',
+    heliozoan:   '<circle cx="8" cy="8" r="2.6"/><path d="M8 5.4V1.6M8 14.4v-3.8M10.6 8H14.4M1.6 8H5.4M6.2 6.2L3.6 3.6M12.4 12.4l-2.2-2.2M6.2 9.8l-2.6 2.6M12.4 3.6l-2.2 2.2" stroke-width=".7"/>',
+    flagellate:  '<circle cx="7" cy="8" r="3.2"/><path d="M10 6.6c2-1.6 4-1.2 4.6 0-1 .2-2 1-2.6 2" fill="none" stroke-width=".9"/>',
+    medusa:      '<path d="M4.5 7.5a3.5 3.5 0 0 1 7 0v.6H4.5z"/><path d="M5.5 9.5v3M7.3 9.5v3.6M9 9.5v3M10.7 9.5v2.6" stroke-width=".7"/>',
+    volvox:      '<circle cx="8" cy="8" r="5"/><circle cx="6" cy="6.5" r=".7" fill="currentColor" stroke="none"/><circle cx="10" cy="6.2" r=".7" fill="currentColor" stroke="none"/><circle cx="9" cy="10" r=".7" fill="currentColor" stroke="none"/><circle cx="6" cy="10" r=".7" fill="currentColor" stroke="none"/>',
+    rotifer:     '<circle cx="6.2" cy="8" r="2.6"/><path d="M8.6 6.4c1.6-1.4 3.6-1.4 4.6-.2-1.4.4-2.4 1-2.8 2.2M8.6 9.6c1.6 1.4 3.6 1.4 4.6.2-1.4-.4-2.4-1-2.8-2.2" fill="none" stroke-width=".8"/>',
+    tardigrado:  '<path d="M2.6 8c0-2 2.4-3.3 5.4-3.3s5.4 1.3 5.4 3.3-2.4 3.3-5.4 3.3S2.6 10 2.6 8z"/><path d="M5.2 5V3.5M7.6 4.8V3.3M10 5V3.6M5.2 11v1.5M7.6 11.2v1.5M10 11v1.4M3 6.8l-1.4-.9M3 9.2l-1.4.9" stroke-width=".8"/>',
+    vorticella:  '<path d="M8 2.6c2.6 0 4.6 2 4.6 4.4 0 2-1.6 3.4-4.6 3.4S3.4 9 3.4 7c0-2.4 2-4.4 4.6-4.4z"/><line x1="8" y1="10.4" x2="8" y2="14" stroke-width=".9"/>',
+    // milk
+    acidophilus:   '<rect x="1" y="6.5" width="4.2" height="3" rx="1.5"/><rect x="5.9" y="6.5" width="4.2" height="3" rx="1.5"/><rect x="10.8" y="6.5" width="4.2" height="3" rx="1.5"/>',
+    thermophilus:  '<circle cx="2.6" cy="8.8" r="1.5"/><circle cx="5.5" cy="7.6" r="1.5"/><circle cx="8.4" cy="7.3" r="1.5"/><circle cx="11.3" cy="8" r="1.5"/><circle cx="14" cy="9.1" r="1.3"/>',
+    lactococcus:   '<circle cx="5.6" cy="8" r="2.6"/><circle cx="10.4" cy="8" r="2.6"/>',
+    bulgaricus:    '<rect x="1" y="6.6" width="6.6" height="2.8" rx="1.4"/><rect x="8.4" y="6.6" width="6.6" height="2.8" rx="1.4" transform="rotate(8 11.7 8)"/>',
+    bifidus:       '<path d="M1.8 8H8.2M8.2 8l5.4-3.6M8.2 8l5.4 3.6" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+    kefir:         '<ellipse cx="6.6" cy="8" rx="4.4" ry="3.6"/><circle cx="12.6" cy="7.6" r="1.9"/>',
+    'e. coli':     '<rect x="4.5" y="5.8" width="9" height="4.4" rx="2.2"/><path d="M4.6 6.8c-1-.6-2-.2-3-.8M4.6 9.2c-1 .6-2 .2-3 .8" fill="none" stroke-width=".7"/>',
+    's. aureus':   '<circle cx="6" cy="6" r="2"/><circle cx="10" cy="6" r="2"/><circle cx="4" cy="9.6" r="2"/><circle cx="8" cy="9.6" r="2"/><circle cx="12" cy="9.6" r="2"/>',
+    salmonella:    '<rect x="4" y="5.8" width="8" height="4.4" rx="2.2"/><path d="M4.4 6.2 2.6 4.4M4.4 9.8 2.6 11.6M8 5.8V3.6M8 10.2v2.2M11.6 6.2l1.8-1.8M11.6 9.8l1.8 1.8" fill="none" stroke-width=".7"/>',
+    listeria:      '<rect x="5" y="5.6" width="7" height="4.8" rx="2.4"/><path d="M5.2 7c-1.2-.8-2.2-.4-3.2-1M5.2 9c-1.2.8-2.2.4-3.2 1" fill="none" stroke-width=".7"/>',
+    'c. jejuni':   '<path d="M2 9.6c1.6-4 4.4-4 6 0s4.4 4 6 0" fill="none" stroke-width="1.4"/>',
+    'b. cereus':   '<rect x="1" y="5.8" width="6.6" height="4.4" rx="1.2"/><rect x="8.4" y="5.8" width="6.6" height="4.4" rx="1.2"/><ellipse cx="4.6" cy="8" rx="1.3" ry=".9"/><ellipse cx="11.4" cy="8" rx="1.3" ry=".9"/>',
+    'm. bovis':    '<path d="M2.5 6.5c3.5-1 7.5-1 11 1M3.5 10.5c3-.8 6-.4 8.5.8" fill="none" stroke-width="1.3" stroke-linecap="round"/>',
+    brucella:      '<ellipse cx="5.5" cy="7" rx="2" ry="1.5"/><ellipse cx="10.5" cy="9.2" rx="2" ry="1.5"/>',
+    pseudomonas:   '<rect x="6" y="5.8" width="8" height="4.4" rx="2.2"/><path d="M6.1 8c-1.2-1.3-2.1-1.3-2.7 0S2 9.3 1 8" fill="none" stroke-width=".8"/>',
+    // water / soil additions
+    stentor:       '<path d="M6.2 3l4.6 3.6c1.6 1.3 1.4 3.7-.4 4.7-2 1.1-4.4.2-4.9-2L4 4.6"/><path d="M11.4 6.4l1.4-.8M12 8.4l1.6-.2M11.6 10.4l1.4.6" stroke-width=".7"/>',
+    chlamydomonas: '<ellipse cx="7" cy="8" rx="3.6" ry="3"/><path d="M10.4 7.4c1.6-1.6 3-2.6 4.4-2.4M10.4 8.6c1.6 1.6 3 2.6 4.4 2.4" fill="none" stroke-width=".8"/>',
+    bacillus:      '<rect x="4" y="6" width="8" height="4" rx="2"/><path d="M4.2 7c-1-.6-2-.3-2.8-.9M4.2 9c-1 .6-2 .3-2.8.9" fill="none" stroke-width=".7"/>',
+    spirillum:     '<path d="M2 8c1.5-3 3-3 4 0s2.5 3 4 0 2.5-3 4 0" fill="none" stroke-width="1.4"/>',
+    vibrio:        '<path d="M4 10c1.5-4 6.5-4 8 0" fill="none" stroke-width="2" stroke-linecap="round"/><path d="M12 10c.8 1 1.8 1.4 2.8 1" fill="none" stroke-width=".7"/>'
+  };
+  // grouped by sample, then from the common ones (black) to the rarest
+  // (green, purple, gold) — each row carries its rarity colour
+  const RARITY_ORDER = { comum:0, incomum:1, raro:2, lendario:3 };
+  const railGroup = sp => sp.habitat.includes('milk') ? 1 : 0;
+  const railSpecies = SPECIES.slice().sort((a,b)=> railGroup(a) - railGroup(b) || RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity]);
+  let lastRailGroup = null, lastRailRarity = null;
+  railSpecies.forEach(sp=>{
+    const group = railGroup(sp) ? 'milk' : 'env';
+    if(group !== lastRailGroup){
+      const sub = document.createElement('div');
+      sub.className = 'rail-sub';
+      sub.textContent = group === 'milk' ? 'Leite · laticínios' : 'Água e solo';
+      shapeListEl.appendChild(sub);
+      lastRailGroup = group; lastRailRarity = null;
+    }
+    if(sp.rarity !== lastRailRarity){
+      const rs = document.createElement('div');
+      rs.className = 'rail-rarity';
+      rs.style.setProperty('--rar', RARITY_INFO[sp.rarity].color);
+      rs.textContent = RARITY_INFO[sp.rarity].plural;
+      shapeListEl.appendChild(rs);
+      lastRailRarity = sp.rarity;
+    }
+    const label = sp.displayName;
+    const row = document.createElement('div');
+    row.className = 'shape-entry';
+    row.dataset.label = label;
+    row.style.setProperty('--rar', RARITY_INFO[sp.rarity].color);
+    const glyph = SHAPE_ICONS[label] || '<circle cx="8" cy="8" r="3"/>';
+    // the health dot only shows once the species has been collected
+    const dot = sp.health ? `<i class="hdot ${sp.health}" title="${HEALTH_INFO[sp.health].short}"></i>` : '';
+    row.innerHTML = `<svg class="sw" viewBox="0 0 16 16">${glyph}</svg><span>${label}</span>${dot}`;
+    shapeListEl.appendChild(row);
+  });
+
+  function markShapeDiscovered(species){
+    discoveredIds.add(species.id);
+    const label = species.displayName;
+    if(!label || discoveredShapes.has(label)) return;
+    discoveredShapes.add(label);
+    const row = shapeListEl.querySelector(`[data-label="${label}"]`);
+    if(row) row.classList.add('discovered');
+  }
+
+  // ---- "≡" toggle: expand / collapse the specimen list under the controls ----
+  const speciesToggle = document.getElementById('species-toggle');
+  speciesToggle.addEventListener('click', ()=>{
+    const open = shapeListEl.classList.toggle('collapsed') === false;
+    speciesToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    speciesToggle.title = open ? 'Ocultar espécimes' : 'Mostrar espécimes';
+  });
+
+  // ---- right panel hide/show arrow ----
+  const hudPanel = document.getElementById('hud-panel');
+  const hudToggle = document.getElementById('hud-toggle');
+  hudToggle.addEventListener('click', ()=>{
+    const hidden = hudPanel.classList.toggle('collapsed');
+    document.body.classList.toggle('hud-hidden', hidden);
+    hudToggle.textContent = hidden ? '‹' : '›';
+    hudToggle.title = hidden ? 'Mostrar dados' : 'Ocultar dados';
+    hudToggle.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+  });
+
+  // ---- phones: both cards are drawers; the scrim behind an open one closes it ----
+  const railToggle = document.getElementById('rail-toggle');
+  const phoneMQ = window.matchMedia('(max-width: 820px), (max-height: 520px)');
+  function setRail(open){
+    document.body.classList.toggle('rail-open', open);
+    railToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function setHud(open){ if(hudPanel.classList.contains('collapsed') === open) hudToggle.click(); }
+  railToggle.addEventListener('click', ()=>{
+    const open = !document.body.classList.contains('rail-open');
+    if(open && phoneMQ.matches) setHud(false); // one drawer at a time on a phone
+    setRail(open);
+  });
+  hudToggle.addEventListener('click', ()=>{ if(phoneMQ.matches && !hudPanel.classList.contains('collapsed')) setRail(false); });
+  document.getElementById('drawer-scrim').addEventListener('click', ()=>{ setRail(false); if(phoneMQ.matches) setHud(false); });
+  function applyPhoneLayout(){
+    document.body.classList.toggle('phone', phoneMQ.matches);
+    if(phoneMQ.matches){ setHud(false); setRail(false); }
+  }
+  applyPhoneLayout();
+  if(phoneMQ.addEventListener) phoneMQ.addEventListener('change', applyPhoneLayout);
+
+  // ---- HUD groups collapse/expand ----
+  document.querySelectorAll('.hud-group-head').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      head.parentElement.classList.toggle('open');
+    });
+  });
+
+  // ---- mouse = pipette only (tracks position for proximity spawning) ----
+  dropletClip.addEventListener('pointermove', (e)=>{
+    const pt = svgPointFromEvent(e);
+    mouseMap.x = pt.x; mouseMap.y = pt.y;
+  });
+
+  // ---- scroll wheel = focus knob ----
+  // trackpads fire many tiny deltas, so accumulate until one "click" of the
+  // knob's worth of scroll has built up before changing focal plane.
+  let wheelAccum = 0;
+  dropletClip.addEventListener('wheel', (e)=>{
+    e.preventDefault();
+    wheelAccum += e.deltaY;
+    if(Math.abs(wheelAccum) >= 60){
+      applyDepth(currentDepth + (wheelAccum > 0 ? 1 : -1));
+      wheelAccum = 0;
+    }
+  }, { passive:false });
+
+  // ---- arrow keys (or WASD) = move the stage, smoothly while held ----
+  const keysDown = new Set();
+  const PAN_KEYS = {
+    ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0],
+    w:[0,-1], s:[0,1], a:[-1,0], d:[1,0], W:[0,-1], S:[0,1], A:[-1,0], D:[1,0]
+  };
+  window.addEventListener('keydown', (e)=>{
+    if(e.key >= '1' && e.key <= '4') applyDepth(parseInt(e.key));
+    if(PAN_KEYS[e.key]){ keysDown.add(e.key); e.preventDefault(); }
+  });
+  window.addEventListener('keyup', (e)=>{ keysDown.delete(e.key); });
+  window.addEventListener('blur', ()=> keysDown.clear());
+
+  const PAN_SPEED = 430; // map units per second
+  function updateCameraKeys(dt){
+    if((panVel.x || panVel.y) && !panTouch){
+      camera.x += panVel.x*dt; camera.y += panVel.y*dt;
+      const k = Math.exp(-dt*4.5);
+      panVel.x *= k; panVel.y *= k;
+      if(Math.hypot(panVel.x, panVel.y) < 4) panVel.x = panVel.y = 0;
+      clampCamera(); applyViewBox();
+    }
+    if(!keysDown.size) return;
+    let vx = 0, vy = 0;
+    keysDown.forEach(k=>{ const v = PAN_KEYS[k]; if(v){ vx += v[0]; vy += v[1]; } });
+    const len = Math.hypot(vx, vy);
+    if(!len) return;
+    camera.x += (vx/len) * PAN_SPEED * dt;
+    camera.y += (vy/len) * PAN_SPEED * dt;
+    clampCamera();
+    applyViewBox();
+  }
+
+  // ---- interaction: hold to capture ----
+  const HOLD_DURATION = 5000; // 5 seconds of steady suction to capture
+  let holding = null;
+  let holdProgress = 0; // seconds of on-target suction accumulated
+  let holdLastT = 0;
+  let holdPointer = { x: 0, y: 0 };
+
+  function attachInteraction(org){
+    org.group.addEventListener('pointerdown', (e)=>{
+      e.stopPropagation();
+      startHold(org, e);
+    });
+  }
+
+  let holdTouch = false; // the hold was started by a finger (bigger target, pipette drawn at the finger)
+  function isPointerOverOrganism(org, clientX, clientY){
+    const rect = org.group.getBoundingClientRect();
+    const pad = holdTouch ? 24 : 6; // small tolerance: a pipette tip doesn't need pixel-perfect aim; a fingertip covers more
+    return clientX >= rect.left-pad && clientX <= rect.right+pad &&
+           clientY >= rect.top-pad && clientY <= rect.bottom+pad;
+  }
+
+  function startHold(org, e){
+    if(gameOver || org.caught || org.escaped || org.dying || org.vanishing) return;
+    const pt = svgPointFromEvent(e);
+    spawnRipple(pt.x, pt.y);
+
+    if(org.depthLevel !== currentDepth){
+      org.triggerFlee(org.x, org.y);
+      showToast('Fora de foco — ajuste a profundidade.', true);
+      return;
+    }
+    holding = org;
+    holding.suction = true;
+    holdProgress = 0;
+    holdLastT = performance.now();
+    holdPointer = { x: e.clientX, y: e.clientY };
+    holdTouch = e.pointerType === 'touch';
+    if(holdTouch) ppShowAt(e.clientX, e.clientY);
+    const rect = dropletClip.getBoundingClientRect();
+    updateProgressPosition(e.clientX, e.clientY, rect);
+    captureProgress.style.display = 'block';
+    setCaptureBar(0);
+
+    window.addEventListener('pointermove', onHoldMove);
+    window.addEventListener('pointerup', onHoldEnd);
+    window.addEventListener('pointercancel', onHoldEnd);
+  }
+
+  function onHoldMove(e){
+    if(!holding) return;
+    holdPointer = { x: e.clientX, y: e.clientY };
+    if(holdTouch) ppShowAt(e.clientX, e.clientY);
+    const rect = dropletClip.getBoundingClientRect();
+    updateProgressPosition(e.clientX, e.clientY, rect);
+  }
+
+  function updateProgressPosition(clientX, clientY, rect){
+    captureProgress.style.left = (clientX - rect.left) + 'px';
+    captureProgress.style.top = (clientY - rect.top) + 'px';
+  }
+
+  function setCaptureBar(t){
+    const circumference = 138.2;
+    captureBar.setAttribute('stroke-dashoffset', (circumference * (1-t)).toFixed(1));
+  }
+
+  function onHoldEnd(){
+    window.removeEventListener('pointermove', onHoldMove);
+    window.removeEventListener('pointerup', onHoldEnd);
+    window.removeEventListener('pointercancel', onHoldEnd);
+    if(holdTouch){ holdTouch = false; ppHideSoon(); }
+    if(holding) holding.suction = false;
+    if(holding && !holding.caught){
+      if(holding.stuck){
+        // trapped in dried rim: doesn't get to flee, just stays put
+      } else {
+        holding.triggerFlee(holding.x, holding.y);
+        showToast(`${holding.species.displayName} escapou da pipeta!`, true);
+      }
+    }
+    holding = null;
+    captureProgress.style.display = 'none';
+  }
+
+  function holdLoop(){
+    if(holding){
+      const now = performance.now();
+      const dt = Math.min(0.25, (now - holdLastT)/1000); // real time; cap only guards against backgrounded-tab jumps
+      holdLastT = now;
+      const inFocus = holding.depthLevel === currentDepth;
+      const pointerOnTarget = isPointerOverOrganism(holding, holdPointer.x, holdPointer.y);
+      holding.suction = inFocus && pointerOnTarget;
+      if(!inFocus || !pointerOnTarget){
+        // off target: accumulated suction drains away (faster than it builds),
+        // so wandering off costs progress without wiping a near-finished capture
+        holdProgress = Math.max(0, holdProgress - dt*1.5);
+        setCaptureBar(holdProgress*1000/HOLD_DURATION);
+      } else {
+        holdProgress += dt;
+        const t = Math.min(1, holdProgress*1000 / HOLD_DURATION);
+        setCaptureBar(t);
+        if(t >= 1){
+          holding.suction = false;
+          completeCapture(holding);
+          window.removeEventListener('pointermove', onHoldMove);
+          window.removeEventListener('pointerup', onHoldEnd);
+          window.removeEventListener('pointercancel', onHoldEnd);
+          if(holdTouch){ holdTouch = false; ppHideSoon(); }
+          holding = null;
+          captureProgress.style.display = 'none';
+        }
+      }
+    }
+    requestAnimationFrame(holdLoop);
+  }
+  requestAnimationFrame(holdLoop);
+
+  // ---- glass pipette following the pointer over the slide ----
+  // Replaces the system cursor there (mouse/pen only). Pressing squeezes the
+  // rubber bulb; while a specimen is being sucked up the bulb re-expands and
+  // the sample's liquid rises inside the glass with the capture progress,
+  // then drains back out once the specimen is in its vial or escapes.
+  const pipetteEl = document.getElementById('pipette');
+  const ppSvg = pipetteEl.querySelector('svg');
+  const ppLiquid = document.getElementById('pp-liquid');
+  const ppMeniscus = document.getElementById('pp-meniscus');
+  const ppBulge = document.getElementById('pp-bulge');
+  const ppK = parseFloat(ppSvg.getAttribute('width')) / ppSvg.viewBox.baseVal.width; // px per drawing unit
+  const ppTip = { x: -ppSvg.viewBox.baseVal.x*ppK, y: -ppSvg.viewBox.baseVal.y*ppK }; // tip is drawn at (0,0)
+  const PP_LIQUID = { water:['#a9c2b6', 0.6], soil:['#b09f76', 0.6], milk:['#ffffff', 1] };
+  const ppFinePointer = !!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches);
+  if(ppFinePointer) document.body.classList.add('pipette-on');
+  let ppVisible = false, ppPressed = false, ppLevel = 0, ppSqueeze = 0, ppSlide = null, ppLastT = performance.now();
+
+  function placePipette(e){
+    if(!ppFinePointer || e.pointerType === 'touch') return;
+    pipetteEl.style.transform = `translate3d(${(e.clientX-ppTip.x).toFixed(1)}px,${(e.clientY-ppTip.y).toFixed(1)}px,0)`;
+    if(!ppVisible){ ppVisible = true; pipetteEl.classList.add('on'); }
+  }
+  // on a touch screen the pipette only appears while a finger is catching a
+  // specimen: its tip sits under the finger and the liquid rises in the glass
+  let ppHideT = null;
+  function ppShowAt(x, y){
+    clearTimeout(ppHideT);
+    pipetteEl.style.transform = `translate3d(${(x-ppTip.x).toFixed(1)}px,${(y-ppTip.y).toFixed(1)}px,0)`;
+    if(!ppVisible){ ppVisible = true; pipetteEl.classList.add('on'); }
+  }
+  function ppHideSoon(){
+    clearTimeout(ppHideT);
+    ppHideT = setTimeout(()=>{ if(!holding){ ppVisible = false; pipetteEl.classList.remove('on'); } }, 650); // let the liquid drain first
+  }
+  dropletClip.addEventListener('pointermove', placePipette);
+  dropletClip.addEventListener('pointerenter', placePipette);
+  dropletClip.addEventListener('pointerleave', (e)=>{ if(e.pointerType === 'touch') return; ppVisible = false; pipetteEl.classList.remove('on'); });
+  // capture phase: organisms stop the pointerdown from bubbling
+  dropletClip.addEventListener('pointerdown', ()=>{ ppPressed = true; }, true);
+  window.addEventListener('pointerup', ()=>{ ppPressed = false; });
+
+  // capture progress (0..1) -> liquid height above the tip: the thin
+  // capillary fills fast, then the shoulder, then the wide body slowly
+  function ppLiquidHeight(p){
+    if(p <= 0.35) return p/0.35*64;
+    if(p <= 0.5) return 64 + (p-0.35)/0.15*16;
+    return 80 + (p-0.5)/0.5*40;
+  }
+  // inner half-width of the glass at height h above the tip (for the meniscus)
+  function ppHalfWidth(h){
+    if(h <= 64) return 0.45 + 0.7*h/64;
+    if(h <= 80){ const t = (h-64)/16; return 1.15 + 4.35*t*t*(3-2*t); }
+    return 5.5;
+  }
+
+  function pipetteLoop(now){
+    const dt = Math.min(0.1, (now - ppLastT)/1000);
+    ppLastT = now;
+    if(ppVisible){
+      if(ppSlide !== currentSlide){
+        ppSlide = currentSlide;
+        const [col, op] = PP_LIQUID[currentSlide] || PP_LIQUID.water;
+        ppLiquid.setAttribute('fill', col); ppLiquid.setAttribute('fill-opacity', op);
+      }
+      const p = holding ? Math.min(1, holdProgress*1000/HOLD_DURATION) : pendingRelease ? 0.55 : 0;
+      ppLevel += (p - ppLevel) * Math.min(1, dt*(p > ppLevel ? 12 : 4)); // rises with the suction, drains slower
+      const squeezeTarget = ppPressed ? (holding ? 1 - p : 1) : 0;
+      ppSqueeze += (squeezeTarget - ppSqueeze) * Math.min(1, dt*14);
+
+      const h = ppLevel < 0.002 ? 0 : ppLiquidHeight(ppLevel);
+      ppLiquid.setAttribute('y', (-h).toFixed(2));
+      ppLiquid.setAttribute('height', (h > 0 ? h + 1 : 0).toFixed(2));
+      ppMeniscus.setAttribute('cy', (-h).toFixed(2));
+      ppMeniscus.setAttribute('rx', ppHalfWidth(h).toFixed(2));
+      ppMeniscus.setAttribute('opacity', h > 1 ? 1 : 0);
+      // pinched between the fingers: narrower, a touch longer
+      const sx = 1 - 0.32*ppSqueeze, sy = 1 + 0.05*ppSqueeze;
+      ppBulge.setAttribute('transform', `translate(0 -158) scale(${sx.toFixed(3)} ${sy.toFixed(3)}) translate(0 158)`);
+    }
+    requestAnimationFrame(pipetteLoop);
+  }
+  requestAnimationFrame(pipetteLoop);
+
+  // ---- poking the water, and putting specimens back on the slide ----
+  let pendingRelease = null; // species picked in its sheet, waiting for a click on the slide
+  function placeOrganism(species, x, y, depth){
+    const org = new Organism(species, MAP_W, MAP_H);
+    org.x = x; org.y = y;
+    org.depthLevel = depth;
+    org.spawnFade = 0;
+    organisms.push(org);
+    layerGroups[depth].g.appendChild(org.group);
+    attachInteraction(org);
+    return org;
+  }
+  function releaseSpecimen(species, x, y){
+    if(!isInsideWetBlob(x, y, simTime, 0.95)){ showToast('Solte dentro da gota.', true); return; }
+    pendingRelease = null;
+    const org = placeOrganism(species, x, y, species.depth);
+    org.spawnFade = 0.4;
+    spawnRipple(x, y);
+    caughtLog[species.id]--;
+    if(caughtLog[species.id] <= 0) delete caughtLog[species.id];
+    if(currentDepth !== species.depth) applyDepth(species.depth); // focus on the plane it lives in
+    updateReel(); updateHud();
+    showToast(`${species.displayName} solto na lâmina`, false);
+  }
+  // capture phase: while carrying a specimen, this click drops it instead of grabbing one
+  dropletClip.addEventListener('pointerdown', (e)=>{
+    if(!pendingRelease || gameOver) return;
+    e.stopPropagation();
+    const pt = svgPointFromEvent(e);
+    releaseSpecimen(pendingRelease, pt.x, pt.y);
+  }, true);
+  // a click that hits no organism (organisms stop their own clicks): the
+  // pipette tip pokes the water — a ripple, and whatever is close by in the
+  // focused plane gets startled and darts away
+  function pokeWater(e){
+    const pt = svgPointFromEvent(e);
+    spawnRipple(pt.x, pt.y);
+    organisms.forEach(o=>{
+      if(o.depthLevel !== currentDepth || o.caught || o.dying || o.beingEaten) return;
+      if(Math.hypot(o.x - pt.x, o.y - pt.y) < 60) o.triggerFlee(pt.x, pt.y);
+    });
+  }
+  dropletClip.addEventListener('pointerdown', (e)=>{
+    if(gameOver || e.pointerType === 'touch') return;
+    pokeWater(e);
+  });
+
+  // ---- touch: drag the slide around, tap to poke the water, put a finger on
+  // (or right next to) a specimen to catch it, two fingers up/down to focus ----
+  const touchPts = new Map();   // active fingers on the slide: pointerId -> {x, y}
+  let panTouch = null;          // the finger dragging the slide
+  let twoFingerY = null, twoFingerAccum = 0;
+  const panVel = { x: 0, y: 0 }; // fling: the slide keeps gliding a moment after release
+  window.addEventListener('pointerdown', (e)=>{ if(e.pointerType === 'touch') document.body.classList.add('touch'); }, true);
+  function unitsPerPx(){ return VIEW_W / dropletClip.getBoundingClientRect().width; }
+  function avgTouchY(){ let y = 0; touchPts.forEach(p=> y += p.y); return y / touchPts.size; }
+  // the in-focus specimen closest to a fingertip, within reach
+  function nearestCatchable(cx, cy, maxPx){
+    let best = null, bd = maxPx;
+    for(const o of organisms){
+      if(o.depthLevel !== currentDepth || o.caught || o.dying || o.vanishing || o.beingEaten || o._hidden) continue;
+      const r = o.group.getBoundingClientRect();
+      const d = Math.hypot(Math.max(r.left - cx, 0, cx - r.right), Math.max(r.top - cy, 0, cy - r.bottom));
+      if(d < bd){ bd = d; best = o; }
+    }
+    return best;
+  }
+  dropletClip.addEventListener('pointerdown', (e)=>{
+    if(e.pointerType !== 'touch' || gameOver) return;
+    touchPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    panVel.x = panVel.y = 0;
+    if(touchPts.size === 2){ panTouch = null; twoFingerY = avgTouchY(); twoFingerAccum = 0; return; }
+    if(touchPts.size > 2 || holding) return;
+    const near = nearestCatchable(e.clientX, e.clientY, 30);
+    if(near){ startHold(near, e); return; }
+    panTouch = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
+  });
+  window.addEventListener('pointermove', (e)=>{
+    if(e.pointerType !== 'touch' || !touchPts.has(e.pointerId)) return;
+    touchPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(touchPts.size >= 2 && twoFingerY !== null){
+      const y = avgTouchY();
+      twoFingerAccum += y - twoFingerY; twoFingerY = y;
+      if(Math.abs(twoFingerAccum) > 46){ applyDepth(currentDepth + (twoFingerAccum > 0 ? 1 : -1)); twoFingerAccum = 0; }
+      return;
+    }
+    if(!panTouch || panTouch.id !== e.pointerId) return;
+    if(!panTouch.moved && Math.hypot(e.clientX - panTouch.sx, e.clientY - panTouch.sy) > 9) panTouch.moved = true;
+    if(panTouch.moved){
+      const k = unitsPerPx(), now = performance.now();
+      const dx = (e.clientX - panTouch.x)*k, dy = (e.clientY - panTouch.y)*k;
+      camera.x -= dx; camera.y -= dy;
+      clampCamera(); applyViewBox();
+      const dts = Math.max(0.008, (now - panTouch.t)/1000);
+      panVel.x = panVel.x*0.6 + (-dx/dts)*0.4; panVel.y = panVel.y*0.6 + (-dy/dts)*0.4;
+      panTouch.t = now;
+    }
+    panTouch.x = e.clientX; panTouch.y = e.clientY;
+  });
+  function endTouch(e){
+    if(e.pointerType !== 'touch' || !touchPts.has(e.pointerId)) return;
+    touchPts.delete(e.pointerId);
+    if(touchPts.size < 2) twoFingerY = null;
+    if(panTouch && panTouch.id === e.pointerId){
+      if(!panTouch.moved){ panVel.x = panVel.y = 0; if(e.type === 'pointerup' && !gameOver) pokeWater(e); }
+      else if(performance.now() - panTouch.t > 90){ panVel.x = panVel.y = 0; } // finger stopped before lifting: no fling
+      panTouch = null;
+    }
+  }
+  window.addEventListener('pointerup', endTouch);
+  window.addEventListener('pointercancel', endTouch);
+
+  // on-screen focus buttons (touch screens)
+  document.getElementById('focus-up').addEventListener('click', ()=> applyDepth(currentDepth - 1));
+  document.getElementById('focus-down').addEventListener('click', ()=> applyDepth(currentDepth + 1));
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && pendingRelease){ pendingRelease = null; showToast('Soltura cancelada', false); }
+  });
+
+  // ---- life between organisms: live division and predation ----
+  const MAX_ORGANISMS = 160;
+  let divisionToastShown = false, predationToastShown = false;
+  // bacteria divide every ~20–50 s here, diatoms more slowly
+  function divisionDelay(sp){
+    return (sp.motility === 'gliding' || sp.motility === 'brownian') ? 30 + Math.random()*40 : 18 + Math.random()*30;
+  }
+  function updateDivision(o, dt){
+    if(!o.species.divides || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.suction || o.tun || o.fleeing) return;
+    if(o._divT === undefined) o._divT = divisionDelay(o.species);
+    // "Caçar e lutar": a well-fed cell divides much sooner, a hungry one later
+    o._divT -= dt * (behaviorOn ? ((o.energy || 0) >= 3 ? 4 : 0.5) : 1);
+    if(o._divT > 0) return;
+    o._divT = divisionDelay(o.species);
+    const same = organisms.filter(x => x.species === o.species && !x.dying && inView(x, 40)).length;
+    if(same >= (o.species.maxInView || 6) || organisms.length >= MAX_ORGANISMS || atEntityLimit()) return;
+    if(!isInsideWetBlob(o.x, o.y, simTime, 0.9)) return;
+    divide(o);
+  }
+  // binary fission: the daughter starts on top of the mother and both slide
+  // apart — rods split across the middle and separate end to end; diatoms
+  // split along the valve plane, so the two daughters end up side by side
+  function divide(o){
+    const sp = o.species;
+    if(behaviorOn) o.energy = Math.max(0, (o.energy || 0) - 3); // dividing spends what it ate
+    const child = placeOrganism(sp, o.x, o.y, o.depthLevel);
+    child.spawnFade = o.spawnFade;
+    child.angle = child.displayAngle = o.displayAngle;
+    const rod = ['bacillus','vibrio','spirillum'].includes(sp.shape);
+    const axis = o.displayAngle + (rod ? 0 : Math.PI/2);
+    const dist = rod ? sp.length*1.05 : sp.width*1.1;
+    o._split = { t:0, dir:1, axis, dist };
+    child._split = { t:0, dir:-1, axis, dist };
+    child._divT = divisionDelay(sp);
+    if(!divisionToastShown && inView(o, 0)){
+      divisionToastShown = true;
+      showToast(`${sp.displayName} está se dividindo ao vivo (fissão binária)!`, false, null, 2600);
+    }
+  }
+  // predators (species with an "eats" list) swallow prey of those species
+  // that touch them in the same focal plane, and steer toward food they
+  // sense nearby; then they need a while to digest before eating again
+  function updatePredation(o, dt){
+    const eats = o.species.eats;
+    if(!eats || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun || o.suction || o.engaged) return;
+    if(o._digest > 0){ o._digest -= dt; return; }
+    const reach = Math.max(o.species.length, o.species.width) * 0.5;
+    let best = null, bestD = Infinity;
+    for(const p of organisms){
+      if(p === o || p.depthLevel !== o.depthLevel || !eats.includes(p.species.id)) continue;
+      if(p.caught || p.dying || p.vanishing || p.beingEaten || p.tun || p._split) continue;
+      const d = Math.hypot(p.x - o.x, p.y - o.y);
+      if(d < bestD){ best = p; bestD = d; }
+    }
+    if(!best) return;
+    const preyR = Math.max(best.species.length, best.species.width) * 0.3;
+    if(bestD < reach + preyR){
+      if(Math.random() < dt*1.5) swallow(o, best);
+    } else if(bestD < reach*(behaviorOn ? 12 : 4) && o.species.motility !== 'stalked' && !o.fleeing){
+      const toward = Math.atan2(best.y - o.y, best.x - o.x);
+      // "Caçar e lutar": predators spot prey from much further and chase it
+      if(behaviorOn){ o.steerTo = toward; o.speedBoost = 1.45; }
+      else o.angle += Math.atan2(Math.sin(toward - o.angle), Math.cos(toward - o.angle)) * Math.min(1, dt*2);
+    }
+  }
+  function swallow(pred, prey){
+    prey.beingEaten = { by: pred, t: 0 };
+    prey.suction = false;
+    if(holding === prey){
+      holding = null;
+      captureProgress.style.display = 'none';
+      window.removeEventListener('pointermove', onHoldMove);
+      window.removeEventListener('pointerup', onHoldEnd);
+      showToast(`O ${pred.species.displayName} comeu o ${prey.species.displayName} que você estava pegando!`, true, null, 2800);
+    } else if(!predationToastShown && inView(pred, 0)){
+      predationToastShown = true;
+      showToast(`${pred.species.displayName} comeu um ${prey.species.displayName}!`, false, null, 2600);
+    }
+    pred._digest = 12 + Math.random()*10;
+    // a fresh food vacuole shows up inside the predator and is slowly digested
+    const fv = el('circle', { cx:(-pred.species.length*0.05).toFixed(1), cy:0, r:(pred.species.width*0.14).toFixed(2), fill:'#6e5a3a', opacity:0.5 });
+    (pred.bodyEl || pred.group).appendChild(fv);
+    fv.animate([{ opacity:0.55 }, { opacity:0 }], { duration:12000, easing:'ease-in' }).onfinish = ()=> fv.remove();
+  }
+
+  // color / duration are optional: the milk slide tints the toast with the
+  // health verdict and keeps it up longer so it can be read
+  function showToast(msg, isWarn, color, duration){
+    toast.textContent = msg;
+    toast.style.color = color || (isWarn ? '#b0322a' : '#111');
+    toast.style.borderColor = color || '#111';
+    toast.animate([
+      { opacity:0, transform:'translate(-50%, -6px)' },
+      { opacity:1, transform:'translate(-50%, 0)', offset:0.15 },
+      { opacity:1, transform:'translate(-50%, 0)', offset:0.8 },
+      { opacity:0, transform:'translate(-50%, -6px)' }
+    ], { duration: duration || 1500, easing:'ease-out' });
+  }
+
+  function completeCapture(org){
+    org.caught = true;
+    spawnRipple(org.x, org.y);
+    const wrap = el('g', {});
+    while(org.group.firstChild){ wrap.appendChild(org.group.firstChild); }
+    org.group.appendChild(wrap);
+    wrap.style.transformBox = 'fill-box';
+    wrap.style.transformOrigin = 'center';
+    wrap.animate([
+      { opacity:1, transform:'scale(1)' },
+      { opacity:0, transform:'scale(0.1)' }
+    ], { duration: 300, easing:'ease-in' }).onfinish = ()=>{
+      org.group.remove();
+      const idx = organisms.indexOf(org);
+      if(idx>=0) organisms.splice(idx,1);
+    };
+
+    const sp = org.species;
+    caughtLog[sp.id] = (caughtLog[sp.id]||0) + 1;
+    markShapeDiscovered(sp);
+    if(sp.health){
+      // milk microbes: say right away whether it is good or bad for people
+      if(currentSlide === 'milk') milkSession.caught[sp.id] = (milkSession.caught[sp.id]||0) + 1;
+      const h = HEALTH_INFO[sp.health];
+      showToast(`Coletado: ${sp.displayName} · ${h.icon} ${h.label}`, false, h.color, 2800);
+    } else {
+      showToast(`Coletado: ${sp.displayName} (${RARITY_INFO[sp.rarity].label})`, false, RARITY_INFO[sp.rarity].color);
+    }
+    updateHud();
+    updateReel();
+  }
+
+  // ---- depth control ----
+  function applyDepth(depth){
+    currentDepth = Math.max(1, Math.min(MAX_DEPTH, depth));
+    const depthNames = {1:'superficial', 2:'intermediário', 3:'profundo', 4:'fundo'};
+    hudDepthName.textContent = depthNames[currentDepth];
+    hudDepthLevel.textContent = `${currentDepth}/${MAX_DEPTH}`;
+    const zoomMap = {1:'100x', 2:'250x', 3:'400x', 4:'1000x'};
+    hudZoom.textContent = zoomMap[currentDepth];
+    document.querySelectorAll('#focus-ctl .fdots i').forEach((d, i)=> d.classList.toggle('on', i + 1 === currentDepth));
+
+    for(let d=1; d<=MAX_DEPTH; d++){
+      const diff = Math.abs(d - currentDepth);
+      const blurAmt = diff === 0 ? 0 : diff === 1 ? 1.6 : diff === 2 ? 3.2 : 4.6;
+      layerGroups[d].feBlur.setAttribute('stdDeviation', blurAmt.toFixed(2));
+      if(blurAmt === 0) layerGroups[d].g.removeAttribute('filter');   // in focus: no filter pass at all
+      else layerGroups[d].g.setAttribute('filter', `url(#blur-d${d})`);
+      if(blurAmt === 0) strandedLayers[d].removeAttribute('filter');
+      else strandedLayers[d].setAttribute('filter', `url(#blur-d${d})`);
+      strandedLayers[d].style.opacity = diff===0 ? 1 : diff===1 ? 0.55 : 0.28;
+      layerGroups[d].g.style.opacity = diff===0 ? 1 : diff===1 ? 0.55 : 0.28;
+      layerGroups[d].g.style.transition = 'opacity .35s ease';
+    }
+  }
+
+  // ---- HUD updates ----
+  function updateHud(){
+    const distinctCaught = discoveredShapes.size;
+    hudOrgCount.textContent = `${distinctCaught}/${SPECIES.length}`;
+    document.getElementById('species-count').textContent = `${distinctCaught}/${SPECIES.length}`;
+    const totalCaught = Object.values(caughtLog).reduce((a,b)=>a+b,0);
+    hudJarCount.textContent = totalCaught;
+    hudFieldCount.textContent = organisms.length;
+    hudLifeActive.textContent = liveCount();
+    const hd = document.getElementById('hud-deaths'); if(hd) hd.textContent = deathsAtEdge;
+    updateMilkHud();
+  }
+
+  // ---- milk analysis: counts by health class and the lot's risk level ----
+  function milkCounts(){
+    const c = { benefica:0, deteriorante:0, patogenica:0 };
+    Object.entries(milkSession.caught).forEach(([id, n])=>{ c[SPECIES_BY_ID[id].health] += n; });
+    return c;
+  }
+  function milkRisk(c){
+    if(c.patogenica) return { level:'ALTO', cls:'crit' };
+    if(c.deteriorante) return { level:'MODERADO', cls:'warn' };
+    if(c.benefica) return { level:'BAIXO', cls:'' };
+    return { level:'sem dados', cls:'' };
+  }
+  function updateMilkHud(){
+    if(currentSlide !== 'milk') return;
+    const c = milkCounts(), risk = milkRisk(c);
+    hudMilkLot.textContent = `nº ${milkSession.number}`;
+    hudMilkGood.textContent = c.benefica;
+    hudMilkSpoil.textContent = c.deteriorante;
+    hudMilkBad.textContent = c.patogenica;
+    hudMilkRisk.textContent = risk.level;
+    hudMilkRiskRow.classList.toggle('warn', risk.cls === 'warn');
+    hudMilkRiskRow.classList.toggle('crit', risk.cls === 'crit');
+  }
+
+  // Compute a per-species scale so thumbnails fill their frame consistently —
+  // a 46-unit paramecium and a 9-unit micrococcus should both read clearly at a glance.
+  function thumbnailScaleFor(species){
+    const longestDim = Math.max(species.length, species.width);
+    const targetFill = 40; // desired on-screen size in the 60x60 viewBox, leaving margin
+    return Math.min(2.2, Math.max(0.7, targetFill / longestDim));
+  }
+
+  // ---- reel (bottom right) ----
+  function updateReel(){
+    reel.innerHTML = '';
+    Object.keys(caughtLog).forEach(id=>{
+      const species = SPECIES.find(s=>s.id===id);
+      const slot = document.createElement('div');
+      slot.className = `reel-slot rarity-${species.rarity}`;
+      const mini = new Organism(species, 60, 60);
+      mini.spawnFade = 1;
+      mini.x = 0; mini.y = 0; mini.angle = 0;
+      mini.render(0); mini.group.setAttribute('filter','url(#soft-edge)'); // draw the resting pose once — these thumbnails never loop
+      const scale = thumbnailScaleFor(species);
+      mini.group.setAttribute('transform', `translate(30,30) scale(${scale.toFixed(2)})`);
+      const svg = el('svg', { viewBox:'0 0 60 60' });
+      svg.appendChild(mini.group);
+      slot.appendChild(svg);
+      const countEl = document.createElement('span');
+      countEl.className = 'reel-count mono';
+      countEl.textContent = `×${caughtLog[id]}`;
+      slot.appendChild(countEl);
+      const nameEl = document.createElement('span');
+      nameEl.className = 'reel-name';
+      nameEl.textContent = species.displayName;
+      slot.appendChild(nameEl);
+      slot.title = `${species.displayName} — ${species.commonName}`;
+      if(species.health){
+        const h = HEALTH_INFO[species.health];
+        const badge = document.createElement('span');
+        badge.className = `health-badge ${species.health}`;
+        badge.textContent = h.icon;
+        slot.appendChild(badge);
+        slot.title += ` — ${h.short}`;
+      }
+      slot.addEventListener('click', ()=> openSpeciesPanel(species));
+      reel.appendChild(slot);
+    });
+  }
+
+  // ---- species detail panel ----
+  const HABITAT_LABEL = { soil:'solo', water:'água doce', milk:'leite (laticínios)' };
+  let panelSpecies = null;
+  function openSpeciesPanel(species){
+    panelSpecies = species;
+    // a specimen in a vial can be put back on the slide (it goes to its own focal plane)
+    document.getElementById('panel-release').style.display = (caughtLog[species.id] > 0 && !gameOver) ? '' : 'none';
+    document.getElementById('panel-common-name').textContent = species.displayName;
+    document.getElementById('panel-sci-name').textContent = species.sciName;
+    document.getElementById('panel-real').textContent = species.commonName;
+    document.getElementById('panel-habitat').textContent =
+      species.habitat.map(h => HABITAT_LABEL[h] || h).join(' · ');
+    // health verdict + dairy role + Gram: only the milk microbes carry these
+    document.getElementById('panel-health-section').style.display = species.health ? '' : 'none';
+    document.getElementById('panel-industry-section').style.display = species.industry ? '' : 'none';
+    document.getElementById('panel-gram-row').style.display = species.gram ? '' : 'none';
+    if(species.health){
+      const tag = document.getElementById('panel-health-tag');
+      tag.className = `health-tag ${species.health}`;
+      tag.textContent = `${HEALTH_INFO[species.health].icon} ${HEALTH_INFO[species.health].label}`;
+      document.getElementById('panel-health').textContent = species.healthNote;
+    }
+    document.getElementById('panel-industry').textContent = species.industry || '';
+    document.getElementById('panel-gram').textContent = species.gram || '';
+    const wiki = document.getElementById('panel-wiki');
+    wiki.href = wikipediaUrl(species);
+    wiki.textContent = `Ver "${species.commonName}" na Wikipedia ↗`;
+    const rarityTag = document.getElementById('panel-rarity');
+    rarityTag.textContent = RARITY_INFO[species.rarity].label;
+    rarityTag.style.color = RARITY_INFO[species.rarity].color;
+    document.getElementById('panel-desc').textContent = species.desc;
+    document.getElementById('panel-behavior').textContent = species.behavior;
+    document.getElementById('panel-depth').textContent = DEPTH_INFO[species.depth];
+    document.getElementById('panel-shape').textContent = species.shapeLabel || shapeLabel(species.shape);
+    document.getElementById('panel-motility').textContent = motilityLabel(species);
+    document.getElementById('panel-caught-count').textContent = caughtLog[species.id] || 0;
+
+    const portrait = document.getElementById('panel-portrait');
+    portrait.innerHTML = '';
+    const mini = new Organism(species, 60, 60);
+    mini.spawnFade = 1;
+    mini.x = 0; mini.y = 0; mini.angle = 0;
+    mini.render(0); mini.group.setAttribute('filter','url(#soft-edge)'); // draw the resting pose once — this portrait never loops
+    const scale = thumbnailScaleFor(species);
+    mini.group.setAttribute('transform', `translate(30,30) scale(${scale.toFixed(2)})`);
+    const svg = el('svg', { viewBox:'0 0 60 60', width:'100%', height:'100%' });
+    svg.appendChild(mini.group);
+    portrait.appendChild(svg);
+
+    panelOverlay.classList.add('open');
+  }
+
+  function shapeLabel(shape){
+    const map = {
+      'ovoid-cilia':'Ovoide ciliado', 'bean-cilia':'Feijão / rim, ciliado',
+      'testate-amoeba':'Ameba com carapaça (teca)', 'slipper-cilia':'Sola de sapato, ciliado',
+      paramecium:'Sola de sapato, ciliado', 'segmented-worm':'Verme segmentado',
+      'ciliate-generic':'Oval, totalmente ciliado', 'blepharisma-shape':'Alongado, afunilado, rosado',
+      'nematode-worm':'Verme cilíndrico', 'spirogyra-filament':'Filamento com cloroplasto espiral',
+      'oscillatoria-filament':'Filamento de células em disco', 'diatom-pennate':'Carapaça de sílica alongada',
+      'diatom-centric':'Carapaça de sílica circular', 'diatom-rect':'Carapaça de sílica em barco',
+      'diatom-tri':'Carapaça de sílica triangular', 'closterium-crescent':'Meia-lua',
+      'spiny-desmid':'Lobulado e espinhoso', 'heliozoan-rays':'Esfera com raios (axópodes)',
+      'euglena-flagellate':'Fusiforme com flagelo', 'medusa-bell':'Sino com tentáculos',
+      volvox:'Colônia esférica', tardigrade:'Corpo segmentado com 8 patas e garras', 'rotifer-crown':'Corpo com coroa ciliada', 'vorticella-stalked':'Sino preso a um talo',
+      bacillus:'Bastonete (bacilo)', 'bacillus-chain':'Bastonetes em cadeia', 'coccus-chain':'Cocos em cadeia (colar de contas)',
+      'coccus-cluster':'Cocos em cacho, como uvas', spirillum:'Espiral', 'bifid-rod':'Bastonete ramificado em "Y"',
+      'budding-yeast':'Célula oval com broto (levedura)', spirochete:'Espiral longa e apertada',
+      vibrio:'Bastonete curvo (vírgula)', 'stentor-trumpet':'Trompete com coroa de cílios na frente',
+      biflagellate:'Oval com dois flagelos na frente'
+    };
+    return map[shape] || shape;
+  }
+  // bacteria are labelled by the motor model they actually use (BACTERIA_MOTOR)
+  const MOTOR_LABEL = {
+    peritrichous:'Flagelos por todo o corpo — corrida e cambalhota',
+    'push-pull':'Flagelos polares — avança e recua',
+    flick:'Flagelo polar — avança, recua e vira de lado',
+    amphitrichous:'Um flagelo em cada ponta — saca-rolhas, troca de sentido',
+    'rigid-helix':'Espiral rígida com tufo de flagelos em cada ponta',
+    endoflagella:'Flagelos internos — o corpo flexível gira e ondula',
+    brownian:'Sem flagelos — só o movimento browniano'
+  };
+  function motilityLabel(species){
+    const motor = BACTERIA_MOTOR[species.id];
+    if(motor) return MOTOR_LABEL[motor.type];
+    const m = species.motility;
+    const map = {
+      'flagella-run-tumble':'Flagelos — corrida e cambalhota',
+      'flagella-smooth':'Flagelos — nado contínuo em espiral',
+      'flagella-colony':'Flagelos coloniais sincronizados',
+      cilia:'Cílios — batimento ondulante',
+      brownian:'Sem locomoção própria (browniano)',
+      'flagellate-whip':'Flagelo único — chicoteia à frente do corpo',
+      gliding:'Deslize por secreção (para e inverte)',
+      crawl:'Rastejo / pseudópodes / ondulação do corpo',
+      stalked:'Séssil — preso por um talo contrátil'
+    };
+    return map[m] || m;
+  }
+
+  panelClose.addEventListener('click', ()=> panelOverlay.classList.remove('open'));
+  document.getElementById('panel-release').addEventListener('click', ()=>{
+    if(!panelSpecies || !(caughtLog[panelSpecies.id] > 0) || gameOver) return;
+    pendingRelease = panelSpecies;
+    panelOverlay.classList.remove('open');
+    showToast(`Clique na lâmina para soltar: ${panelSpecies.displayName} (Esc cancela)`, false, null, 3000);
+  });
+  panelOverlay.addEventListener('click', (e)=>{ if(e.target===panelOverlay) panelOverlay.classList.remove('open'); });
+
+  // ---- drying system ----
+  function updateDrying(dt){
+    if(gameOver) return;
+    if(!dryPaused) dryElapsed += dt;
+    const t = Math.min(1, dryElapsed / DRY_DURATION);
+    const shrink = Math.pow(t, 1.4);
+    wetR = MAX_WET_R * (1 - shrink);
+    if(!Number.isFinite(wetR)) wetR = MAX_WET_R;
+
+    blobRefreshT -= dt;
+    if(blobRefreshT <= 0){ blobRefreshT = 0.25; updateStaticBlobShapes(simTime); }
+
+    dryFieldBg.setAttribute('opacity', (0.9*shrink).toFixed(2));
+
+    residueSpecks.forEach(({el: spot, rr})=>{
+      spot.setAttribute('opacity', rr > wetR ? 0.4 : 0);
+    });
+
+    const pct = Math.round((1-t)*100);
+    hudDryPct.textContent = pct + '%';
+    hudDryBar.style.width = pct + '%';
+    hudDryRow.classList.toggle('warn', pct <= 40 && pct > 15);
+    hudDryRow.classList.toggle('crit', pct <= 15);
+
+    // anything left outside the receding water is stranded and dies
+    organisms.forEach(o=>{
+      if(o.caught || o.escaped || o.dying || o.vanishing || o.beingEaten) return;
+      if(!isInsideWetBlob(o.x, o.y, simTime, 1.0)){
+        if(o.species.cryptobiosis){
+          // tardigrade: survives the drying by becoming a tun — it can still be collected
+          if(!o.tun){
+            o.enterTun();
+            strandedLayers[o.depthLevel].appendChild(o.group); // out of the wet clip: stays visible
+            if(!tunToastShown){ tunToastShown = true; showToast('Tardígrado entrou em criptobiose: virou um "tun" e sobreviveu à seca!', false); }
+          }
+          return;
+        }
+        if(holding === o){ o.suction = false; holding = null; captureProgress.style.display = 'none'; }
+        o.startDying();
+        deathsAtEdge++;
+      }
+    });
+
+    if(t >= 1 && !gameOver){
+      endGame();
+    }
+  }
+
+  // early: true when the analyst issued the report before the drop dried
+  function endGame(early){
+    gameOver = true;
+    if(holding){ holding.suction = false; holding = null; captureProgress.style.display = 'none'; }
+    const isMilk = currentSlide === 'milk';
+    driedOverlay.classList.toggle('laudo', isMilk);
+    if(isMilk){
+      driedTitle.textContent = 'Laudo microbiológico do lote';
+      driedSummary.textContent = (early ? '' : 'A amostra secou.\n') + buildLaudo();
+      restartBtn.textContent = 'Analisar novo lote';
+    } else {
+      const totalCaught = Object.values(caughtLog).reduce((a,b)=>a+b,0);
+      const distinct = discoveredShapes.size;
+      driedTitle.textContent = 'A lâmina secou';
+      driedSummary.textContent = `Coletados: ${totalCaught} espécimes · ${distinct}/${SPECIES.length} espécies catalogadas.`;
+      restartBtn.textContent = 'Nova lâmina';
+    }
+    driedOverlay.classList.add('show');
+  }
+
+  // Quality-control report for the milk lot: what was found, the risk, what
+  // each problem microbe points to at the farm/plant, and finally the lot's
+  // real (hidden) condition — so the player can check their own diagnosis.
+  const RISK_TEXT = {
+    'ALTO': 'Risco ALTO — patógenos detectados: o leite não pode ser consumido cru e a origem da contaminação precisa ser investigada.',
+    'MODERADO': 'Risco MODERADO — só deteriorantes: não costumam causar doença, mas reduzem a validade e a qualidade do produto.',
+    'BAIXO': 'Risco BAIXO — apenas microrganismos benéficos: lote aprovado para o processamento.',
+    'sem dados': 'Laudo inconclusivo — nenhuma amostra foi coletada.'
+  };
+  function buildLaudo(){
+    const { lot, number, caught } = milkSession;
+    const c = milkCounts(), risk = milkRisk(c);
+    const total = c.benefica + c.deteriorante + c.patogenica;
+    const found = Object.keys(caught).map(id => SPECIES_BY_ID[id]);
+    const lines = [
+      `Lote nº ${number} · ${total} coleta${total === 1 ? '' : 's'}`,
+      `Benéficas ${c.benefica} · Deteriorantes ${c.deteriorante} · Patogênicas ${c.patogenica}`,
+      '',
+      RISK_TEXT[risk.level]
+    ];
+    const good = found.filter(sp => sp.health === 'benefica');
+    if(good.length) lines.push('', `Fermentos e probióticos: ${good.map(sp => sp.displayName).join(', ')}.`);
+    const bad = found.filter(sp => sp.health !== 'benefica');
+    if(bad.length){
+      lines.push('', 'Achados:');
+      bad.forEach(sp => lines.push(`${HEALTH_INFO[sp.health].icon} ${sp.displayName} — ${sp.finding}`));
+    }
+    lines.push('', `Situação real do lote: ${lot.diagnosis}`);
+    if(lot.key.length){
+      lines.push(lot.key.some(id => caught[id])
+        ? '✓ Seu laudo encontrou o agente principal do problema.'
+        : `✗ O agente principal deste lote (${lot.key.map(id => SPECIES_BY_ID[id].displayName).join(' / ')}) não foi coletado.`);
+    } else {
+      lines.push(total >= 3
+        ? '✓ Laudo coerente: nenhum patógeno neste lote.'
+        : 'Poucas coletas para um laudo confiável — colete ao menos 3 amostras.');
+    }
+    return lines.join('\n');
+  }
+
+  const dryPauseBtn = document.getElementById('dry-pause-btn');
+  dryPauseBtn.addEventListener('click', ()=>{
+    dryPaused = !dryPaused;
+    dryPauseBtn.textContent = dryPaused ? 'Retomar secagem' : 'Pausar secagem';
+    dryPauseBtn.setAttribute('aria-pressed', dryPaused ? 'true' : 'false');
+    showToast(dryPaused ? 'Secagem pausada' : 'A gota voltou a secar', false);
+  });
+
+  laudoBtn.addEventListener('click', ()=>{
+    if(currentSlide === 'milk' && !gameOver && !swapping) endGame(true);
+  });
+
+  // ---- slide switching: fresh drop of the chosen sample (soil / water / milk) ----
+  // The collection (caughtLog, containers, discovered list) is kept across
+  // slides — you're building one specimen catalogue from every sample. Each
+  // milk slide is a new lot, with its own analysis and report.
+  const slideEl = document.getElementById('slide');
+  const labelTape = document.getElementById('label-tape');
+  const hudSlideName = document.getElementById('hud-slide-name');
+  const slideBtns = document.querySelectorAll('.slide-btn');
+
+  // instant swap of the sample on the stage (the transition below calls it
+  // while the view is hidden)
+  function applySlide(slide){
+    currentSlide = slide;
+    if(holding){
+      holding.suction = false; holding = null; captureProgress.style.display = 'none';
+      window.removeEventListener('pointermove', onHoldMove);
+      window.removeEventListener('pointerup', onHoldEnd);
+    }
+    // clear every organism from the old sample
+    organisms.forEach(o=>{ if(o.group.parentNode) o.group.parentNode.removeChild(o.group); });
+    organisms.length = 0;
+    refreshQueue.length = 0; refreshT = REFRESH_EVERY; // pending swaps belonged to the old sample
+    clearBehavior(); // food and fights belonged to the old sample too
+    // reset the drop: full of water again
+    dryElapsed = 0; wetR = MAX_WET_R; gameOver = false;
+    driedOverlay.classList.remove('show');
+    // re-skin the slide
+    const info = SLIDE_INFO[slide];
+    if(slide === 'milk') newMilkLot();
+    slideEl.classList.toggle('soil', slide==='soil');
+    slideEl.classList.toggle('milk', slide==='milk');
+    document.body.classList.toggle('slide-milk', slide==='milk');
+    labelTape.textContent = info.label;
+    hudSlideName.textContent = info.hud;
+    hudDryLabel.textContent = `${info.liquid} restante`;
+    info.tint.forEach((col,i)=> wetTintStops[i].setAttribute('stop-color', col));
+    slideBtns.forEach(b=> b.classList.toggle('active', b.dataset.slide===slide));
+    buildDebris(slide);
+    // this sample's organisms will drift into view gradually
+    deathsAtEdge = 0;
+    spawnCheckTimer = 0.2;
+    camera.x = CENTER.x - VIEW_W/2; camera.y = CENTER.y - VIEW_H/2;
+    clampCamera(); applyViewBox();
+    updateMilkHud();
+    showToast(slide === 'milk' ? `${info.label} · lote nº ${milkSession.number}` : info.label, false);
+  }
+  // ---- changing slides: zoom out of the drop to the whole glass slide,
+  // the stage carries it away and brings the next one in, then zoom back into
+  // the new drop and pull focus. Clicks on the slide are blocked meanwhile.
+  const swapEl = document.getElementById('slide-swap');
+  const swapLight = swapEl.querySelector('.swap-light');
+  const swapOut = document.getElementById('swap-out'), swapIn = document.getElementById('swap-in');
+  const SLIDE_NUMBER = { water:'01', soil:'02', milk:'03' };
+  const SLIDE_SAMPLE = { water:'Água de lagoa', soil:'Solo úmido', milk:'Leite cru' };
+  let swapping = false;
+  function dressGlass(card, slide, note){
+    card.className = `glass-slide gs-${slide}`;
+    card.querySelector('b').textContent = `Lâmina ${SLIDE_NUMBER[slide]}`;
+    card.querySelector('span').textContent = SLIDE_SAMPLE[slide];
+    card.querySelector('small').textContent = note;
+  }
+  async function switchSlide(slide){
+    if(swapping) return;
+    if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ applySlide(slide); return; }
+    swapping = true;
+    dressGlass(swapOut, currentSlide, currentSlide === 'milk' ? `lote nº ${milkSession.number}` : 'amostra analisada');
+    dressGlass(swapIn, slide, slide === 'milk' ? 'novo lote' : 'nova gota');
+    swapEl.classList.add('on');
+    const AT = 'translate(-62%,-50%)'; // the drop (62% across the glass) sits at the screen centre
+    const ease1 = 'cubic-bezier(.5,0,.75,0)', ease2 = 'cubic-bezier(.2,.7,.3,1)', slideEase = 'cubic-bezier(.55,0,.4,1)';
+    // 1. zoom out of the drop until the whole glass slide is in view
+    const hide = slideEl.animate([{ transform:'scale(1)', filter:'blur(0px)', opacity:1 }, { transform:'scale(.3)', filter:'blur(6px)', opacity:0 }],
+                                 { duration:520, easing:ease1, fill:'forwards' });
+    swapLight.animate([{ opacity:0 }, { opacity:1 }], { duration:420, fill:'forwards' });
+    swapIn.animate([{ transform:`${AT} translateX(120vw)` }], { duration:1, fill:'forwards' });
+    swapOut.animate([{ transform:`${AT} scale(2.6)`, opacity:0 }, { transform:`${AT} scale(1)`, opacity:1 }], { duration:520, easing:ease2, fill:'forwards' });
+    await hide.finished;
+    // 2. the stage moves: this slide leaves to the left, the next comes in from the right
+    swapOut.animate([{ transform:`${AT} scale(1)`, opacity:1 }, { transform:`${AT} translateX(-120vw) rotate(-2deg)`, opacity:1 }], { duration:760, easing:slideEase, fill:'forwards' });
+    const enter = swapIn.animate([{ transform:`${AT} translateX(120vw) rotate(2deg)` }, { transform:`${AT} translateX(0) rotate(0deg)` }], { duration:760, easing:slideEase, fill:'forwards' });
+    applySlide(slide);
+    if(slide === 'milk') swapIn.querySelector('small').textContent = `lote nº ${milkSession.number}`;
+    await enter.finished;
+    // 3. zoom into the new drop and bring it into focus
+    swapIn.animate([{ transform:`${AT} scale(1)`, opacity:1 }, { transform:`${AT} scale(2.6)`, opacity:0 }], { duration:560, easing:ease1, fill:'forwards' });
+    swapLight.animate([{ opacity:1 }, { opacity:0 }], { duration:700, delay:200, fill:'forwards' });
+    hide.cancel();
+    const show = slideEl.animate([
+      { transform:'scale(.3)', filter:'blur(8px)', opacity:0 },
+      { transform:'scale(1)', filter:'blur(3px)', opacity:1, offset:0.7 },
+      { transform:'scale(1)', filter:'blur(0px)', opacity:1 }
+    ], { duration:950, easing:ease2 });
+    await show.finished;
+    swapEl.classList.remove('on');
+    [swapOut, swapIn, swapLight].forEach(n=> n.getAnimations().forEach(a=> a.cancel()));
+    swapping = false;
+  }
+  slideBtns.forEach(b=> b.addEventListener('click', ()=> switchSlide(b.dataset.slide)));
+
+  restartBtn.addEventListener('click', ()=>{
+    switchSlide(currentSlide);
+  });
+
+  // ================= LAB: culture plates + white analysis plane =================
+  // Opening the lab pauses the slide (drying, spawning, everything). Each
+  // collected species is isolated in a Culture: a small population living
+  // inside its own boundary — a petri dish, or the white analysis field —
+  // with its own clock; in a dish it grows by division until the plate is full.
+  const labEl = document.getElementById('lab');
+  const platesGrid = document.getElementById('plates-grid');
+  const anList = document.getElementById('an-list');
+  const anSvg = document.getElementById('an-svg');
+  const anEmpty = document.getElementById('an-empty');
+  const anInfo = document.getElementById('an-info');
+  const anPauseBtn = document.getElementById('an-pause');
+  let labOpen = false, labPage = 'plates', labLastT = null, labLoopRunning = false;
+  let analysis = null, anPaused = false; // analysis = { species, culture, zoom, ripples }
+  const dishCultures = new Map();        // species id -> Culture (kept while the page is open)
+  const ANIMALS = ['nematode-worm','segmented-worm','rotifer-crown','tardigrade','medusa-bell'];
+  const RODS = ['bacillus','bacillus-chain','vibrio','spirillum','spirochete'];
+
+  const agarGrad = el('radialGradient', { id:'agar-grad', cx:'50%', cy:'45%', r:'55%' });
+  [['0%','#ffffff'],['75%','#f3f5f6'],['100%','#e3e7ea']].forEach(([o,c])=> agarGrad.appendChild(el('stop', { offset:o, 'stop-color':c })));
+  defs.appendChild(agarGrad);
+
+  class Culture {
+    // opts: shape 'dish' (circle of radius R) or 'field' (w x h), centred on
+    // 0,0; cap = how many individuals it grows to (0 = no growth); start
+    constructor(species, root, opts){
+      this.species = species; this.root = root; this.orgs = [];
+      Object.assign(this, opts);
+      this.growT = 1.5 + Math.random()*2;
+      this.paused = false; this.visible = true;
+      for(let i=0;i<(opts.start || 0);i++) this.add(null);
+    }
+    inside(x, y, m){
+      return this.shape === 'dish' ? (x*x + y*y < (this.R*m)*(this.R*m))
+                                   : (Math.abs(x) < this.w/2*m && Math.abs(y) < this.h/2*m);
+    }
+    randomPoint(){
+      if(this.shape === 'dish'){ const a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*this.R*0.8; return [Math.cos(a)*r, Math.sin(a)*r]; }
+      return [(Math.random()-0.5)*this.w*0.8, (Math.random()-0.5)*this.h*0.8];
+    }
+    // a new individual: splits off a parent cell (binary fission), or —
+    // for animals, or with no parent — just appears somewhere and fades in
+    add(parent){
+      const sp = this.species;
+      const o = new Organism(sp, 10, 10);
+      if(parent){
+        o.x = parent.x; o.y = parent.y; o.spawnFade = 1;
+        o.angle = o.displayAngle = parent.displayAngle;
+        const rod = RODS.includes(sp.shape);
+        const axis = parent.displayAngle + (rod ? 0 : Math.PI/2);
+        const dist = rod ? sp.length*1.05 : sp.width*1.1;
+        parent._split = { t:0, dir:1, axis, dist };
+        o._split = { t:0, dir:-1, axis, dist };
+      } else {
+        [o.x, o.y] = this.randomPoint();
+        o.angle = o.displayAngle = Math.random()*Math.PI*2;
+        o.spawnFade = 0;
+      }
+      this.root.appendChild(o.group);
+      this.orgs.push(o);
+      return o;
+    }
+    step(dt){
+      if(this.paused || !this.visible) return;
+      const bounds = { cx:0, cy:0, isInside:(x,y)=> this.inside(x,y,1), isInsideMargin:(x,y,m)=> this.inside(x,y,m) };
+      this.orgs.forEach(o=>{
+        o.update(dt, bounds);
+        // drifters (and anything that got pushed out) are kept inside
+        if(!this.inside(o.x, o.y, 0.97)){
+          if(this.shape === 'dish'){ const k = this.R*0.95/(Math.hypot(o.x, o.y) || 1); o.x *= k; o.y *= k; }
+          else { o.x = Math.max(-this.w*0.48, Math.min(this.w*0.48, o.x)); o.y = Math.max(-this.h*0.48, Math.min(this.h*0.48, o.y)); }
+          o.angle = Math.atan2(-o.y, -o.x) + (Math.random()-0.5)*0.8;
+        }
+        o.render(dt);
+      });
+      if(this.cap && this.orgs.length < this.cap){
+        this.growT -= dt;
+        if(this.growT <= 0){
+          // a sparse plate grows fast; it slows down as the plate fills up
+          this.growT = this.orgs.length < this.cap/2 ? 2 + Math.random()*3 : 4 + Math.random()*5;
+          const free = this.orgs.filter(o=> !o._split);
+          if(ANIMALS.includes(this.species.shape) || !free.length) this.add(null);
+          else this.add(free[Math.floor(Math.random()*free.length)]);
+        }
+      }
+      if(this.onCount) this.onCount(this.orgs.length);
+    }
+    clear(){ this.orgs.forEach(o=> o.group.remove()); this.orgs = []; }
+  }
+
+  // ---- culture plates ----
+  function cultureCap(sp){ const L = Math.max(sp.length, sp.width); return L <= 20 ? 10 : L <= 45 ? 6 : 3; }
+  const dishObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(entries=> entries.forEach(en=>{ if(en.target._culture) en.target._culture.visible = en.isIntersecting; }),
+                               { root: document.getElementById('lab-plates') })
+    : null;
+  let dishSeq = 0;
+  function makeDish(sp){
+    const R = Math.min(160, Math.max(45, Math.max(sp.length, sp.width)*3)); // big organisms get a "wider" dish
+    const pad = R*0.12;
+    const card = document.createElement('button');
+    card.className = 'dish-card';
+    card.style.setProperty('--rar', RARITY_INFO[sp.rarity].color);
+    card.title = `Analisar ${sp.displayName} no plano branco`;
+    const svg = el('svg', { viewBox:`${(-R-pad).toFixed(1)} ${(-R-pad).toFixed(1)} ${(2*(R+pad)).toFixed(1)} ${(2*(R+pad)).toFixed(1)}` });
+    const clipId = `dish-clip-${++dishSeq}`;
+    const dDefs = el('defs', {});
+    const cp = el('clipPath', { id: clipId }); cp.appendChild(el('circle', { cx:0, cy:0, r:R }));
+    dDefs.appendChild(cp); svg.appendChild(dDefs);
+    // glass lid rim, then the agar the culture lives on
+    svg.appendChild(el('circle', { cx:0, cy:0, r:(R+pad*0.55).toFixed(1), fill:'#fbfcfd', stroke:'#b9bfc5', 'stroke-width':1.6, 'vector-effect':'non-scaling-stroke' }));
+    svg.appendChild(el('circle', { cx:0, cy:0, r:R, fill:'url(#agar-grad)', stroke:'#d3d8dc', 'stroke-width':1.2, 'vector-effect':'non-scaling-stroke' }));
+    const root = el('g', { 'clip-path':`url(#${clipId})` });
+    svg.appendChild(root);
+    svg.appendChild(el('path', { d:`M ${(-R*0.74).toFixed(1)} ${(-R*0.46).toFixed(1)} A ${(R*0.88).toFixed(1)} ${(R*0.88).toFixed(1)} 0 0 1 ${(-R*0.2).toFixed(1)} ${(-R*0.85).toFixed(1)}`,
+      fill:'none', stroke:'#ffffff', 'stroke-width':3, 'stroke-linecap':'round', opacity:0.9, 'vector-effect':'non-scaling-stroke' }));
+    card.appendChild(svg);
+    const name = document.createElement('span'); name.className = 'dish-name'; name.textContent = sp.displayName;
+    if(sp.health){ const dot = document.createElement('i'); dot.className = `hdot ${sp.health}`; name.appendChild(dot); }
+    const sub = document.createElement('span'); sub.className = 'dish-sub'; sub.textContent = sp.sciName;
+    const count = document.createElement('span'); count.className = 'dish-count';
+    card.append(name, sub, count);
+    const cap = cultureCap(sp);
+    const c = new Culture(sp, root, { shape:'dish', R, cap, start: Math.min(cap, Math.max(2, caughtLog[sp.id] || 0)) });
+    c.card = card; card._culture = c;
+    c.onCount = n=>{ if(c._n !== n){ c._n = n; count.textContent = `${n} ${n === 1 ? 'indivíduo' : 'indivíduos'}${n >= cap ? ' · placa cheia' : ''}`; } };
+    c.onCount(c.orgs.length);
+    card.addEventListener('click', ()=> openLab('analysis', sp.id));
+    return c;
+  }
+  function renderPlates(){
+    platesGrid.textContent = '';
+    if(!discoveredIds.size){
+      const p = document.createElement('div'); p.className = 'plates-empty';
+      p.textContent = 'Nenhuma cultura ainda — colete espécimes na lâmina para isolá-los aqui.';
+      platesGrid.appendChild(p);
+      return;
+    }
+    discoveredIds.forEach(id=>{
+      let c = dishCultures.get(id);
+      if(!c){ c = makeDish(SPECIES_BY_ID[id]); dishCultures.set(id, c); if(dishObserver) dishObserver.observe(c.card); }
+      platesGrid.appendChild(c.card);
+    });
+  }
+
+  // ---- the white analysis plane: one species, enlarged, alone ----
+  function analysisBase(sp){ return Math.max(150, Math.max(sp.length, sp.width)*6); }
+  function analysisCount(sp){ const L = Math.max(sp.length, sp.width); return L <= 20 ? 8 : L <= 45 ? 4 : 2; }
+  function fitAnalysisView(){
+    if(!analysis) return;
+    const r = anSvg.getBoundingClientRect();
+    const w = analysisBase(analysis.species) / analysis.zoom;
+    const h = w * (r.height / Math.max(1, r.width));
+    anSvg.setAttribute('viewBox', `${(-w/2).toFixed(1)} ${(-h/2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+    analysis.culture.w = w; analysis.culture.h = h;
+  }
+  function selectAnalysis(id){
+    if(analysis) analysis.culture.clear();
+    anSvg.textContent = '';
+    const sp = id && SPECIES_BY_ID[id];
+    if(!sp || !discoveredIds.has(id)){
+      analysis = null; anEmpty.classList.add('show'); anInfo.textContent = '';
+      renderAnalysisList();
+      return;
+    }
+    anEmpty.classList.remove('show');
+    const root = el('g', {}), ripples = el('g', {});
+    anSvg.appendChild(root); anSvg.appendChild(ripples);
+    analysis = { species: sp, zoom: 1, ripples, culture: new Culture(sp, root, { shape:'field', w: analysisBase(sp), h: analysisBase(sp)*0.6, cap: 0 }) };
+    analysis.fx = createRippleFX(anSvg, root, ()=>{ const c = analysis.culture; return { x: -c.w/2 - 10, y: -c.h/2 - 10, w: c.w + 20, h: c.h + 20 }; });
+    fitAnalysisView();
+    for(let i=0;i<analysisCount(sp);i++) analysis.culture.add(null);
+    analysis.culture.paused = anPaused;
+    renderAnalysisList();
+    renderAnalysisInfo(sp);
+  }
+  function renderAnalysisList(){
+    anList.textContent = '';
+    let lastGroup = null;
+    railSpecies.forEach(sp=>{
+      const group = railGroup(sp) ? 'Leite · laticínios' : 'Água e solo';
+      if(group !== lastGroup){ const h = document.createElement('div'); h.className = 'rail-sub'; h.textContent = group; anList.appendChild(h); lastGroup = group; }
+      const known = discoveredIds.has(sp.id);
+      const b = document.createElement('button');
+      b.className = 'an-item' + (analysis && analysis.species === sp ? ' active' : '');
+      b.style.setProperty('--rar', RARITY_INFO[sp.rarity].color);
+      b.disabled = !known;
+      b.title = known ? `Analisar ${sp.commonName}` : 'Colete na lâmina para desbloquear';
+      b.innerHTML = `<svg viewBox="0 0 16 16">${SHAPE_ICONS[sp.displayName] || '<circle cx="8" cy="8" r="3"/>'}</svg>`;
+      const label = document.createElement('span'); label.textContent = sp.displayName; b.appendChild(label);
+      if(sp.health && known){ const dot = document.createElement('i'); dot.className = `hdot ${sp.health}`; b.appendChild(dot); }
+      b.addEventListener('click', ()=> selectAnalysis(sp.id));
+      anList.appendChild(b);
+    });
+  }
+  function renderAnalysisInfo(sp){
+    anInfo.textContent = '';
+    const add = (tag, cls, text)=>{ const n = document.createElement(tag); if(cls) n.className = cls; if(text !== undefined) n.textContent = text; anInfo.appendChild(n); return n; };
+    add('h2', '', sp.displayName);
+    add('p', 'an-sci', sp.sciName);
+    const tags = add('div', 'an-tags');
+    const rt = document.createElement('span'); rt.className = 'rarity-tag'; rt.textContent = RARITY_INFO[sp.rarity].label; rt.style.color = RARITY_INFO[sp.rarity].color;
+    tags.appendChild(rt);
+    if(sp.health){ const ht = document.createElement('span'); ht.className = `health-tag ${sp.health}`; ht.textContent = `${HEALTH_INFO[sp.health].icon} ${HEALTH_INFO[sp.health].label}`; tags.appendChild(ht); }
+    const section = (title, text)=>{ if(!text) return; const sec = add('div', 'panel-section'); const h = document.createElement('h4'); h.textContent = title; const p = document.createElement('p'); p.textContent = text; sec.append(h, p); };
+    section('DESCRIÇÃO', sp.desc);
+    section('COMPORTAMENTO OBSERVADO', sp.behavior);
+    section('SAÚDE HUMANA', sp.healthNote);
+    section('NA INDÚSTRIA DE LATICÍNIOS', sp.industry);
+    const stats = add('div', 'panel-section');
+    const row = (k, v)=>{ if(!v) return; const d = document.createElement('div'); d.className = 'stat-row'; const a = document.createElement('span'); a.textContent = k; const b = document.createElement('span'); b.textContent = v; d.append(a, b); stats.appendChild(d); };
+    row('Organismo real', sp.commonName);
+    row('Coloração de Gram', sp.gram);
+    row('Forma', sp.shapeLabel || shapeLabel(sp.shape));
+    row('Motilidade', motilityLabel(sp));
+    row('Plano focal', DEPTH_INFO[sp.depth]);
+    row('Habitat', sp.habitat.map(h => HABITAT_LABEL[h] || h).join(' · '));
+    row('Nos frascos', String(caughtLog[sp.id] || 0));
+    const wiki = add('a', 'wiki-btn', `Ver "${sp.commonName}" na Wikipedia ↗`);
+    wiki.href = wikipediaUrl(sp); wiki.target = '_blank'; wiki.rel = 'noopener noreferrer';
+  }
+  // clicking the white field pokes the water there: ripple + startle
+  anSvg.addEventListener('pointerdown', (e)=>{
+    if(!analysis) return;
+    const pt = anSvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(anSvg.getScreenCTM().inverse());
+    const w = analysis.culture.w;
+    waterRings(analysis.ripples, p.x, p.y, w*0.08, w/320);
+    analysis.fx.trigger(p.x, p.y, w*0.1, w*0.025, 1300);
+    analysis.culture.orgs.forEach(o=>{ if(Math.hypot(o.x - p.x, o.y - p.y) < w*0.12) o.triggerFlee(p.x, p.y); });
+  });
+  document.getElementById('an-zoom-in').addEventListener('click', ()=>{ if(analysis){ analysis.zoom = Math.min(4, analysis.zoom*1.25); fitAnalysisView(); } });
+  document.getElementById('an-zoom-out').addEventListener('click', ()=>{ if(analysis){ analysis.zoom = Math.max(0.5, analysis.zoom/1.25); fitAnalysisView(); } });
+  anPauseBtn.addEventListener('click', ()=>{
+    anPaused = !anPaused;
+    anPauseBtn.textContent = anPaused ? 'Continuar' : 'Pausar';
+    if(analysis) analysis.culture.paused = anPaused;
+  });
+
+  // ---- opening / closing the lab ----
+  function setLabPage(page){
+    labPage = page;
+    labEl.querySelectorAll('.lab-tab').forEach(t=> t.classList.toggle('active', t.dataset.lab === page));
+    document.getElementById('lab-plates').classList.toggle('active', page === 'plates');
+    document.getElementById('lab-analysis').classList.toggle('active', page === 'analysis');
+  }
+  function openLab(page, speciesId){
+    if(holding){
+      holding.suction = false; holding = null; captureProgress.style.display = 'none';
+      window.removeEventListener('pointermove', onHoldMove);
+      window.removeEventListener('pointerup', onHoldEnd);
+    }
+    panelOverlay.classList.remove('open');
+    labOpen = true;
+    labEl.classList.add('open'); labEl.setAttribute('aria-hidden', 'false');
+    setLabPage(page);
+    if(page === 'plates') renderPlates();
+    else selectAnalysis(speciesId || (analysis && analysis.species.id) || discoveredIds.values().next().value);
+    if(!labLoopRunning){ labLoopRunning = true; labLastT = null; requestAnimationFrame(labLoop); }
+  }
+  function closeLab(){
+    labOpen = false;
+    labEl.classList.remove('open'); labEl.setAttribute('aria-hidden', 'true');
+  }
+  function labLoop(now){
+    if(!labOpen){ labLoopRunning = false; return; }
+    const dt = labLastT === null ? 0.016 : Math.min(0.05, (now - labLastT)/1000);
+    labLastT = now;
+    if(labPage === 'plates') dishCultures.forEach(c=> c.step(dt));
+    else if(analysis) analysis.culture.step(dt);
+    requestAnimationFrame(labLoop);
+  }
+  document.getElementById('open-plates').addEventListener('click', ()=> openLab('plates'));
+  document.getElementById('open-analysis').addEventListener('click', ()=> openLab('analysis'));
+  document.getElementById('panel-analyze').addEventListener('click', ()=>{ if(panelSpecies) openLab('analysis', panelSpecies.id); });
+  labEl.querySelectorAll('.lab-tab').forEach(t=> t.addEventListener('click', ()=> openLab(t.dataset.lab)));
+  document.getElementById('lab-close').addEventListener('click', closeLab);
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && labOpen && !panelOverlay.classList.contains('open')) closeLab();
+  });
+  window.addEventListener('resize', ()=>{ if(labOpen && labPage === 'analysis') fitAnalysisView(); });
+
+  // ---- scene options: entity limit and periodic renewal ----
+  // "Limitar entidades": at most N living organisms on the slide (all focal
+  // planes together, 1–20) — nothing new spawns or divides past it, and if
+  // the limit is lowered the ones furthest from view fade away one by one.
+  // "Renovar a cada 20 s": every 20 s each organism fades out and another one
+  // fades in at the same spot and plane, drawn at random from what this
+  // sample holds (so it may be the same species or a different one).
+  const ENTITY_LIMIT_MAX = 20, REFRESH_EVERY = 20;
+  const limitOnEl = document.getElementById('limit-on');
+  const limitRangeEl = document.getElementById('limit-range');
+  const limitValEl = document.getElementById('limit-val');
+  const refreshOnEl = document.getElementById('refresh-on');
+  const refreshLeftEl = document.getElementById('refresh-left');
+  let entityLimit = ENTITY_LIMIT_MAX, limitOn = false, refreshOn = false, refreshT = REFRESH_EVERY, trimT = 0;
+  const refreshQueue = []; // { o, at } swaps staggered over ~1 s so the field doesn't blink all at once
+
+  function liveCount(){ return organisms.filter(o=> !o.dying && !o.vanishing && !o.caught && !o.dead).length; }
+  function atEntityLimit(){ return limitOn && liveCount() >= entityLimit; }
+
+  limitOnEl.addEventListener('change', ()=>{
+    limitOn = limitOnEl.checked;
+    limitRangeEl.disabled = !limitOn;
+    showToast(limitOn ? `Cenário limitado a ${entityLimit} entidades` : 'Cenário sem limite de entidades', false);
+  });
+  limitRangeEl.addEventListener('input', ()=>{
+    entityLimit = Math.max(1, Math.min(ENTITY_LIMIT_MAX, parseInt(limitRangeEl.value, 10) || ENTITY_LIMIT_MAX));
+    limitValEl.textContent = entityLimit;
+  });
+  refreshOnEl.addEventListener('change', ()=>{
+    refreshOn = refreshOnEl.checked;
+    refreshT = REFRESH_EVERY;
+    refreshLeftEl.textContent = refreshOn ? `${REFRESH_EVERY} s` : '—';
+    showToast(refreshOn ? 'Os organismos serão trocados a cada 20 s' : 'Renovação desligada', false);
+  });
+
+  // over the limit (it was just lowered): fade out the one furthest from the
+  // middle of the view, a few times a second, never the one in the pipette
+  function trimToLimit(dt){
+    if(!limitOn) return;
+    trimT -= dt;
+    if(trimT > 0) return;
+    trimT = 0.3;
+    if(liveCount() <= entityLimit) return;
+    const cx = camera.x + VIEW_W/2, cy = camera.y + VIEW_H/2;
+    let far = null, farD = -1;
+    organisms.forEach(o=>{
+      if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten) return;
+      const d = Math.hypot(o.x - cx, o.y - cy);
+      if(d > farD){ far = o; farD = d; }
+    });
+    if(far) far.vanish();
+  }
+
+  function renewScene(){
+    organisms.forEach(o=>{
+      if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun) return;
+      refreshQueue.push({ o, at: simTime + Math.random()*1.2 });
+    });
+  }
+  // swap one organism for a freshly drawn one of the same plane, in its place
+  function swapOrganism(o){
+    if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten || o.dead) return;
+    if(!isInsideWetBlob(o.x, o.y, simTime, 0.92)) return;
+    const sp = pickWeightedSpecies(o.depthLevel);
+    o.vanish();
+    if(!sp) return;
+    const n = placeOrganism(sp, o.x, o.y, o.depthLevel);
+    n.angle = n.displayAngle = Math.random()*Math.PI*2;
+  }
+  function updateSceneOptions(dt){
+    trimToLimit(dt);
+    if(refreshOn){
+      refreshT -= dt;
+      if(refreshT <= 0){ refreshT += REFRESH_EVERY; renewScene(); }
+      refreshLeftEl.textContent = `${Math.ceil(refreshT)} s`;
+    }
+    for(let i=refreshQueue.length-1; i>=0; i--){
+      if(refreshQueue[i].at <= simTime){ swapOrganism(refreshQueue[i].o); refreshQueue.splice(i, 1); }
+    }
+  }
+
+  // ---- scene option "Caçar e lutar": purposeful behaviour ----
+  // Instead of wandering at random: food particles appear in the water and
+  // organisms that feed that way sense the nearest one, swim to it and eat it
+  // (well-fed cells divide sooner); predators chase prey from further off;
+  // organisms of different species and similar size that meet may fight —
+  // they square up and lunge, each blow knocks the target back and costs it
+  // health, the loser dies or runs away. Algae and diatoms photosynthesise,
+  // so they neither forage nor fight. Lactococcus can't swim, but releases
+  // nisin, which hurts nearby Gram-positive pathogens.
+  const PHOTOSYNTHETIC = new Set(['spirogyra','oscillatoria','diatomP','diatomC','diatomR','diatomT','closterium','spiny','volvox','chlamy','flagellate']);
+  const FOOD_MAX = 26, FIGHT_MAX_TIME = 9;
+  const FOOD_COLOR = { water:'#8a7f52', soil:'#6b5434', milk:'#bfb284' };
+  const behaviorOnEl = document.getElementById('behavior-on');
+  const hudFood = document.getElementById('hud-food'), hudFightDeaths = document.getElementById('hud-fight-deaths');
+  let behaviorOn = false, foodSpawnT = 0, fightScanT = 0, fightDeaths = 0, fightToastShown = false, nisinToastShown = false;
+  const foods = [];  // { x, y, depth, el }
+  const fights = []; // { a, b, t, nextHit, lunge }
+
+  const bodyR = o => Math.max(o.species.length, o.species.width) * 0.45;
+  const strength = sp => Math.sqrt(sp.length * sp.width) / 8;
+  const maxHp = sp => 2 + strength(sp)*2;
+  const canSwim = o => !(o.species.motility === 'brownian' || o.species.motility === 'stalked');
+  const isFree = o => !(o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun || o.suction || o.dead);
+  const forages = o => !PHOTOSYNTHETIC.has(o.species.id);
+  const fights_ = o => canSwim(o) && !PHOTOSYNTHETIC.has(o.species.id);
+
+  behaviorOnEl.addEventListener('change', ()=>{
+    behaviorOn = behaviorOnEl.checked;
+    if(!behaviorOn){ clearBehavior(); hudFood.textContent = '—'; }
+    showToast(behaviorOn ? 'Os organismos agora caçam comida e brigam entre si' : 'Comportamento normal: os organismos voltam a vagar', false);
+  });
+  function clearBehavior(){
+    fightDeaths = 0; hudFightDeaths.textContent = 0;
+    foods.forEach(f=> f.el.remove()); foods.length = 0;
+    fights.slice().forEach(f=> endFight(f));
+  }
+
+  // a little clump of organic matter, drawn under the organisms of its plane
+  function spawnFood(){
+    const planes = [];
+    for(let d=1; d<=MAX_DEPTH; d++) if(speciesForDepth(d).some(sp=> !PHOTOSYNTHETIC.has(sp.id))) planes.push(d);
+    if(!planes.length) return;
+    const depth = (planes.includes(currentDepth) && Math.random() < 0.5) ? currentDepth : planes[Math.floor(Math.random()*planes.length)];
+    for(let k=0;k<6;k++){
+      const x = camera.x + Math.random()*VIEW_W, y = camera.y + Math.random()*VIEW_H;
+      if(!isInsideWetBlob(x, y, simTime, 0.9)) continue;
+      const g = el('g', { class:'food', transform:`translate(${x.toFixed(1)},${y.toFixed(1)})` });
+      const col = FOOD_COLOR[currentSlide] || FOOD_COLOR.water;
+      const n = 2 + Math.floor(Math.random()*3);
+      for(let i=0;i<n;i++) g.appendChild(el('circle', { cx:((Math.random()-0.5)*3).toFixed(1), cy:((Math.random()-0.5)*3).toFixed(1), r:(0.8+Math.random()*1.1).toFixed(2), fill:col, opacity:0.8 }));
+      const layer = layerGroups[depth].g;
+      layer.insertBefore(g, layer.firstChild);
+      g.animate([{ opacity:0 }, { opacity:1 }], { duration:600 });
+      foods.push({ x, y, depth, el:g });
+      return;
+    }
+  }
+  function eatFood(o, i){
+    const f = foods[i];
+    foods.splice(i, 1);
+    f.el.animate([{ opacity:1 }, { opacity:0 }], { duration:250 }).onfinish = ()=> f.el.remove();
+    o.energy = (o.energy || 0) + 1;
+  }
+
+  function updateBehavior(dt){
+    if(!behaviorOn) return;
+    foodSpawnT -= dt;
+    if(foodSpawnT <= 0){
+      foodSpawnT = 0.45;
+      if(foods.filter(f=> inView(f, 20)).length < FOOD_MAX) spawnFood();
+    }
+    for(let i=foods.length-1; i>=0; i--){
+      if(!inView(foods[i], VIEW_W*0.6)){ foods[i].el.remove(); foods.splice(i, 1); }
+    }
+    const near = organisms.filter(o=> isFree(o) && inView(o, 60));
+
+    // foraging: head for the nearest food in the same plane, eat it on contact
+    near.forEach(o=>{
+      if(o.hp !== undefined && !o.engaged) o.hp = Math.min(maxHp(o.species), o.hp + dt*0.1); // slowly heals
+      if(o.engaged || o.fleeing || !forages(o)) return;
+      const swim = canSwim(o), r = bodyR(o);
+      const sense = swim ? 90 + r*3 : r + 4; // drifters only eat what bumps into them
+      let best = -1, bestD = Infinity;
+      for(let i=0;i<foods.length;i++){
+        const f = foods[i];
+        if(f.depth !== o.depthLevel) continue;
+        const d = Math.hypot(f.x - o.x, f.y - o.y);
+        if(d < bestD){ bestD = d; best = i; }
+      }
+      if(best < 0 || bestD > sense) return;
+      if(bestD < r + 3){ eatFood(o, best); return; }
+      if(swim){ o.steerTo = Math.atan2(foods[best].y - o.y, foods[best].x - o.x); o.speedBoost = 1.35; }
+    });
+
+    fightScanT -= dt;
+    if(fightScanT <= 0){ fightScanT = 0.25; scanFights(near); }
+    updateFights(dt);
+    releaseBacteriocins(dt, near);
+    hudFood.textContent = foods.length;
+    hudFightDeaths.textContent = fightDeaths;
+  }
+
+  // ---- fights ----
+  function scanFights(near){
+    const cand = near.filter(o=> !o.engaged && fights_(o) && o !== holding && !(o._fightCool > simTime));
+    for(let i=0;i<cand.length;i++) for(let j=i+1;j<cand.length;j++){
+      const a = cand[i], b = cand[j];
+      if(a.engaged || b.engaged || a.depthLevel !== b.depthLevel || a.species === b.species) continue;
+      if((a.species.eats || []).includes(b.species.id) || (b.species.eats || []).includes(a.species.id)) continue; // that's predation
+      const ra = bodyR(a), rb = bodyR(b);
+      if(ra/rb < 0.4 || ra/rb > 2.5) continue;               // only rivals of similar size
+      if(Math.hypot(a.x - b.x, a.y - b.y) > (ra + rb)*1.7) continue;
+      if(Math.random() > 0.35) continue;
+      startFight(a, b);
+    }
+  }
+  function startFight(a, b){
+    const f = { a, b, t:0, nextHit: 0.35 + Math.random()*0.4, lunge:null };
+    if(a.hp === undefined) a.hp = maxHp(a.species);
+    if(b.hp === undefined) b.hp = maxHp(b.species);
+    a.engaged = { fight:f, face:a.displayAngle };
+    b.engaged = { fight:f, face:b.displayAngle };
+    fights.push(f);
+    if(!fightToastShown && inView(a, 0)){
+      fightToastShown = true;
+      showToast(`Briga! ${a.species.displayName} × ${b.species.displayName}`, true, null, 2200);
+    }
+  }
+  function endFight(f){
+    [f.a, f.b].forEach(o=>{ if(o.engaged && o.engaged.fight === f){ o.engaged = null; o._fightCool = simTime + 6 + Math.random()*4; } });
+    const i = fights.indexOf(f);
+    if(i >= 0) fights.splice(i, 1);
+  }
+  function updateFights(dt){
+    for(let k=fights.length-1; k>=0; k--){
+      const f = fights[k], a = f.a, b = f.b;
+      // grabbed by the pipette, eaten, dried up, swapped out, drifted away: over
+      if(!isFree(a) || !isFree(b) || !inView(a, 120)){ endFight(f); continue; }
+      f.t += dt;
+      const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
+      a.engaged.face = Math.atan2(dy, dx);
+      b.engaged.face = Math.atan2(-dy, -dx);
+      const rr = bodyR(a) + bodyR(b);
+      if(f.lunge){
+        // the attacker darts in, strikes, and bounces back
+        const L = f.lunge, att = L.att, tgt = att === a ? b : a;
+        const ux = (tgt.x - att.x)/d, uy = (tgt.y - att.y)/d;
+        L.t += dt;
+        if(L.t < 0.16){
+          const step = Math.max(0, d - rr*0.8) * Math.min(1, dt*14);
+          att.x += ux*step; att.y += uy*step;
+        } else if(!L.hit){
+          L.hit = true;
+          if(strike(f, att, tgt, ux, uy)) continue; // fight is over
+        } else if(L.t < 0.42){
+          att.x -= ux*rr*0.9*dt/0.26; att.y -= uy*rr*0.9*dt/0.26;
+        } else f.lunge = null;
+      } else {
+        // circling at a short distance, then someone attacks
+        const push = (d - rr*1.25) * Math.min(1, dt*2) * 0.5;
+        a.x += dx/d*push; a.y += dy/d*push; b.x -= dx/d*push; b.y -= dy/d*push;
+        f.nextHit -= dt;
+        if(f.nextHit <= 0){
+          const sa = strength(a.species), sb = strength(b.species);
+          f.lunge = { att: Math.random() < sa/(sa+sb) ? a : b, t:0, hit:false };
+          f.nextHit = 0.45 + Math.random()*0.5;
+        }
+      }
+      if(f.t > FIGHT_MAX_TIME){ endFight(f); a.triggerFlee(b.x, b.y); b.triggerFlee(a.x, a.y); } // both give up
+    }
+  }
+  // returns true when the fight ended
+  function strike(f, att, tgt, ux, uy){
+    tgt.hp -= strength(att.species) * (0.6 + Math.random()*0.8);
+    const rr = bodyR(att) + bodyR(tgt);
+    tgt.x += ux*rr*0.35; tgt.y += uy*rr*0.35; // knocked back
+    hitFlash(tgt);
+    hitSpark((att.x + tgt.x)/2, (att.y + tgt.y)/2);
+    if(tgt.hp <= 0){ killedInFight(tgt, att); endFight(f); return true; }
+    if(tgt.hp < maxHp(tgt.species)*0.3 && Math.random() < 0.5){ endFight(f); tgt.triggerFlee(att.x, att.y); return true; } // runs for it
+    return false;
+  }
+  function hitFlash(o){
+    o._hitT = 0.25;
+    o.group.style.filter = 'sepia(1) saturate(5) hue-rotate(-35deg)';
+    setTimeout(()=>{ if(!o.dying && !o.tun) o.group.style.filter = ''; }, 150);
+  }
+  function hitSpark(x, y){
+    const g = el('g', {});
+    for(let i=0;i<6;i++){
+      const a = i/6*Math.PI*2 + Math.random()*0.5, r0 = 2, r1 = 5 + Math.random()*3;
+      g.appendChild(el('line', { x1:(x + Math.cos(a)*r0).toFixed(1), y1:(y + Math.sin(a)*r0).toFixed(1), x2:(x + Math.cos(a)*r1).toFixed(1), y2:(y + Math.sin(a)*r1).toFixed(1),
+        stroke:'#c0392b', 'stroke-width':0.8, 'stroke-linecap':'round' }));
+    }
+    rippleGroup.appendChild(g);
+    g.animate([{ opacity:0.9 }, { opacity:0 }], { duration:320, easing:'ease-out' }).onfinish = ()=> g.remove();
+  }
+  function killedInFight(o, by){
+    o.startDying();
+    fightDeaths++;
+    by.energy = (by.energy || 0) + 2;
+  }
+
+  // ---- bacteriocins: a non-swimming fighter (Lactococcus and its nisin) ----
+  function releaseBacteriocins(dt, near){
+    near.forEach(o=>{
+      if(!o.species.bacteriocin) return;
+      if(o._bactT === undefined) o._bactT = Math.random()*3;
+      o._bactT -= dt;
+      if(o._bactT > 0) return;
+      o._bactT = 3 + Math.random()*2;
+      const R = 55;
+      const targets = near.filter(p=> p !== o && p.depthLevel === o.depthLevel && p.species.health === 'patogenica' &&
+                                       p.species.gram === 'Gram-positiva' && Math.hypot(p.x - o.x, p.y - o.y) < R);
+      if(!targets.length) return;
+      const halo = el('circle', { cx:o.x.toFixed(1), cy:o.y.toFixed(1), r:2, fill:'none', stroke:'#2e8b57', 'stroke-width':1.2, opacity:0 });
+      rippleGroup.appendChild(halo);
+      halo.animate([{ r:2, opacity:0.5 }, { r:R, opacity:0 }], { duration:900, easing:'ease-out' }).onfinish = ()=> halo.remove();
+      targets.forEach(p=>{
+        if(p.hp === undefined) p.hp = maxHp(p.species);
+        p.hp -= 1.2;
+        hitFlash(p);
+        if(p.hp <= 0){
+          killedInFight(p, o);
+          if(!nisinToastShown){
+            nisinToastShown = true;
+            showToast(`${o.species.displayName} liberou ${o.species.bacteriocin} e matou um ${p.species.displayName}!`, false, '#2e8b57', 3000);
+          }
+        }
+      });
+    });
+  }
+
+  // ---- main loop ----
+  let lastT = null;
+  function loop(now){
+    if(lastT === null) lastT = now;
+    const dt = Math.min(0.05, Math.max(0, (now-lastT)/1000));
+    lastT = now;
+    simTime += dt;
+    if(!labOpen) updateCameraKeys(dt);
+    if(!gameOver && !labOpen){
+      updateDrying(dt);
+      updateSceneOptions(dt);
+      updateBehavior(dt);
+      maybeSpawnInView(dt);
+      const bounds = {
+        cx: CENTER.x, cy: CENTER.y, wetR,
+        isInside: (x,y) => isInsideWetBlob(x, y, simTime, 1.0),
+        isInsideMargin: (x,y,m) => isInsideWetBlob(x, y, simTime, m)
+      };
+      // view culling: with a 20-screen map most organisms are off-screen;
+      // they keep living (update) but are only drawn when near the viewport.
+      const M = 90;
+      const vx0 = camera.x - M, vx1 = camera.x + VIEW_W + M;
+      const vy0 = camera.y - M, vy1 = camera.y + VIEW_H + M;
+      for(let i=organisms.length-1; i>=0; i--){
+        if(organisms[i].dead){
+          const o = organisms[i];
+          if(o.group.parentNode) o.group.parentNode.removeChild(o.group);
+          organisms.splice(i,1);
+        }
+      }
+      organisms.forEach(o=>{
+        o.update(dt, bounds);
+        const onScreen = o.x > vx0 && o.x < vx1 && o.y > vy0 && o.y < vy1;
+        if(onScreen){
+          if(o._hidden){ o.group.style.display = ''; o._hidden = false; }
+          o.render(dt);
+          updateDivision(o, dt);
+          updatePredation(o, dt);
+        } else if(!o._hidden){
+          o.group.style.display = 'none'; o._hidden = true;
+        }
+      });
+      updateHud();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // ---- intro / start ----
+  startBtn.addEventListener('click', ()=>{
+    introEl.style.opacity = '0';
+    introEl.style.transition = 'opacity .5s ease';
+    setTimeout(()=> introEl.style.display='none', 500);
+  });
+
+  applyDepth(currentDepth);
+  updateHud();
+  requestAnimationFrame(loop);
+})();

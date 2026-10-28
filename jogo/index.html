@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Microcosmo — Lâmina 07</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="inicio.js"></script>
+
+<div id="intro">
+  <h1>Microcosmo</h1>
+  <div class="lead mono">
+    Um microscópio virtual. Escolha uma lâmina — água de lagoa, solo úmido ou
+    <b>leite cru</b> de um lote da indústria de laticínios — e explore a amostra
+    <span class="mouse-only">com as <b>setas do teclado</b>. Gire a <b>roda do mouse</b> para ajustar o foco:
+    cada plano focal revela organismos diferentes. Para coletar um espécime, segure o clique
+    com a <b>pipeta</b> sobre ele por <b>5 segundos</b>.</span><span class="touch-only"><b>arrastando o dedo</b> pela lâmina.
+    Use os botões <b>▲ ▼</b> do foco (ou deslize <b>dois dedos</b> para cima e para baixo):
+    cada plano focal revela organismos diferentes. Para coletar um espécime, <b>mantenha o dedo</b>
+    sobre ele por <b>5 segundos</b>, acompanhando-o se ele fugir.</span> No leite, cada bactéria coletada é
+    classificada como <b>benéfica</b>, <b>deteriorante</b> ou <b>patogênica</b> para a saúde
+    humana, e o lote recebe um laudo de risco. <span class="mouse-only">Clique</span><span class="touch-only">Toque</span> num recipiente para ver a ficha
+    do organismo, abrir a página dele na Wikipedia ou <b>soltá-lo de volta</b> na lâmina.
+    Os bichos se dividem ao vivo, alguns comem outros, e quanto mais raro, mais colorido:
+    <b>preto</b> comum, <b>verde</b> incomum, <b>roxo</b> raro, <b>dourado</b> lendário.
+    No <b>laboratório</b> (painel Coleção), cada espécie coletada ganha uma <b>placa de cultura</b>
+    e pode ser estudada sozinha no <b>plano de análise</b>, um campo todo branco.
+    A gota evapora com o tempo (dá para pausar).
+  </div>
+  <button id="start-btn" class="mono">Colocar a lâmina</button>
+</div>
+
+<div id="app">
+  <!-- LEFT: shape reference list -->
+  <div id="shape-rail" class="bench-surface">
+    <div class="rail-title mono">Controles</div>
+    <div class="controls-card">
+      <div class="ctrl mouse-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><path d="M14 3.2a10.8 10.8 0 0 0-10.8 10.8V15H14z" fill="#111" opacity=".85"/></svg><div class="ctrl-txt"><b>Segurar 5 s</b><span>coletar com a pipeta</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><circle cx="14" cy="16" r="5" fill="#111"/><circle cx="14" cy="16" r="9.5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="14" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><path d="M14 30v8" stroke="currentColor" stroke-width="1.4"/></svg><div class="ctrl-txt"><b>Segurar 5 s</b><span>dedo sobre o organismo: coletar</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico wide" viewBox="0 0 48 30"><circle cx="24" cy="15" r="5" fill="#111"/><path d="M24 2v6m0 14v6M11 15h6m14 0h6" stroke="currentColor" stroke-width="1.4"/><path d="M24 1l-3 4h6zM24 29l-3-4h6zM10 15l4-3v6zM38 15l-4-3v6z" fill="currentColor"/></svg><div class="ctrl-txt"><b>Arrastar</b><span>mover a lâmina</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="5" y="2" width="18" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M14 7l-4 5h8zM14 33l-4-5h8z" fill="#111"/><circle cx="14" cy="17" r="2" fill="#111"/><circle cx="14" cy="23" r="2" fill="none" stroke="#111" stroke-width="1"/></svg><div class="ctrl-txt"><b>▲ ▼ ou 2 dedos</b><span>ajustar o foco</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><rect x="11.5" y="6" width="5" height="8" rx="2.5" fill="#111"/><path d="M14 18.5v6m-2.2-2.2 2.2 2.2 2.2-2.2" stroke="#111" stroke-width="1.3" fill="none"/></svg><div class="ctrl-txt"><b>Rolar</b><span>ajustar o foco</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico wide" viewBox="0 0 48 30"><rect x="17" y="1" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 3.5l3.6 4.8H3.4z" fill="#111" transform="translate(17,1)"/><rect x="1" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M3.2 6.5l4.8-3.6v7.2z" fill="#111" transform="translate(1,16)"/><rect x="17" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 9.5l3.6-4.8H3.4z" fill="#111" transform="translate(17,16)"/><rect x="33" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M10.8 6.5L6 2.9v7.2z" fill="#111" transform="translate(33,16)"/></svg><div class="ctrl-txt"><b>Setas / WASD</b><span>mover a lâmina</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico wide" viewBox="0 0 48 16"><rect x="1" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="6" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">1</text><rect x="13" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="18" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">2</text><rect x="25" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="30" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">3</text><rect x="37" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="42" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">4</text></svg><div class="ctrl-txt"><b>1 – 4</b><span>ir direto ao plano</span></div></div>
+      <div class="ctrl"><svg class="ctrl-ico" viewBox="0 0 24 40"><rect x="5" y="2" width="14" height="5" rx="1.2" fill="#7a5a36"/><path d="M6 7h12v25a6 6 0 0 1-12 0z" fill="rgba(160,190,170,.18)" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 17h10.8v15a5.4 5.4 0 0 1-10.8 0z" fill="rgba(140,175,150,.45)"/><ellipse cx="12" cy="26" rx="3.4" ry="1.8" fill="#111" opacity=".8"/></svg><div class="ctrl-txt"><b><span class="mouse-only">Clicar</span><span class="touch-only">Tocar</span> no frasco</b><span>ficha, Wikipedia, soltar</span></div></div>
+    </div>
+    <button id="species-toggle" class="species-toggle mono" aria-expanded="false" title="Mostrar espécimes">
+      <span class="burger"><i></i><i></i><i></i></span>
+      <span class="st-label">Espécimes</span>
+      <span id="species-count" class="st-count">0/44</span>
+    </button>
+    <div id="shape-list" class="collapsed"></div>
+  </div>
+
+  <!-- CENTER: stage -->
+  <div id="stage-wrap" class="bench-surface">
+    <button id="hud-toggle" class="mono" title="Ocultar dados" aria-expanded="true">›</button>
+    <button id="rail-toggle" title="Controles e espécimes" aria-expanded="false"><span class="burger"><i></i><i></i><i></i></span></button>
+    <div id="drawer-scrim"></div>
+    <div id="focus-ctl" role="group" aria-label="Foco">
+      <button id="focus-up" title="Foco mais raso" aria-label="Foco mais raso">▲</button>
+      <div class="fl">FOCO</div>
+      <div class="fdots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <button id="focus-down" title="Foco mais fundo" aria-label="Foco mais fundo">▼</button>
+    </div>
+    <div id="slide">
+      <div id="glass-frame">
+        <div id="glass"></div>
+        <div id="label-tape" class="mono">Lâmina 01 · Água de lagoa</div>
+        <div id="droplet-clip">
+          <svg id="droplet-svg" preserveAspectRatio="xMidYMid meet"></svg>
+          <div id="condenser-light"></div>
+          <div id="capture-progress">
+            <svg viewBox="0 0 52 52">
+              <circle class="track" cx="26" cy="26" r="22"/>
+              <circle class="bar" cx="26" cy="26" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="toast mono" id="toast"></div>
+
+    <!-- slide change: the glass slides that travel across the stage -->
+    <div id="slide-swap" aria-hidden="true">
+      <div class="swap-light"></div>
+      <div class="glass-slide" id="swap-out"><div class="gs-label"><b></b><span></span><small></small></div><div class="gs-sample"><div class="gs-drop"></div><div class="gs-cover"></div></div></div>
+      <div class="glass-slide" id="swap-in"><div class="gs-label"><b></b><span></span><small></small></div><div class="gs-sample"><div class="gs-drop"></div><div class="gs-cover"></div></div></div>
+    </div>
+
+    <!-- glass Pasteur pipette that follows the pointer. Drawn upright with the
+         tip at (0,0) and tilted by the rotate(32); the script keeps the tip on
+         the pointer and sets the liquid level and the bulb squeeze. -->
+    <div id="pipette" aria-hidden="true">
+      <svg width="118" height="171" viewBox="-8 -170 128 186">
+        <defs>
+          <!-- glass seen side-on: tinted, refractive edges, nearly clear middle -->
+          <linearGradient id="pp-glass" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#cfe3dd" stop-opacity=".45"/>
+            <stop offset=".2" stop-color="#ffffff" stop-opacity=".14"/>
+            <stop offset=".5" stop-color="#ffffff" stop-opacity=".05"/>
+            <stop offset=".8" stop-color="#ffffff" stop-opacity=".14"/>
+            <stop offset="1" stop-color="#b9d2cb" stop-opacity=".45"/>
+          </linearGradient>
+          <linearGradient id="pp-shine" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+            <stop offset=".15" stop-color="#fff" stop-opacity=".9"/>
+            <stop offset=".85" stop-color="#fff" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="pp-rubber" cx=".36" cy=".3" r=".85">
+            <stop offset="0" stop-color="#d0604f"/>
+            <stop offset=".45" stop-color="#9a3427"/>
+            <stop offset="1" stop-color="#4a1611"/>
+          </radialGradient>
+          <linearGradient id="pp-neck" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0" stop-color="#4f1913"/>
+            <stop offset=".3" stop-color="#a63d2f"/>
+            <stop offset=".6" stop-color="#7a291f"/>
+            <stop offset="1" stop-color="#3d120e"/>
+          </linearGradient>
+          <clipPath id="pp-cavity">
+            <path d="M -0.45 0.2 L -1.15 -64 C -1.15 -71.6 -5.5 -73.8 -5.5 -80 L -5.5 -150 L 5.5 -150 L 5.5 -80 C 5.5 -73.8 1.15 -71.6 1.15 -64 L 0.45 0.2 Z"/>
+          </clipPath>
+          <filter id="pp-blur" filterUnits="userSpaceOnUse" x="-26" y="-200" width="52" height="212">
+            <feGaussianBlur stdDeviation="2.2"/>
+          </filter>
+        </defs>
+        <!-- soft shadow on the slide: glass casts a faint one, the rubber a darker one -->
+        <g transform="translate(7 10) rotate(32)" filter="url(#pp-blur)">
+          <path d="M -1.1 0 Q 0 0.7 1.1 0 L 1.9 -64 C 1.9 -72 6.8 -74 6.8 -80 L 6.8 -150 L -6.8 -150 L -6.8 -80 C -6.8 -74 -1.9 -72 -1.9 -64 Z" fill="#1d2420" opacity=".1"/>
+          <path d="M -8.4 -145.6 L -8.4 -158 C -11 -161 -11.2 -168 -11 -174 C -10.8 -184 -5.4 -190 0 -190 C 5.4 -190 10.8 -184 11 -174 C 11.2 -168 11 -161 8.4 -158 L 8.4 -145.6 Z" fill="#1d2420" opacity=".28"/>
+        </g>
+        <g transform="rotate(32)">
+          <!-- liquid drawn up by suction, seen through the glass -->
+          <g clip-path="url(#pp-cavity)">
+            <rect id="pp-liquid" x="-7" y="0" width="14" height="0" fill="#a9c2b6" fill-opacity=".6"/>
+            <ellipse id="pp-meniscus" cx="0" cy="0" rx="0" ry="0.9" fill="#ffffff" fill-opacity=".5" stroke="#34403c" stroke-opacity=".5" stroke-width=".35" opacity="0"/>
+          </g>
+          <!-- glass tube: capillary, shoulder and body in one outline -->
+          <path d="M -1.1 0 Q 0 0.7 1.1 0 L 1.9 -64 C 1.9 -72 6.8 -74 6.8 -80 L 6.8 -150 L -6.8 -150 L -6.8 -80 C -6.8 -74 -1.9 -72 -1.9 -64 Z"
+                fill="url(#pp-glass)" stroke="#2f3d39" stroke-opacity=".55" stroke-width=".8" stroke-linejoin="round"/>
+          <!-- inner wall: the thickness of the glass shows as a second, fainter line -->
+          <path d="M -0.5 -1.5 L -1.15 -64 C -1.15 -71.6 -5.5 -73.8 -5.5 -80 L -5.5 -146 M 0.5 -1.5 L 1.15 -64 C 1.15 -71.6 5.5 -73.8 5.5 -80 L 5.5 -146"
+                fill="none" stroke="#2f3d39" stroke-opacity=".22" stroke-width=".5"/>
+          <!-- printed graduation marks -->
+          <path d="M 1.6 -92 H 4.6 M 1.6 -98 H 3.4 M 1.6 -104 H 4.6 M 1.6 -110 H 3.4 M 1.6 -116 H 4.6 M 1.6 -122 H 3.4 M 1.6 -128 H 4.6 M 1.6 -134 H 3.4 M 1.6 -140 H 4.6"
+                fill="none" stroke="#24302d" stroke-opacity=".45" stroke-width=".45"/>
+          <!-- specular highlights running along the glass -->
+          <rect x="-4.7" y="-147" width="1.5" height="64" rx=".75" fill="url(#pp-shine)"/>
+          <rect x="3.3" y="-140" width=".8" height="46" rx=".4" fill="url(#pp-shine)" opacity=".4"/>
+          <path d="M -5.2 -79 C -5.2 -74 -2 -72.5 -1.5 -66" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".7" stroke-linecap="round"/>
+          <path d="M -0.95 -62 L -0.55 -4" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width=".45" stroke-linecap="round"/>
+          <circle cx="0" cy="-0.8" r=".5" fill="#fff" opacity=".8"/>
+          <!-- rubber bulb: neck sleeved over the glass, then the squeezable bulge -->
+          <path d="M -8.4 -146.5 L -8.4 -159 L 8.4 -159 L 8.4 -146.5 Q 8.4 -145.6 7.6 -145.6 L -7.6 -145.6 Q -8.4 -145.6 -8.4 -146.5 Z" fill="url(#pp-neck)"/>
+          <path d="M -8.4 -150 H 8.4 M -8.4 -153 H 8.4 M -8.4 -156 H 8.4" fill="none" stroke="#2e0c09" stroke-opacity=".45" stroke-width=".6"/>
+          <path d="M -8.4 -149.4 H 8.4 M -8.4 -152.4 H 8.4 M -8.4 -155.4 H 8.4" fill="none" stroke="#e08070" stroke-opacity=".25" stroke-width=".4"/>
+          <g id="pp-bulge">
+            <path d="M -8.4 -158 C -11 -161 -11.2 -168 -11 -174 C -10.8 -184 -5.4 -190 0 -190 C 5.4 -190 10.8 -184 11 -174 C 11.2 -168 11 -161 8.4 -158 Z"
+                  fill="url(#pp-rubber)" stroke="#2e0c09" stroke-opacity=".5" stroke-width=".6"/>
+            <ellipse cx="-4.4" cy="-178" rx="2" ry="6.5" fill="#fff" opacity=".22" transform="rotate(12 -4.4 -178)"/>
+            <circle cx="-5" cy="-184" r=".9" fill="#fff" opacity=".45"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div id="reel"></div>
+
+    <div id="dried-overlay">
+      <h2 id="dried-title">A lâmina secou</h2>
+      <p class="mono" id="dried-summary"></p>
+      <button id="restart-btn" class="mono">Nova lâmina</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: instrument HUD -->
+  <div id="hud-panel" class="bench-surface">
+    <div class="hud-group open" data-group="focus">
+      <div class="hud-group-head"><span class="caret">▶</span>Foco</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>plano</span><span id="hud-depth-name">superficial</span></div>
+        <div class="hud-row"><span>nível</span><span id="hud-depth-level">1/4</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="slide">
+      <div class="hud-group-head"><span class="caret">▶</span>Lâmina</div>
+      <div class="hud-group-body">
+        <div class="slide-picker">
+          <button class="slide-btn mono active" data-slide="water">Água</button>
+          <button class="slide-btn mono" data-slide="soil">Solo</button>
+          <button class="slide-btn mono" data-slide="milk">Leite</button>
+        </div>
+        <div class="hud-row"><span>amostra</span><span id="hud-slide-name">água de lagoa</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="milk" id="hud-milk">
+      <div class="hud-group-head"><span class="caret">▶</span>Análise do leite</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>lote</span><span id="hud-milk-lot">—</span></div>
+        <div class="hud-row good"><span>benéficas</span><span id="hud-milk-good">0</span></div>
+        <div class="hud-row spoil"><span>deteriorantes</span><span id="hud-milk-spoil">0</span></div>
+        <div class="hud-row bad"><span>patogênicas</span><span id="hud-milk-bad">0</span></div>
+        <div class="hud-row" id="hud-milk-risk-row"><span>risco do lote</span><span id="hud-milk-risk">sem dados</span></div>
+        <button id="laudo-btn" class="laudo-btn">Emitir laudo</button>
+      </div>
+    </div>
+    <div class="hud-group" data-group="zoom">
+      <div class="hud-group-head"><span class="caret">▶</span>zoom</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>ampliação</span><span id="hud-zoom">100x</span></div>
+      </div>
+    </div>
+    <div class="hud-group" data-group="view">
+      <div class="hud-group-head"><span class="caret">▶</span>view</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>campo</span><span id="hud-field-count">0</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="life">
+      <div class="hud-group-head"><span class="caret">▶</span>Vida</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>ativos</span><span id="hud-life-active">0</span></div>
+        <div class="hud-row"><span>mortos na borda</span><span id="hud-deaths">0</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="scene">
+      <div class="hud-group-head"><span class="caret">▶</span>Cenário</div>
+      <div class="hud-group-body">
+        <label class="hud-check"><input type="checkbox" id="limit-on"> Limitar entidades</label>
+        <div class="hud-row"><span>máximo</span><span id="limit-val">20</span></div>
+        <input type="range" id="limit-range" class="hud-range" min="1" max="20" value="20" disabled aria-label="Máximo de entidades">
+        <label class="hud-check"><input type="checkbox" id="refresh-on"> Renovar a cada 20 s</label>
+        <div class="hud-row"><span>próxima troca</span><span id="refresh-left">—</span></div>
+        <label class="hud-check" title="Os organismos procuram comida, os predadores caçam e espécies diferentes brigam entre si"><input type="checkbox" id="behavior-on"> Caçar e lutar</label>
+        <div class="hud-row"><span>comida na água</span><span id="hud-food">—</span></div>
+        <div class="hud-row"><span>mortes em lutas</span><span id="hud-fight-deaths">0</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="organisms">
+      <div class="hud-group-head"><span class="caret">▶</span>Coleção</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>catalogados</span><span id="hud-org-count">0/0</span></div>
+        <button id="open-plates" class="laudo-btn">Placas de cultura</button>
+        <button id="open-analysis" class="laudo-btn">Plano de análise</button>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="catching">
+      <div class="hud-group-head"><span class="caret">▶</span>Frascos</div>
+      <div class="hud-group-body">
+        <div class="hud-row"><span>na pipeta</span><span id="hud-jar-count">0</span></div>
+      </div>
+    </div>
+    <div class="hud-group open" data-group="drying">
+      <div class="hud-group-head"><span class="caret">▶</span>Secagem</div>
+      <div class="hud-group-body">
+        <div class="hud-row" id="hud-dry-row"><span id="hud-dry-label">água restante</span><span id="hud-dry-pct">100%</span></div>
+        <div class="mini-bar dry"><div id="hud-dry-bar" style="width:100%"></div></div>
+        <button id="dry-pause-btn" class="laudo-btn" aria-pressed="false">Pausar secagem</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAB: culture plates (one petri dish per isolated species) and the
+     white analysis plane (pick any collected species to study it alone) -->
+<div id="lab" class="lab" aria-hidden="true">
+  <div class="lab-bar">
+    <button class="lab-tab" data-lab="plates">Placas de cultura</button>
+    <button class="lab-tab" data-lab="analysis">Plano de análise</button>
+    <button id="lab-close" class="lab-close">Voltar ao microscópio ✕</button>
+  </div>
+  <div id="lab-plates" class="lab-page">
+    <p class="lab-hint">Cada espécie que você coleta é isolada na sua própria placa de Petri, onde a cultura cresce sozinha. Clique numa placa para analisá-la no plano branco.</p>
+    <div id="plates-grid" class="plates-grid"></div>
+  </div>
+  <div id="lab-analysis" class="lab-page">
+    <aside id="an-list" class="an-list" aria-label="Escolha o organismo"></aside>
+    <div class="an-stage">
+      <svg id="an-svg" preserveAspectRatio="xMidYMid meet"></svg>
+      <div id="an-empty" class="an-empty">Colete um espécime na lâmina para analisá-lo aqui.</div>
+      <div class="an-tools">
+        <button id="an-zoom-out" class="lab-tool" title="Afastar">−</button>
+        <button id="an-zoom-in" class="lab-tool" title="Aproximar">+</button>
+        <button id="an-pause" class="lab-tool wide">Pausar</button>
+      </div>
+      <div class="an-help"><span class="mouse-only">clique</span><span class="touch-only">toque</span> no campo para cutucar</div>
+    </div>
+    <aside id="an-info" class="an-info"></aside>
+  </div>
+</div>
+
+<!-- Species detail modal -->
+<div id="panel-overlay">
+  <div id="species-panel">
+    <button id="panel-close" class="mono">FECHAR ✕</button>
+    <div class="panel-header">
+      <div class="panel-portrait" id="panel-portrait"></div>
+      <div class="panel-titles">
+        <p class="common-name" id="panel-common-name"></p>
+        <p class="sci-name" id="panel-sci-name"></p>
+        <span class="rarity-tag mono" id="panel-rarity"></span>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section"><h4>DESCRIÇÃO</h4><p id="panel-desc"></p></div>
+      <div class="panel-section"><h4>COMPORTAMENTO OBSERVADO</h4><p id="panel-behavior"></p></div>
+      <div class="panel-section" id="panel-health-section">
+        <h4>SAÚDE HUMANA</h4>
+        <span class="health-tag" id="panel-health-tag"></span>
+        <p id="panel-health"></p>
+      </div>
+      <div class="panel-section" id="panel-industry-section"><h4>NA INDÚSTRIA DE LATICÍNIOS</h4><p id="panel-industry"></p></div>
+      <div class="panel-section">
+        <div class="stat-row" id="panel-gram-row"><span>Coloração de Gram</span><span id="panel-gram"></span></div>
+        <div class="stat-row"><span>Plano focal</span><span id="panel-depth"></span></div>
+        <div class="stat-row"><span>Forma</span><span id="panel-shape"></span></div>
+        <div class="stat-row"><span>Motilidade</span><span id="panel-motility"></span></div>
+        <div class="stat-row"><span>Organismo real</span><span id="panel-real"></span></div>
+        <div class="stat-row"><span>Habitat</span><span id="panel-habitat"></span></div>
+        <div class="stat-row"><span>Capturados</span><span id="panel-caught-count"></span></div>
+      </div>
+      <button id="panel-analyze" class="release-btn">Analisar no plano branco</button>
+      <button id="panel-release" class="release-btn">Soltar na lâmina</button>
+      <a id="panel-wiki" class="wiki-btn mono" href="#" target="_blank" rel="noopener noreferrer">Ver na Wikipedia ↗</a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
