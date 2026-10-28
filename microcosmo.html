@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Microcosmo — Lâmina 07</title>
 <style>
   :root{
@@ -706,20 +706,109 @@
   #pipette.on{ display:block; }
   #pipette svg{ display:block; overflow:visible; }
   body.pipette-on #droplet-clip, body.pipette-on #droplet-clip .organism{ cursor:none; }
+
+  /* ================= TOUCH + PHONE ================= */
+  /* the slide takes every gesture itself (drag = move, hold = catch, two
+     fingers = focus), so the browser must not scroll or zoom it */
+  #droplet-clip{ touch-action:none; }
+  button, .reel-slot, .hud-group-head{ touch-action:manipulation; }
+  body{ -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
+  body.touch .mouse-only{ display:none !important; }
+  body:not(.touch) .touch-only{ display:none !important; }
+
+  /* focus knob for touch screens: shallower / deeper, four stops */
+  #focus-ctl{ display:none; position:fixed; left:16px; bottom:16px; z-index:72; flex-direction:column; align-items:center; gap:6px;
+              padding:6px; background:#fff; border:2px solid #111; border-radius:10px;
+              font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body.touch #focus-ctl{ display:flex; }
+  #focus-ctl button{ width:44px; height:44px; padding:0; border:1.5px solid #111; border-radius:8px; background:#fff; color:#111;
+                     font-size:1.05rem; font-weight:700; line-height:1; cursor:pointer; }
+  #focus-ctl button:active{ background:#111; color:#fff; }
+  #focus-ctl .fl{ font-size:.56rem; font-weight:800; letter-spacing:.12em; color:#111; }
+  #focus-ctl .fdots{ display:flex; flex-direction:column; gap:5px; padding:2px 0; }
+  #focus-ctl .fdots i{ display:block; width:9px; height:9px; border-radius:50%; border:1.5px solid #111; }
+  #focus-ctl .fdots i.on{ background:#111; }
+
+  /* drawer toggle for the left card (phones only) and the scrim behind open drawers */
+  #rail-toggle{ display:none; position:fixed; top:16px; left:16px; z-index:61; align-items:center; justify-content:center;
+                width:30px; height:30px; padding:0; border-radius:6px; background:#fff; border:2px solid #111; color:#111; cursor:pointer; }
+  #rail-toggle .burger{ width:18px; }
+  #drawer-scrim{ display:none; position:fixed; inset:0; z-index:110; background:rgba(0,0,0,.28); }
+
+  @media (max-width: 820px), (max-height: 520px){
+    #shape-rail, #hud-panel{
+      top:0 !important; bottom:0; height:100%; max-height:none !important; width:min(86vw, 320px) !important;
+      border-radius:0 !important; border-top:0 !important; border-bottom:0 !important; z-index:120;
+      padding-top:max(14px, env(safe-area-inset-top)) !important; padding-bottom:max(14px, env(safe-area-inset-bottom)) !important;
+      overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+    }
+    #shape-rail{ left:0; border-left:0 !important; transform:translateX(-105%); transition:transform .3s ease; }
+    body.rail-open #shape-rail{ transform:none; }
+    #hud-panel{ right:0; border-right:0 !important; }
+    #hud-panel.collapsed{ width:min(86vw, 320px) !important; transform:translateX(105%); }
+    body.rail-open #drawer-scrim, body.phone:not(.hud-hidden) #drawer-scrim{ display:block; }
+    #rail-toggle{ display:flex; }
+    #hud-toggle, #rail-toggle{ top:max(10px, env(safe-area-inset-top)) !important; width:44px; height:44px; z-index:130; }
+    #hud-toggle{ font-size:1.3rem; right:calc(min(86vw, 320px) + 8px) !important; }
+    body.hud-hidden #hud-toggle{ right:max(10px, env(safe-area-inset-right)) !important; }
+    #rail-toggle{ left:max(10px, env(safe-area-inset-left)); transition:left .3s ease; }
+    body.rail-open #rail-toggle{ left:calc(min(86vw, 320px) + 8px); }
+    /* with a drawer open only its own toggle stays, beside the drawer */
+    body.rail-open #hud-toggle, body.phone:not(.hud-hidden) #rail-toggle{ display:none; }
+    .hud-group-head{ padding:13px 16px; font-size:.7rem; }
+    .hud-check{ padding:9px 0 5px; font-size:.8rem; }
+    .hud-check input{ width:20px; height:20px; }
+    .laudo-btn{ padding:11px 0; font-size:.72rem; }
+    .slide-btn{ padding:10px 0; font-size:.74rem; }
+    .toast{ top:max(64px, calc(env(safe-area-inset-top) + 56px)); font-size:.86rem; }
+    #focus-ctl{ left:max(10px, env(safe-area-inset-left)); bottom:max(10px, env(safe-area-inset-bottom)); }
+    #reel{ left:76px; right:max(8px, env(safe-area-inset-right)); bottom:max(6px, env(safe-area-inset-bottom)); max-width:none;
+           gap:16px; padding:14px 4px 20px; }
+    .reel-slot{ width:42px; height:70px; }
+    #panel-overlay{ align-items:flex-end; }
+    #species-panel{ width:100vw; max-height:88vh; border-radius:14px 14px 0 0; border-bottom:0;
+                    padding-bottom:env(safe-area-inset-bottom); overscroll-behavior:contain; }
+    #panel-close{ top:8px; right:8px; padding:10px 12px; }
+    .panel-header{ padding:18px 64px 14px 18px; gap:14px; }
+    .panel-body{ padding:16px 18px 28px; }
+    #dried-overlay{ justify-content:flex-start; overflow-y:auto; padding:72px 18px 28px; }
+    .lab-bar{ padding-top:max(12px, env(safe-area-inset-top)); padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right)); }
+    .an-tools{ bottom:max(16px, env(safe-area-inset-bottom)); }
+    #intro .lead{ font-size:.86rem; line-height:1.6; }
+    /* the intro scrolls when it doesn't fit (phone held sideways); the auto
+       margins keep it centred whenever it does fit */
+    #intro{ justify-content:flex-start; overflow-y:auto; -webkit-overflow-scrolling:touch;
+            padding:max(20px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom)); }
+    #intro > *{ flex:none; }
+    #intro h1{ margin-top:auto; }
+    #start-btn{ margin-bottom:auto; }
+  }
+  @media (max-height: 520px){
+    #intro .lead{ font-size:.78rem; max-width:640px; }
+  }
 </style>
 </head>
 <body>
+<script>
+  // touch screen (phone, tablet): set before the intro paints, so its text
+  // and the controls card already explain the touch gestures
+  if(window.matchMedia && matchMedia('(pointer: coarse)').matches) document.body.classList.add('touch');
+  if(window.matchMedia && matchMedia('(max-width: 820px), (max-height: 520px)').matches) document.body.classList.add('phone');
+</script>
 
 <div id="intro">
   <h1>Microcosmo</h1>
   <div class="lead mono">
     Um microscópio virtual. Escolha uma lâmina — água de lagoa, solo úmido ou
-    <b>leite cru</b> de um lote da indústria de laticínios — e explore a amostra com as
-    <b>setas do teclado</b>. Gire a <b>roda do mouse</b> para ajustar o foco:
+    <b>leite cru</b> de um lote da indústria de laticínios — e explore a amostra
+    <span class="mouse-only">com as <b>setas do teclado</b>. Gire a <b>roda do mouse</b> para ajustar o foco:
     cada plano focal revela organismos diferentes. Para coletar um espécime, segure o clique
-    com a <b>pipeta</b> sobre ele por <b>5 segundos</b>. No leite, cada bactéria coletada é
+    com a <b>pipeta</b> sobre ele por <b>5 segundos</b>.</span><span class="touch-only"><b>arrastando o dedo</b> pela lâmina.
+    Use os botões <b>▲ ▼</b> do foco (ou deslize <b>dois dedos</b> para cima e para baixo):
+    cada plano focal revela organismos diferentes. Para coletar um espécime, <b>mantenha o dedo</b>
+    sobre ele por <b>5 segundos</b>, acompanhando-o se ele fugir.</span> No leite, cada bactéria coletada é
     classificada como <b>benéfica</b>, <b>deteriorante</b> ou <b>patogênica</b> para a saúde
-    humana, e o lote recebe um laudo de risco. Clique num recipiente para ver a ficha
+    humana, e o lote recebe um laudo de risco. <span class="mouse-only">Clique</span><span class="touch-only">Toque</span> num recipiente para ver a ficha
     do organismo, abrir a página dele na Wikipedia ou <b>soltá-lo de volta</b> na lâmina.
     Os bichos se dividem ao vivo, alguns comem outros, e quanto mais raro, mais colorido:
     <b>preto</b> comum, <b>verde</b> incomum, <b>roxo</b> raro, <b>dourado</b> lendário.
@@ -735,11 +824,14 @@
   <div id="shape-rail" class="bench-surface">
     <div class="rail-title mono">Controles</div>
     <div class="controls-card">
-      <div class="ctrl"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><path d="M14 3.2a10.8 10.8 0 0 0-10.8 10.8V15H14z" fill="#111" opacity=".85"/></svg><div class="ctrl-txt"><b>Segurar 5 s</b><span>coletar com a pipeta</span></div></div>
-      <div class="ctrl"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><rect x="11.5" y="6" width="5" height="8" rx="2.5" fill="#111"/><path d="M14 18.5v6m-2.2-2.2 2.2 2.2 2.2-2.2" stroke="#111" stroke-width="1.3" fill="none"/></svg><div class="ctrl-txt"><b>Rolar</b><span>ajustar o foco</span></div></div>
-      <div class="ctrl"><svg class="ctrl-ico wide" viewBox="0 0 48 30"><rect x="17" y="1" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 3.5l3.6 4.8H3.4z" fill="#111" transform="translate(17,1)"/><rect x="1" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M3.2 6.5l4.8-3.6v7.2z" fill="#111" transform="translate(1,16)"/><rect x="17" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 9.5l3.6-4.8H3.4z" fill="#111" transform="translate(17,16)"/><rect x="33" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M10.8 6.5L6 2.9v7.2z" fill="#111" transform="translate(33,16)"/></svg><div class="ctrl-txt"><b>Setas / WASD</b><span>mover a lâmina</span></div></div>
-      <div class="ctrl"><svg class="ctrl-ico wide" viewBox="0 0 48 16"><rect x="1" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="6" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">1</text><rect x="13" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="18" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">2</text><rect x="25" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="30" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">3</text><rect x="37" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="42" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">4</text></svg><div class="ctrl-txt"><b>1 – 4</b><span>ir direto ao plano</span></div></div>
-      <div class="ctrl"><svg class="ctrl-ico" viewBox="0 0 24 40"><rect x="5" y="2" width="14" height="5" rx="1.2" fill="#7a5a36"/><path d="M6 7h12v25a6 6 0 0 1-12 0z" fill="rgba(160,190,170,.18)" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 17h10.8v15a5.4 5.4 0 0 1-10.8 0z" fill="rgba(140,175,150,.45)"/><ellipse cx="12" cy="26" rx="3.4" ry="1.8" fill="#111" opacity=".8"/></svg><div class="ctrl-txt"><b>Clicar no frasco</b><span>ficha, Wikipedia, soltar</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><path d="M14 3.2a10.8 10.8 0 0 0-10.8 10.8V15H14z" fill="#111" opacity=".85"/></svg><div class="ctrl-txt"><b>Segurar 5 s</b><span>coletar com a pipeta</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><circle cx="14" cy="16" r="5" fill="#111"/><circle cx="14" cy="16" r="9.5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="14" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/><path d="M14 30v8" stroke="currentColor" stroke-width="1.4"/></svg><div class="ctrl-txt"><b>Segurar 5 s</b><span>dedo sobre o organismo: coletar</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico wide" viewBox="0 0 48 30"><circle cx="24" cy="15" r="5" fill="#111"/><path d="M24 2v6m0 14v6M11 15h6m14 0h6" stroke="currentColor" stroke-width="1.4"/><path d="M24 1l-3 4h6zM24 29l-3-4h6zM10 15l4-3v6zM38 15l-4-3v6z" fill="currentColor"/></svg><div class="ctrl-txt"><b>Arrastar</b><span>mover a lâmina</span></div></div>
+      <div class="ctrl touch-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="5" y="2" width="18" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M14 7l-4 5h8zM14 33l-4-5h8z" fill="#111"/><circle cx="14" cy="17" r="2" fill="#111"/><circle cx="14" cy="23" r="2" fill="none" stroke="#111" stroke-width="1"/></svg><div class="ctrl-txt"><b>▲ ▼ ou 2 dedos</b><span>ajustar o foco</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico" viewBox="0 0 28 40"><rect x="2" y="2" width="24" height="36" rx="12" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 2v14M2 16h24" stroke="currentColor" stroke-width="1.2"/><rect x="11.5" y="6" width="5" height="8" rx="2.5" fill="#111"/><path d="M14 18.5v6m-2.2-2.2 2.2 2.2 2.2-2.2" stroke="#111" stroke-width="1.3" fill="none"/></svg><div class="ctrl-txt"><b>Rolar</b><span>ajustar o foco</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico wide" viewBox="0 0 48 30"><rect x="17" y="1" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 3.5l3.6 4.8H3.4z" fill="#111" transform="translate(17,1)"/><rect x="1" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M3.2 6.5l4.8-3.6v7.2z" fill="#111" transform="translate(1,16)"/><rect x="17" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M7 9.5l3.6-4.8H3.4z" fill="#111" transform="translate(17,16)"/><rect x="33" y="16" width="14" height="13" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.2"/><path d="M10.8 6.5L6 2.9v7.2z" fill="#111" transform="translate(33,16)"/></svg><div class="ctrl-txt"><b>Setas / WASD</b><span>mover a lâmina</span></div></div>
+      <div class="ctrl mouse-only"><svg class="ctrl-ico wide" viewBox="0 0 48 16"><rect x="1" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="6" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">1</text><rect x="13" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="18" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">2</text><rect x="25" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="30" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">3</text><rect x="37" y="1" width="10" height="13" rx="2" fill="#fff" stroke="currentColor" stroke-width="1.1"/><text x="42" y="11" text-anchor="middle" font-size="8" font-family="monospace" fill="#111">4</text></svg><div class="ctrl-txt"><b>1 – 4</b><span>ir direto ao plano</span></div></div>
+      <div class="ctrl"><svg class="ctrl-ico" viewBox="0 0 24 40"><rect x="5" y="2" width="14" height="5" rx="1.2" fill="#7a5a36"/><path d="M6 7h12v25a6 6 0 0 1-12 0z" fill="rgba(160,190,170,.18)" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 17h10.8v15a5.4 5.4 0 0 1-10.8 0z" fill="rgba(140,175,150,.45)"/><ellipse cx="12" cy="26" rx="3.4" ry="1.8" fill="#111" opacity=".8"/></svg><div class="ctrl-txt"><b><span class="mouse-only">Clicar</span><span class="touch-only">Tocar</span> no frasco</b><span>ficha, Wikipedia, soltar</span></div></div>
     </div>
     <button id="species-toggle" class="species-toggle mono" aria-expanded="false" title="Mostrar espécimes">
       <span class="burger"><i></i><i></i><i></i></span>
@@ -752,6 +844,14 @@
   <!-- CENTER: stage -->
   <div id="stage-wrap" class="bench-surface">
     <button id="hud-toggle" class="mono" title="Ocultar dados" aria-expanded="true">›</button>
+    <button id="rail-toggle" title="Controles e espécimes" aria-expanded="false"><span class="burger"><i></i><i></i><i></i></span></button>
+    <div id="drawer-scrim"></div>
+    <div id="focus-ctl" role="group" aria-label="Foco">
+      <button id="focus-up" title="Foco mais raso" aria-label="Foco mais raso">▲</button>
+      <div class="fl">FOCO</div>
+      <div class="fdots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <button id="focus-down" title="Foco mais fundo" aria-label="Foco mais fundo">▼</button>
+    </div>
     <div id="slide">
       <div id="glass-frame">
         <div id="glass"></div>
@@ -974,7 +1074,7 @@
         <button id="an-zoom-in" class="lab-tool" title="Aproximar">+</button>
         <button id="an-pause" class="lab-tool wide">Pausar</button>
       </div>
-      <div class="an-help">clique no campo para cutucar</div>
+      <div class="an-help"><span class="mouse-only">clique</span><span class="touch-only">toque</span> no campo para cutucar</div>
     </div>
     <aside id="an-info" class="an-info"></aside>
   </div>
@@ -4372,8 +4472,11 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   let VIEW_W = 800, VIEW_H = 450;
   function computeView(){
     const r = dropletClip.getBoundingClientRect();
-    VIEW_W = Math.max(240, r.width / PX_PER_UNIT);
-    VIEW_H = Math.max(160, r.height / PX_PER_UNIT);
+    // a phone shows a little less magnification, so the field isn't too
+    // narrow; the scale stays the same in both directions (no empty bands)
+    const ppu = Math.min(PX_PER_UNIT, r.width/180, r.height/120);
+    VIEW_W = r.width / ppu;
+    VIEW_H = r.height / ppu;
   }
   computeView();
 
@@ -5099,6 +5202,28 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     hudToggle.setAttribute('aria-expanded', hidden ? 'false' : 'true');
   });
 
+  // ---- phones: both cards are drawers; the scrim behind an open one closes it ----
+  const railToggle = document.getElementById('rail-toggle');
+  const phoneMQ = window.matchMedia('(max-width: 820px), (max-height: 520px)');
+  function setRail(open){
+    document.body.classList.toggle('rail-open', open);
+    railToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function setHud(open){ if(hudPanel.classList.contains('collapsed') === open) hudToggle.click(); }
+  railToggle.addEventListener('click', ()=>{
+    const open = !document.body.classList.contains('rail-open');
+    if(open && phoneMQ.matches) setHud(false); // one drawer at a time on a phone
+    setRail(open);
+  });
+  hudToggle.addEventListener('click', ()=>{ if(phoneMQ.matches && !hudPanel.classList.contains('collapsed')) setRail(false); });
+  document.getElementById('drawer-scrim').addEventListener('click', ()=>{ setRail(false); if(phoneMQ.matches) setHud(false); });
+  function applyPhoneLayout(){
+    document.body.classList.toggle('phone', phoneMQ.matches);
+    if(phoneMQ.matches){ setHud(false); setRail(false); }
+  }
+  applyPhoneLayout();
+  if(phoneMQ.addEventListener) phoneMQ.addEventListener('change', applyPhoneLayout);
+
   // ---- HUD groups collapse/expand ----
   document.querySelectorAll('.hud-group-head').forEach(head=>{
     head.addEventListener('click', ()=>{
@@ -5140,6 +5265,13 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
 
   const PAN_SPEED = 430; // map units per second
   function updateCameraKeys(dt){
+    if((panVel.x || panVel.y) && !panTouch){
+      camera.x += panVel.x*dt; camera.y += panVel.y*dt;
+      const k = Math.exp(-dt*4.5);
+      panVel.x *= k; panVel.y *= k;
+      if(Math.hypot(panVel.x, panVel.y) < 4) panVel.x = panVel.y = 0;
+      clampCamera(); applyViewBox();
+    }
     if(!keysDown.size) return;
     let vx = 0, vy = 0;
     keysDown.forEach(k=>{ const v = PAN_KEYS[k]; if(v){ vx += v[0]; vy += v[1]; } });
@@ -5165,9 +5297,10 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     });
   }
 
+  let holdTouch = false; // the hold was started by a finger (bigger target, pipette drawn at the finger)
   function isPointerOverOrganism(org, clientX, clientY){
     const rect = org.group.getBoundingClientRect();
-    const pad = 6; // small tolerance: a pipette tip doesn't need pixel-perfect aim
+    const pad = holdTouch ? 24 : 6; // small tolerance: a pipette tip doesn't need pixel-perfect aim; a fingertip covers more
     return clientX >= rect.left-pad && clientX <= rect.right+pad &&
            clientY >= rect.top-pad && clientY <= rect.bottom+pad;
   }
@@ -5187,6 +5320,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     holdProgress = 0;
     holdLastT = performance.now();
     holdPointer = { x: e.clientX, y: e.clientY };
+    holdTouch = e.pointerType === 'touch';
+    if(holdTouch) ppShowAt(e.clientX, e.clientY);
     const rect = dropletClip.getBoundingClientRect();
     updateProgressPosition(e.clientX, e.clientY, rect);
     captureProgress.style.display = 'block';
@@ -5194,11 +5329,13 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
 
     window.addEventListener('pointermove', onHoldMove);
     window.addEventListener('pointerup', onHoldEnd);
+    window.addEventListener('pointercancel', onHoldEnd);
   }
 
   function onHoldMove(e){
     if(!holding) return;
     holdPointer = { x: e.clientX, y: e.clientY };
+    if(holdTouch) ppShowAt(e.clientX, e.clientY);
     const rect = dropletClip.getBoundingClientRect();
     updateProgressPosition(e.clientX, e.clientY, rect);
   }
@@ -5216,6 +5353,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   function onHoldEnd(){
     window.removeEventListener('pointermove', onHoldMove);
     window.removeEventListener('pointerup', onHoldEnd);
+    window.removeEventListener('pointercancel', onHoldEnd);
+    if(holdTouch){ holdTouch = false; ppHideSoon(); }
     if(holding) holding.suction = false;
     if(holding && !holding.caught){
       if(holding.stuck){
@@ -5251,6 +5390,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
           completeCapture(holding);
           window.removeEventListener('pointermove', onHoldMove);
           window.removeEventListener('pointerup', onHoldEnd);
+          window.removeEventListener('pointercancel', onHoldEnd);
+          if(holdTouch){ holdTouch = false; ppHideSoon(); }
           holding = null;
           captureProgress.style.display = 'none';
         }
@@ -5282,9 +5423,21 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     pipetteEl.style.transform = `translate3d(${(e.clientX-ppTip.x).toFixed(1)}px,${(e.clientY-ppTip.y).toFixed(1)}px,0)`;
     if(!ppVisible){ ppVisible = true; pipetteEl.classList.add('on'); }
   }
+  // on a touch screen the pipette only appears while a finger is catching a
+  // specimen: its tip sits under the finger and the liquid rises in the glass
+  let ppHideT = null;
+  function ppShowAt(x, y){
+    clearTimeout(ppHideT);
+    pipetteEl.style.transform = `translate3d(${(x-ppTip.x).toFixed(1)}px,${(y-ppTip.y).toFixed(1)}px,0)`;
+    if(!ppVisible){ ppVisible = true; pipetteEl.classList.add('on'); }
+  }
+  function ppHideSoon(){
+    clearTimeout(ppHideT);
+    ppHideT = setTimeout(()=>{ if(!holding){ ppVisible = false; pipetteEl.classList.remove('on'); } }, 650); // let the liquid drain first
+  }
   dropletClip.addEventListener('pointermove', placePipette);
   dropletClip.addEventListener('pointerenter', placePipette);
-  dropletClip.addEventListener('pointerleave', ()=>{ ppVisible = false; pipetteEl.classList.remove('on'); });
+  dropletClip.addEventListener('pointerleave', (e)=>{ if(e.pointerType === 'touch') return; ppVisible = false; pipetteEl.classList.remove('on'); });
   // capture phase: organisms stop the pointerdown from bubbling
   dropletClip.addEventListener('pointerdown', ()=>{ ppPressed = true; }, true);
   window.addEventListener('pointerup', ()=>{ ppPressed = false; });
@@ -5365,15 +5518,87 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   // a click that hits no organism (organisms stop their own clicks): the
   // pipette tip pokes the water — a ripple, and whatever is close by in the
   // focused plane gets startled and darts away
-  dropletClip.addEventListener('pointerdown', (e)=>{
-    if(gameOver) return;
+  function pokeWater(e){
     const pt = svgPointFromEvent(e);
     spawnRipple(pt.x, pt.y);
     organisms.forEach(o=>{
       if(o.depthLevel !== currentDepth || o.caught || o.dying || o.beingEaten) return;
       if(Math.hypot(o.x - pt.x, o.y - pt.y) < 60) o.triggerFlee(pt.x, pt.y);
     });
+  }
+  dropletClip.addEventListener('pointerdown', (e)=>{
+    if(gameOver || e.pointerType === 'touch') return;
+    pokeWater(e);
   });
+
+  // ---- touch: drag the slide around, tap to poke the water, put a finger on
+  // (or right next to) a specimen to catch it, two fingers up/down to focus ----
+  const touchPts = new Map();   // active fingers on the slide: pointerId -> {x, y}
+  let panTouch = null;          // the finger dragging the slide
+  let twoFingerY = null, twoFingerAccum = 0;
+  const panVel = { x: 0, y: 0 }; // fling: the slide keeps gliding a moment after release
+  window.addEventListener('pointerdown', (e)=>{ if(e.pointerType === 'touch') document.body.classList.add('touch'); }, true);
+  function unitsPerPx(){ return VIEW_W / dropletClip.getBoundingClientRect().width; }
+  function avgTouchY(){ let y = 0; touchPts.forEach(p=> y += p.y); return y / touchPts.size; }
+  // the in-focus specimen closest to a fingertip, within reach
+  function nearestCatchable(cx, cy, maxPx){
+    let best = null, bd = maxPx;
+    for(const o of organisms){
+      if(o.depthLevel !== currentDepth || o.caught || o.dying || o.vanishing || o.beingEaten || o._hidden) continue;
+      const r = o.group.getBoundingClientRect();
+      const d = Math.hypot(Math.max(r.left - cx, 0, cx - r.right), Math.max(r.top - cy, 0, cy - r.bottom));
+      if(d < bd){ bd = d; best = o; }
+    }
+    return best;
+  }
+  dropletClip.addEventListener('pointerdown', (e)=>{
+    if(e.pointerType !== 'touch' || gameOver) return;
+    touchPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    panVel.x = panVel.y = 0;
+    if(touchPts.size === 2){ panTouch = null; twoFingerY = avgTouchY(); twoFingerAccum = 0; return; }
+    if(touchPts.size > 2 || holding) return;
+    const near = nearestCatchable(e.clientX, e.clientY, 30);
+    if(near){ startHold(near, e); return; }
+    panTouch = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
+  });
+  window.addEventListener('pointermove', (e)=>{
+    if(e.pointerType !== 'touch' || !touchPts.has(e.pointerId)) return;
+    touchPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if(touchPts.size >= 2 && twoFingerY !== null){
+      const y = avgTouchY();
+      twoFingerAccum += y - twoFingerY; twoFingerY = y;
+      if(Math.abs(twoFingerAccum) > 46){ applyDepth(currentDepth + (twoFingerAccum > 0 ? 1 : -1)); twoFingerAccum = 0; }
+      return;
+    }
+    if(!panTouch || panTouch.id !== e.pointerId) return;
+    if(!panTouch.moved && Math.hypot(e.clientX - panTouch.sx, e.clientY - panTouch.sy) > 9) panTouch.moved = true;
+    if(panTouch.moved){
+      const k = unitsPerPx(), now = performance.now();
+      const dx = (e.clientX - panTouch.x)*k, dy = (e.clientY - panTouch.y)*k;
+      camera.x -= dx; camera.y -= dy;
+      clampCamera(); applyViewBox();
+      const dts = Math.max(0.008, (now - panTouch.t)/1000);
+      panVel.x = panVel.x*0.6 + (-dx/dts)*0.4; panVel.y = panVel.y*0.6 + (-dy/dts)*0.4;
+      panTouch.t = now;
+    }
+    panTouch.x = e.clientX; panTouch.y = e.clientY;
+  });
+  function endTouch(e){
+    if(e.pointerType !== 'touch' || !touchPts.has(e.pointerId)) return;
+    touchPts.delete(e.pointerId);
+    if(touchPts.size < 2) twoFingerY = null;
+    if(panTouch && panTouch.id === e.pointerId){
+      if(!panTouch.moved){ panVel.x = panVel.y = 0; if(e.type === 'pointerup' && !gameOver) pokeWater(e); }
+      else if(performance.now() - panTouch.t > 90){ panVel.x = panVel.y = 0; } // finger stopped before lifting: no fling
+      panTouch = null;
+    }
+  }
+  window.addEventListener('pointerup', endTouch);
+  window.addEventListener('pointercancel', endTouch);
+
+  // on-screen focus buttons (touch screens)
+  document.getElementById('focus-up').addEventListener('click', ()=> applyDepth(currentDepth - 1));
+  document.getElementById('focus-down').addEventListener('click', ()=> applyDepth(currentDepth + 1));
   window.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' && pendingRelease){ pendingRelease = null; showToast('Soltura cancelada', false); }
   });
@@ -5517,6 +5742,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     hudDepthLevel.textContent = `${currentDepth}/${MAX_DEPTH}`;
     const zoomMap = {1:'100x', 2:'250x', 3:'400x', 4:'1000x'};
     hudZoom.textContent = zoomMap[currentDepth];
+    document.querySelectorAll('#focus-ctl .fdots i').forEach((d, i)=> d.classList.toggle('on', i + 1 === currentDepth));
 
     for(let d=1; d<=MAX_DEPTH; d++){
       const diff = Math.abs(d - currentDepth);
