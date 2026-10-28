@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Microcosmo — Lâmina 07</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="modelo3d.css">
 </head>
 <body>
 <script src="inicio.js"></script>
@@ -246,6 +247,7 @@
         <div class="hud-row"><span>catalogados</span><span id="hud-org-count">0/0</span></div>
         <button id="open-plates" class="laudo-btn">Placas de cultura</button>
         <button id="open-analysis" class="laudo-btn">Plano de análise</button>
+        <button id="open-3d" class="laudo-btn">Modelos 3D das células</button>
       </div>
     </div>
     <div class="hud-group open" data-group="catching">
@@ -325,11 +327,45 @@
       </div>
       <button id="panel-analyze" class="release-btn">Analisar no plano branco</button>
       <button id="panel-release" class="release-btn">Soltar na lâmina</button>
+      <button id="panel-3d" class="release-btn">Ver a estrutura em 3D</button>
       <a id="panel-wiki" class="wiki-btn mono" href="#" target="_blank" rel="noopener noreferrer">Ver na Wikipedia ↗</a>
     </div>
   </div>
 </div>
 
+<!-- MODELO 3D: a célula aberta camada por camada. A página rola por cima
+     do modelo (roda do mouse ou o dedo) e cada trecho mostra uma estrutura. -->
+<section id="m3d" class="m3d" aria-hidden="true" aria-label="Modelo 3D da célula">
+  <div id="m3d-scroll" class="m3d-scroll" tabindex="-1">
+    <div id="m3d-stage" class="m3d-stage">
+      <canvas id="m3d-canvas" aria-hidden="true"></canvas>
+      <svg id="m3d-lines" aria-hidden="true"></svg>
+      <div id="m3d-label" aria-hidden="true"></div>
+      <header id="m3d-head" class="m3d-head">
+        <h1 id="m3d-title"></h1>
+        <p id="m3d-sub"></p>
+        <div class="m3d-foot">
+          <div id="m3d-steps" class="m3d-steps" aria-label="Estruturas"></div>
+          <p id="m3d-hint"></p>
+        </div>
+      </header>
+      <button id="m3d-prev" class="m3d-arrow" aria-label="Célula anterior"><svg viewBox="0 0 60 90"><polyline points="52,10 12,45 52,80"/></svg></button>
+      <button id="m3d-next" class="m3d-arrow" aria-label="Próxima célula"><svg viewBox="0 0 60 90"><polyline points="8,10 48,45 8,80"/></svg></button>
+      <div id="m3d-desc" class="m3d-desc" aria-live="polite">
+        <p class="m3d-desc-label">descrição</p>
+        <div id="m3d-box" class="m3d-box">
+          <h2 id="m3d-desc-title"></h2>
+          <p id="m3d-desc-text"></p>
+        </div>
+      </div>
+      <button id="m3d-close" class="m3d-close">← Voltar ao microscópio</button>
+      <div id="m3d-loading">Carregando o modelo 3D…</div>
+    </div>
+    <div id="m3d-spacer" aria-hidden="true"></div>
+  </div>
+</section>
+
 <script src="script.js"></script>
+<script src="modelo3d.js"></script>
 </body>
 </html>

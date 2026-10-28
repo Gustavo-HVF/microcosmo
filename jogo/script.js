@@ -4136,7 +4136,11 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0],
     w:[0,-1], s:[0,1], a:[-1,0], d:[1,0], W:[0,-1], S:[0,1], A:[-1,0], D:[1,0]
   };
+  // the 3D model page (modelo3d.js) covers the game; while it is open the
+  // game is paused and leaves the keys alone (arrows scroll and switch cells there)
+  const m3dOpen = () => !!(window.Modelo3D && window.Modelo3D.isOpen);
   window.addEventListener('keydown', (e)=>{
+    if(m3dOpen()) return;
     if(e.key >= '1' && e.key <= '4') applyDepth(parseInt(e.key));
     if(PAN_KEYS[e.key]){ keysDown.add(e.key); e.preventDefault(); }
   });
@@ -4724,8 +4728,11 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   // ---- species detail panel ----
   const HABITAT_LABEL = { soil:'solo', water:'água doce', milk:'leite (laticínios)' };
   let panelSpecies = null;
+  // species that have a 3D cell model (ids of modelo3d.js)
+  const MODEL_3D_FOR = { ecoli:'bacteria', acidophilus:'lactobacillus', bulgaricus:'lactobacillus', kefir:'fungo' };
   function openSpeciesPanel(species){
     panelSpecies = species;
+    document.getElementById('panel-3d').classList.toggle('show', !!MODEL_3D_FOR[species.id]);
     // a specimen in a vial can be put back on the slide (it goes to its own focal plane)
     document.getElementById('panel-release').style.display = (caughtLog[species.id] > 0 && !gameOver) ? '' : 'none';
     document.getElementById('panel-common-name').textContent = species.displayName;
@@ -5300,12 +5307,15 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     document.getElementById('lab-plates').classList.toggle('active', page === 'plates');
     document.getElementById('lab-analysis').classList.toggle('active', page === 'analysis');
   }
-  function openLab(page, speciesId){
+  function dropHold(){
     if(holding){
       holding.suction = false; holding = null; captureProgress.style.display = 'none';
       window.removeEventListener('pointermove', onHoldMove);
       window.removeEventListener('pointerup', onHoldEnd);
     }
+  }
+  function openLab(page, speciesId){
+    dropHold();
     panelOverlay.classList.remove('open');
     labOpen = true;
     labEl.classList.add('open'); labEl.setAttribute('aria-hidden', 'false');
@@ -5332,8 +5342,19 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   labEl.querySelectorAll('.lab-tab').forEach(t=> t.addEventListener('click', ()=> openLab(t.dataset.lab)));
   document.getElementById('lab-close').addEventListener('click', closeLab);
   window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && labOpen && !panelOverlay.classList.contains('open')) closeLab();
+    if(e.key === 'Escape' && labOpen && !panelOverlay.classList.contains('open') && !m3dOpen()) closeLab();
   });
+
+  // ---- 3D cell models (modelo3d.js) ----
+  function open3D(modelId){
+    if(!window.Modelo3D) return;
+    dropHold();
+    keysDown.clear();
+    panelOverlay.classList.remove('open');
+    window.Modelo3D.open(modelId);
+  }
+  document.getElementById('open-3d').addEventListener('click', ()=> open3D('bacteria'));
+  document.getElementById('panel-3d').addEventListener('click', ()=>{ if(panelSpecies) open3D(MODEL_3D_FOR[panelSpecies.id]); });
   window.addEventListener('resize', ()=>{ if(labOpen && labPage === 'analysis') fitAnalysisView(); });
 
   // ---- scene options: entity limit and periodic renewal ----
@@ -5657,8 +5678,9 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     const dt = Math.min(0.05, Math.max(0, (now-lastT)/1000));
     lastT = now;
     simTime += dt;
-    if(!labOpen) updateCameraKeys(dt);
-    if(!gameOver && !labOpen){
+    const paused = labOpen || m3dOpen();
+    if(!paused) updateCameraKeys(dt);
+    if(!gameOver && !paused){
       updateDrying(dt);
       updateSceneOptions(dt);
       updateBehavior(dt);
