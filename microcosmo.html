@@ -1442,7 +1442,7 @@ const SPECIES = [
     motility: 'flagella-smooth', speed: 2.2,
     divides: true,
     desc: 'Bastonete curvo em forma de vírgula, com um único flagelo polar. O gênero vive em águas doces, salobras e marinhas; algumas espécies causam doenças, como o Vibrio cholerae, agente da cólera.',
-    behavior: 'Um dos nadadores mais rápidos da amostra: dispara em linha reta, empurrado pelo flagelo, e muda de direção de repente.'
+    behavior: 'Um dos nadadores mais rápidos da amostra: dispara em linha reta, empurrado pelo flagelo, recua um pouco e, ao voltar a avançar, o flagelo dobra e joga a célula para o lado (o "flick").'
   },
   {
     id: 'spirochete',
@@ -1499,7 +1499,7 @@ const SPECIES = [
     motility: 'brownian', speed: 0.1, turnRate: 0.5,
     health: 'benefica', gram: 'Gram-positiva',
     desc: 'Coco (célula esférica) que se divide sempre no mesmo plano e forma cadeias, como um colar de contas. Cresce bem em temperaturas altas, por volta de 40–45 °C — daí o nome "thermophilus".',
-    behavior: 'Imóvel: a cadeia apenas ondula devagar, sem nadar.',
+    behavior: 'Imóvel: a cadeia só se dobra e treme com o movimento browniano, sem nadar.',
     healthNote: 'Inofensivo e benéfico. As culturas vivas do iogurte produzem a enzima lactase e ajudam pessoas com intolerância à lactose a digerir melhor o leite fermentado.',
     industry: 'Fermento lático do iogurte (em dupla com o L. bulgaricus) e de queijos como a muçarela e o parmesão. Transforma a lactose em ácido lático, que coagula as proteínas do leite.',
     finding: 'fermento lático (iogurte e queijos)'
@@ -1665,7 +1665,7 @@ const SPECIES = [
     motility: 'flagella-smooth', speed: 1.9,
     health: 'patogenica', gram: 'Gram-negativa',
     desc: 'Bastonete curvo em espiral, com um flagelo em cada ponta. Vive no intestino de aves e bovinos sem fazê-los adoecer.',
-    behavior: 'Move-se muito rápido, em saca-rolhas, girando o corpo em espiral e mudando de direção de repente.',
+    behavior: 'Move-se muito rápido, em saca-rolhas, girando o corpo em espiral. Tem um flagelo em cada ponta e troca de sentido de repente, sem precisar dar a volta.',
     healthNote: 'Uma das causas mais comuns de gastroenterite bacteriana no mundo (diarreia, febre, dor abdominal). Raramente desencadeia a síndrome de Guillain-Barré, uma paralisia temporária. O leite cru é uma fonte frequente de surtos.',
     industry: 'Quase não se multiplica fora do intestino, mas poucas células bastam para infectar uma pessoa. A pasteurização a elimina com facilidade.',
     finding: 'contaminação fecal do leite cru'
@@ -1738,7 +1738,7 @@ const SPECIES = [
     divides: true,
     health: 'deteriorante', gram: 'Gram-negativa',
     desc: 'Bastonete com um tufo de flagelos numa das pontas, comum na água, no solo e em superfícies úmidas. É psicrotrófica: multiplica-se bem dentro do tanque de refrigeração do leite.',
-    behavior: 'Nadadora rápida e quase retilínea, empurrada pelos flagelos polares como por uma hélice.',
+    behavior: 'Nadadora rápida e quase retilínea, empurrada pelos flagelos polares como por uma hélice. Para mudar de rumo, inverte o giro dos flagelos e recua pelo mesmo caminho.',
     healthNote: 'Não costuma causar doença em pessoas saudáveis, por isso não é tratada como patógeno de origem alimentar. Mas estraga o leite: o produto fica amargo, rançoso e pode até gelificar.',
     industry: 'Produz proteases e lipases termorresistentes que sobrevivem até ao tratamento UHT e continuam degradando o leite "longa vida" na prateleira. Controle: resfriar rápido, estocar por pouco tempo e higienizar bem tanques e tubulações.',
     finding: 'refrigeração ou higienização deficiente — encurta a validade do produto'
@@ -1811,6 +1811,51 @@ function el(tag, attrs){
 }
 
 let ORG_UID = 0;
+
+// ---- how each bacterium really moves, given the structure it has ----------
+//  peritrichous   flagella all over the cell (E. coli, Salmonella, Bacillus,
+//                 Listeria): "run and tumble". The flagella turn together as
+//                 one bundle behind the cell (run); when motors reverse, the
+//                 bundle flies apart and the cell tumbles in place, then
+//                 starts a new run in a random direction.
+//  push-pull      polar tuft (Pseudomonas): pushed forward by the tuft, then
+//                 the motor reverses and the cell backs up the same way.
+//  flick          one polar flagellum (Vibrio): forward, reverse, and on
+//                 restarting forward the flagellum buckles at its hook and
+//                 flicks the cell about 90 degrees to one side.
+//  amphitrichous  one flagellum at each pole and a helical body
+//                 (Campylobacter): darting corkscrew that swaps which end
+//                 leads instead of turning around.
+//  rigid-helix    rigid spiral with a tuft at each pole (Spirillum): the whole
+//                 helix rotates; both tufts flip together to back up.
+//  endoflagella   flagella inside the cell (spirochetes): the flexible body
+//                 itself rotates and undulates, and now and then stops to flex.
+//  brownian       no flagella: only thermal jiggling (translation and
+//                 rotation), stronger the smaller the cell; chains flex at
+//                 their septa, clusters jiggle as one rigid piece.
+const BACTERIA_MOTOR = {
+  ecoli:       { type:'peritrichous', run:1.0, tumble:0.16 },
+  salmonella:  { type:'peritrichous', run:1.1, tumble:0.16 },
+  bacillus:    { type:'peritrichous', run:1.6, tumble:0.2 },
+  listeria:    { type:'peritrichous', run:0.55, tumble:0.3 },
+  pseudomonas: { type:'push-pull', fwd:1.3, back:0.8 },
+  vibrio:      { type:'flick', fwd:0.9, back:0.35 },
+  campylobacter:{ type:'amphitrichous', run:0.5 },
+  spirillum:   { type:'rigid-helix', run:2.4 },
+  spirochete:  { type:'endoflagella', run:2.2 },
+  acidophilus: { type:'brownian', flex:0.12 },
+  bulgaricus:  { type:'brownian', flex:0.1 },
+  bcereus:     { type:'brownian', flex:0.09 },
+  thermophilus:{ type:'brownian', flex:0.26 },
+  lactococcus: { type:'brownian', flex:0.08 },
+  aureus:      { type:'brownian' },
+  bifidus:     { type:'brownian' },
+  mbovis:      { type:'brownian' },
+  brucella:    { type:'brownian' },
+  kefir:       { type:'brownian' },
+};
+function gauss(){ let u = 0; while(!u) u = Math.random(); return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*Math.random()); }
+const expRand = mean => -Math.log(1 - Math.random()) * mean;
 
 // A chain of points anchored at a base (attached to the body, in the body's local
 // space) that trails behind with lag and springy damping — real whip/tail physics,
@@ -2076,6 +2121,22 @@ class Organism {
     this.tails = []; // { chain: TailChain, el: <path>, restAngleOffset, flutterPhase }
     this.skeleton = null; // BodySkeleton instance if this species has a jointed peristaltic body
     this.softBlob = null; // SoftBlob instance if this shape has a soft membrane outline
+
+    // bacteria get a motor model matching their flagella (see BACTERIA_MOTOR);
+    // it drives both how they move and how their flagella/body are drawn
+    const motor = BACTERIA_MOTOR[species.id];
+    if(motor){
+      const size = Math.max(species.length, species.width);
+      this._motor = Object.assign({
+        mode: 'run', t: 0, dir: 1, bundle: 1, ramp: 1, flick: 0, flickSide: 1, flexAmt: 0, turnRate: 0, burst: 1, switchT: 0,
+        timer: Math.max(0.3, expRand(motor.run || motor.fwd || 1)),
+        roll: Math.random()*Math.PI*2, flagPhase: Math.random()*10, angVel: 0, prevAng: null, lead: 1,
+        curve: (Math.random() < 0.5 ? -1 : 1) * (0.08 + Math.random()*0.22), // circling near the glass
+        D: 22 * 10/size,                                                         // translational diffusion, units^2/s
+        Dr: Math.max(0.004, Math.min(0.9, 0.9*Math.pow(10/size, 3))),           // rotational diffusion, rad^2/s
+        vx: 0, vy: 0, wob: 0
+      }, motor);
+    }
     this._buildSVG();
   }
 
@@ -2106,7 +2167,7 @@ class Organism {
   _translucencyPass(){
     const nodes = this.group.querySelectorAll('*');
     nodes.forEach(n=>{
-      if(n === this._softRimEl || n === this._softGlowEl) return;
+      if(n === this._softRimEl || n === this._softGlowEl || n.hasAttribute('data-keep')) return;
       const tagB = n.tagName;
       if(n.getAttribute('fill') === this.species.color && ['path','ellipse','rect','circle'].includes(tagB)){
         n.setAttribute('fill', `url(#bf-${this.species.id})`);
@@ -2258,32 +2319,103 @@ class Organism {
     return cilia;
   }
 
-  // Bacterial flagella, as whip chains (TailChain) on a rod L long, W wide:
-  //  * 'peritrichous' / 'peritrichous-dense' (E. coli, Salmonella, Listeria):
-  //    attached all along both flanks; while swimming they trail behind the
-  //    cell in a loose bundle;
-  //  * 'polar' (Pseudomonas): a tuft at the rear pole, pushing like a propeller.
-  // Real flagella are only ~20 nm thick — barely visible in brightfield — so
-  // they are drawn thin and faint.
+  // Bacterial flagella, drawn procedurally: each filament is a thin helix (a
+  // wave travelling along it) on a centre line from its insertion on the
+  // cell to an end point the motor state moves around: bundled behind the
+  // cell in a run, flung apart in a tumble, buckled sideways in a flick.
+  // Real flagella are ~20 nm thick, barely visible in brightfield, so they
+  // stay thin and faint. g = the layer they go in (behind the body).
+  _addFlagellum(g, f){
+    f.el = el('path', { d:'', fill:'none', stroke:this.species.colorDark, 'stroke-width':(f.sw || 0.5),
+      'stroke-opacity':(f.op || 0.4), 'stroke-linecap':'round', 'stroke-linejoin':'round', 'data-keep':1 });
+    g.appendChild(f.el);
+    f.ph = Math.random()*Math.PI*2;
+    (this._flagella = this._flagella || []).push(f);
+    return f;
+  }
   _bacterialFlagella(g, s, L, W){
     if(!s.flagella || s.flagella === 'none') return;
-    const add = (ax, ay, rest, segs, segLen, flutter)=>{
-      const chain = new TailChain(segs, segLen, { stiffness: 0.45, damping: 0.74 });
-      const tailEl = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.6, 'stroke-opacity':0.45, 'stroke-linecap':'round' });
-      g.appendChild(tailEl);
-      this.tails.push({ chain, el: tailEl, localAttach: { x: ax, y: ay }, restAngle: rest,
-                        flutterPhase: Math.random()*Math.PI*2, flutterAmount: flutter });
-    };
     if(s.flagella === 'polar'){
-      [-0.2, 0.2].forEach(off=> add(-L/2 + W*0.15, off*W, Math.PI + off*1.1, 5, L*0.2, 1.8));
+      // a tuft of two at the rear pole, pushing (or, reversed, pulling)
+      [-1, 1].forEach(side=> this._addFlagellum(g, { kind:'polar', ax:-L/2 + W*0.12, ay:side*W*0.14, side,
+        len:L*1.25, amp:W*0.3, wl:W*3, spread:side*0.16 }));
       return;
     }
-    const n = s.flagella === 'peritrichous-dense' ? 8 : 4;
-    const perSide = Math.ceil(n/2);
+    // peritrichous: inserted all over the flanks, front to back
+    const n = s.flagella === 'peritrichous-dense' ? 7 : 5;
     for(let i=0;i<n;i++){
-      const side = i%2 ? 1 : -1;
-      const k = Math.floor(i/2) / Math.max(1, perSide-1); // 0 front .. 1 rear
-      add(L*0.3 - k*L*0.6, side*W*0.45, Math.PI - side*0.32, 5, L*0.18, 1.5);
+      const side = i%2 ? 1 : -1, k = (i + 0.5)/n;
+      this._addFlagellum(g, { kind:'peri', ax:L*0.34 - k*L*0.68, ay:side*W*0.47, side,
+        len:L*(1.2 + Math.random()*0.4), amp:W*0.22, wl:W*2.6,
+        splay:0.8 + Math.random()*1.5, lane:(Math.random()-0.5)*W*0.7 });
+    }
+  }
+
+  // centre line of a filament as a quadratic curve (attach -> control -> end)
+  // with a travelling sine wave on top; returns the path d
+  _flagellumPath(ax, ay, cx, cy, ex, ey, f, amp, phase){
+    const K = 13, kWave = 2*Math.PI*f.len/f.wl;
+    let d = '';
+    for(let i=0;i<=K;i++){
+      const t = i/K, u = 1 - t;
+      const bx = u*u*ax + 2*u*t*cx + t*t*ex, by = u*u*ay + 2*u*t*cy + t*t*ey;
+      let tx = 2*u*(cx - ax) + 2*t*(ex - cx), ty = 2*u*(cy - ay) + 2*t*(ey - cy);
+      const tl = Math.hypot(tx, ty) || 1;
+      const env = Math.min(1, t/0.18) * (1 - 0.2*t);
+      const off = amp * env * Math.sin(kWave*t - phase);
+      d += (i ? 'L' : 'M') + (bx - ty/tl*off).toFixed(1) + ' ' + (by + tx/tl*off).toFixed(1) + ' ';
+    }
+    return d;
+  }
+
+  _renderFlagella(){
+    const m = this._motor || { bundle:1, angVel:0, flagPhase:0, dir:1, lead:1, flick:0, flickSide:1 };
+    const L = this.species.length, W = this.species.width;
+    const turn = Math.max(-2.5, Math.min(2.5, m.angVel || 0));
+    const t = m.flagPhase;
+    const dirS = this.speed < 0 ? -1 : 1;
+    for(const f of this._flagella){
+      let ax = f.ax, ay = f.ay;
+      if(f.attach) [ax, ay] = f.attach();
+      let cx, cy, ex, ey, amp = f.amp, phase = f.ph + t*dirS;
+      if(f.kind === 'peri'){
+        const b = m.bundle;
+        // bundled: every filament joins one cable trailing behind the rear pole
+        const bEx = -L/2 - f.len*0.72, bEy = f.lane*0.45;
+        const bCx = ax - f.len*0.32, bCy = ay*0.55;
+        // splayed (tumble): flung out on its own side at its own angle, flailing
+        const sa = Math.PI - f.side*(f.splay + 0.45*Math.sin(t*0.7 + f.ph));
+        const sEx = ax + Math.cos(sa)*f.len*0.82, sEy = ay + Math.sin(sa)*f.len*0.82;
+        const sCx = ax + Math.cos(sa + f.side*0.5)*f.len*0.3, sCy = ay + Math.sin(sa + f.side*0.5)*f.len*0.3;
+        ex = sEx + (bEx - sEx)*b; ey = sEy + (bEy - sEy)*b;
+        cx = sCx + (bCx - sCx)*b; cy = sCy + (bCy - sCy)*b;
+        amp *= 1 + 0.5*(1 - b);
+        if(b < 0.6) phase = f.ph + t*0.45; // apart, each filament turns on its own, slowly
+      } else if(f.kind === 'polar'){
+        // out of the rear pole; a flick buckles it sideways at the hook
+        const a = Math.PI + f.spread + m.flickSide*1.35*m.flick;
+        ex = ax + Math.cos(a)*f.len*0.95; ey = ay + Math.sin(a)*f.len*0.95;
+        const ca = Math.PI + f.spread*0.5 + m.flickSide*0.6*m.flick;
+        cx = ax + Math.cos(ca)*f.len*0.36; cy = ay + Math.sin(ca)*f.len*0.36;
+      } else {
+        // tufts / single filaments at both poles (Spirillum, Campylobacter):
+        // the trailing pole's filaments stream straight back; the leading
+        // pole's are swept back over the cell like an umbrella. lead = +1
+        // when swimming toward +x; it eases through 0 when both flip.
+        const p = f.pole, w = Math.max(0, Math.min(1, (p*m.lead + 1)/2)); // 1 = this pole leads
+        const out = p > 0 ? 0 : Math.PI, fan = f.fan || 0;
+        const tEx = ax + Math.cos(out + fan*0.55)*f.len, tEy = ay + Math.sin(out + fan*0.55)*f.len;
+        const tCx = ax + Math.cos(out + fan*0.2)*f.len*0.4, tCy = ay + Math.sin(out + fan*0.2)*f.len*0.4;
+        const sideY = (fan >= 0 ? 1 : -1);
+        const lEx = ax - p*f.len*0.62, lEy = ay + sideY*(W*0.75 + Math.abs(fan)*W*0.9);
+        const lCx = ax + p*f.len*0.3, lCy = ay + fan*W*0.35 + sideY*W*0.25;
+        ex = tEx + (lEx - tEx)*w; ey = tEy + (lEy - tEy)*w;
+        cx = tCx + (lCx - tCx)*w; cy = tCy + (lCy - tCy)*w;
+        phase = f.ph + t*m.lead;
+      }
+      // filaments lag behind a turn (their far end hasn't swung round yet)
+      ey -= turn*0.14*(ex - ax); cy -= turn*0.06*(cx - ax);
+      f.el.setAttribute('d', this._flagellumPath(ax, ay, cx, cy, ex, ey, f, amp, phase));
     }
   }
 
@@ -2299,6 +2431,57 @@ class Organism {
       pts.push([Math.cos(a)*(L/2)*rxMul, Math.sin(a)*(W/2)*ryMul]);
     }
     return pts;
+  }
+
+  // Inside of a rod-shaped bacterium as it looks under the lens: the wall
+  // and membrane read as a double contour, the nucleoid as a faint darker
+  // cloud, refractile storage granules as bright dots, and the rounded body
+  // focuses light into a pale streak along its axis. The granules ride the
+  // cell's roll about its long axis (render), which sells it as a 3-D body.
+  _rodInterior(g, s, L, W){
+    const inset = W*0.13;
+    const inner = el('path', { d:'', fill:'none', stroke:'#fbfaf2', 'stroke-width':0.4, 'stroke-opacity':0.42,
+      transform:`scale(${((L - 2*inset)/L).toFixed(3)},${((W - 2*inset)/W).toFixed(3)})`, 'data-keep':1 });
+    g.appendChild(inner);
+    this._softInnerEl = inner;
+    const nl = (L - W)*0.32, nw = W*0.2;
+    g.appendChild(el('path', { d:`M ${(-nl).toFixed(2)} 0 C ${(-nl*0.6).toFixed(2)} ${(-nw*1.4).toFixed(2)} ${(nl*0.2).toFixed(2)} ${(-nw*0.6).toFixed(2)} ${(nl*0.5).toFixed(2)} ${(-nw*1.1).toFixed(2)} C ${(nl*1.1).toFixed(2)} ${(-nw*0.4).toFixed(2)} ${(nl*1.05).toFixed(2)} ${(nw*0.9).toFixed(2)} ${(nl*0.3).toFixed(2)} ${(nw*1.05).toFixed(2)} C ${(-nl*0.3).toFixed(2)} ${(nw*1.2).toFixed(2)} ${(-nl*1.1).toFixed(2)} ${(nw*0.8).toFixed(2)} ${(-nl).toFixed(2)} 0 Z`,
+      fill:s.colorDark, 'fill-opacity':0.09, 'data-keep':1 }));
+    g.appendChild(el('line', { x1:(-(L - W)*0.42).toFixed(2), y1:(-W*0.13).toFixed(2), x2:((L - W)*0.42).toFixed(2), y2:(-W*0.13).toFixed(2),
+      stroke:'#ffffff', 'stroke-width':(W*0.16).toFixed(2), 'stroke-opacity':0.26, 'stroke-linecap':'round', 'data-keep':1 }));
+    const gr = [];
+    const nG = 1 + Math.floor(Math.random()*3);
+    for(let i=0;i<nG;i++){
+      const c = el('circle', { cx:0, cy:0, r:(W*(0.07 + Math.random()*0.05)).toFixed(2), fill:'#fdfcf3', 'fill-opacity':0.75,
+        stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.4, 'data-keep':1 });
+      g.appendChild(c);
+      gr.push({ el:c, x:(Math.random() - 0.5)*(L - W)*0.95, r:W*(0.1 + Math.random()*0.18), ph:Math.random()*Math.PI*2 });
+    }
+    this._granules = gr;
+  }
+
+  // y of a helical cell's centre line at t (0 = rear end, 1 = front end), in
+  // the current rotation phase, including a spirochete's flexing
+  _helixY(t){
+    const h = this._helix, m = this._motor;
+    const roll = m ? m.roll : this.phase*2.2;
+    let y = h.A * Math.sin(2*Math.PI*h.turns*t + roll);
+    if(h.spiro && m){
+      const u = t - 0.5;
+      y += m.flexAmt * h.W * (2.4*Math.sin(Math.PI*t)*Math.sin(m.t*2.3) + 1.1*Math.sin(2*Math.PI*t + m.t*1.6));
+      y -= Math.max(-2, Math.min(2, m.angVel)) * 0.09 * h.L * u*u * Math.sign(u || 1); // the body follows its own turn
+    }
+    return y;
+  }
+
+  // one coccus: the cell plus the small bright spot its curved surface focuses
+  // (makes a pale outlined circle read as a glassy sphere)
+  _coccusCell(fa, r, s){
+    const cg = el('g', {});
+    cg.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:r.toFixed(2) }, fa)));
+    cg.appendChild(el('circle', { cx:(-r*0.24).toFixed(2), cy:(-r*0.28).toFixed(2), r:(r*0.36).toFixed(2), fill:'#ffffff', 'fill-opacity':0.32, 'data-keep':1 }));
+    cg.appendChild(el('circle', { cx:(r*0.08).toFixed(2), cy:(r*0.1).toFixed(2), r:(r*0.34).toFixed(2), fill:s.colorDark, 'fill-opacity':0.06, 'data-keep':1 }));
+    return cg;
   }
 
   _shapeSVG(s){
@@ -2359,12 +2542,16 @@ class Organism {
         // vertices around a capsule outline. A bacterial cell wall is stiff, so
         // the wobble is kept small; the caps add W, hence L-W for an overall length L.
         const basePts = this._softCapsulePath(Math.max(0.1, L-W), W, 5);
+        // flagella go in a layer under the body, so they seem to come out of it
+        const flagLayer = el('g', {});
+        g.appendChild(flagLayer);
         const path = el('path', Object.assign({ d:'' }, fa));
         g.appendChild(path);
         this.softBlob = new SoftBlob(basePts.length, { amp: 0.025, speed: 1.0 });
         this._softBasePts = basePts;
         this._softPathEl = path;
-        this._bacterialFlagella(g, s, L, W);
+        this._rodInterior(g, s, L, W);
+        this._bacterialFlagella(flagLayer, s, L, W);
         return g;
       }
       case 'bacillus-chain': {
@@ -2372,7 +2559,7 @@ class Organism {
         // Bacillus), with a slight kink at each septum that flexes in render();
         // spore-formers carry a bright refractile endospore in most cells
         const g = el('g', {});
-        const n = s.chainCells || 3, gap = W*0.16;
+        const n = s.chainCells || 3, gap = W*0.07;
         const cellL = (L - gap*(n-1))/n;
         const cells = [];
         for(let i=0;i<n;i++){
@@ -2380,6 +2567,12 @@ class Organism {
           cg.appendChild(el('rect', Object.assign({
             x:(-cellL/2).toFixed(2), y:(-W/2).toFixed(2), width:cellL.toFixed(2), height:W.toFixed(2), rx:(W*0.46).toFixed(2)
           }, fa)));
+          // wall + membrane double contour and the axial light streak
+          const ins = W*0.13;
+          cg.appendChild(el('rect', { x:(-cellL/2 + ins).toFixed(2), y:(-W/2 + ins).toFixed(2), width:(cellL - 2*ins).toFixed(2), height:(W - 2*ins).toFixed(2),
+            rx:(W*0.33).toFixed(2), fill:'none', stroke:'#fbfaf2', 'stroke-width':0.4, 'stroke-opacity':0.4, 'data-keep':1 }));
+          cg.appendChild(el('line', { x1:(-(cellL - W)*0.4).toFixed(2), y1:(-W*0.13).toFixed(2), x2:((cellL - W)*0.4).toFixed(2), y2:(-W*0.13).toFixed(2),
+            stroke:'#ffffff', 'stroke-width':(W*0.15).toFixed(2), 'stroke-opacity':0.24, 'stroke-linecap':'round', 'data-keep':1 }));
           if(s.spores && Math.random() < 0.75){
             cg.appendChild(el('ellipse', {
               cx:(cellL*(Math.random()<0.5 ? 0.14 : -0.04)).toFixed(2), cy:0, rx:(W*0.36).toFixed(2), ry:(W*0.26).toFixed(2),
@@ -2387,9 +2580,12 @@ class Organism {
             }));
           }
           g.appendChild(cg);
-          cells.push({ g:cg, x: -L/2 + cellL/2 + i*(cellL+gap), kink:(Math.random()-0.5)*0.22, ph:Math.random()*Math.PI*2 });
+          cells.push({ g:cg });
         }
-        this._rodChain = { cells, W };
+        // a real kinematic chain: each septum is a flexible joint whose angle
+        // jiggles thermally around a small built-in kink (render)
+        this._chainKin = { cells, rod:true, link:cellL + gap,
+          rest: Array.from({length:n-1}, ()=> (Math.random() - 0.5)*0.2), theta: Array.from({length:n-1}, ()=> 0) };
         return g;
       }
       case 'bifid-rod': {
@@ -2449,10 +2645,11 @@ class Organism {
             if(touches && Math.random() < (ring===1 ? 0.85 : 0.35)) kept.push([x,y]);
           }
         }
-        kept.forEach(([x,y])=> g.appendChild(el('circle', Object.assign({
-          cx:(x + (Math.random()-0.5)*W*0.08).toFixed(2), cy:(y + (Math.random()-0.5)*W*0.08).toFixed(2),
-          r:(r*(0.92 + Math.random()*0.16)).toFixed(2)
-        }, fa))));
+        kept.forEach(([x,y])=>{
+          const cg = this._coccusCell(fa, r*(0.92 + Math.random()*0.16), s);
+          cg.setAttribute('transform', `translate(${(x + (Math.random()-0.5)*W*0.08).toFixed(2)},${(y + (Math.random()-0.5)*W*0.08).toFixed(2)})`);
+          g.appendChild(cg);
+        });
         return g;
       }
       case 'coccus-chain': {
@@ -2460,13 +2657,16 @@ class Organism {
         // chainCells: 2, a pair (diplococcus) that only sways a little
         const g = el('g', {});
         const n = s.chainCells || 5;
-        const amp = n > 2 ? 0.32 : 0.06;
+        const cells = [];
         for(let i=0;i<n;i++){
-          const t = i-(n-1)/2;
-          const curve = Math.sin(i*0.9) * W*amp;
-          g.appendChild(el('circle', Object.assign({ cx: t*W*0.82, cy: curve, r: W*0.42 }, fa)));
+          const cg = this._coccusCell(fa, W*0.42, s);
+          g.appendChild(cg);
+          cells.push({ g:cg });
         }
-        this.chainCurve = { n, W, amp, els: Array.from(g.children) };
+        // the cells are linked where they divided: flexible joints that jiggle
+        // thermally (a long Streptococcus chain snakes, a pair barely hinges)
+        this._chainKin = { cells, rod:false, link:W*0.82,
+          rest: Array.from({length:n-1}, ()=> (Math.random() - 0.5)*(n > 2 ? 0.5 : 0.1)), theta: Array.from({length:n-1}, ()=> 0) };
         return g;
       }
       case 'giant-coccus': {
@@ -2492,65 +2692,34 @@ class Organism {
         }
         return g;
       }
-      case 'spirillum': {
-        const g = el('g', {});
-        const turns = s.turns || 2.4;
-        const pts = [];
-        const steps = 40;
-        for(let i=0;i<=steps;i++){
-          const t = i/steps;
-          const xx = -L/2 + t*L;
-          const yy = Math.sin(t*Math.PI*2*turns) * (W/2);
-          pts.push([xx, yy]);
-        }
-        const path = el('polyline', {
-          points:'', fill:'none', stroke: s.colorDark, 'stroke-opacity':0.55,
-          'stroke-width': 2.6, 'stroke-linecap':'round', 'stroke-linejoin':'round'
-        });
-        g.appendChild(path);
-        // the helix wave travels along the body, so the cell reads as a
-        // spinning corkscrew rather than a wiggling line
-        this.wavePoints = { turns, steps, L, W, basePts: pts, travel: true };
-        this.waveEl = path;
-
-        // bipolar flagellar tufts at both ends, whipping with real lag
-        [[-1,Math.PI],[1,0]].forEach(([sign])=>{
-          const segCount = 4;
-          const chain = new TailChain(segCount, 2.8, { stiffness: 0.45, damping: 0.74 });
-          const tailEl = el('path', {
-            d:'', fill:'none', stroke: s.colorDark, 'stroke-width':0.8,
-            'stroke-opacity':0.58, 'stroke-linecap':'round'
-          });
-          g.appendChild(tailEl);
-          this.tails.push({
-            chain, el: tailEl,
-            localAttach: { x: sign*L/2, y: 0 },
-            restAngle: sign>0 ? 0 : Math.PI,
-            flutterPhase: Math.random()*Math.PI*2,
-            flutterAmount: 1.6
-          });
-        });
-        return g;
-      }
+      case 'spirillum':
       case 'spirochete': {
+        // a helical cell seen from above: the centre line is a sine wave, and
+        // as the helix rotates the wave scrolls along the body. Segments on
+        // the near side of the coil are drawn darker/thicker than the far
+        // side, so the rotation reads in 3-D. Spirochetes are long, thin and
+        // flexible (render bends them); Spirillum/Campylobacter are rigid.
         const g = el('g', {});
-        const turns = s.turns || 4;
-        const pts = [];
-        const steps = Math.max(40, Math.round(turns*10));
-        for(let i=0;i<=steps;i++){
-          const t = i/steps;
-          const xx = -L/2 + t*L;
-          const yy = Math.sin(t*Math.PI*2*turns) * (W/2);
-          pts.push([xx, yy]);
+        const spiro = s.shape === 'spirochete';
+        const turns = s.turns || (spiro ? 4 : 2.4);
+        const th = W*(spiro ? 0.32 : 0.37);
+        const flagLayer = el('g', {});
+        g.appendChild(flagLayer);
+        const mk = (stroke, op, w)=> el('path', { d:'', fill:'none', stroke, 'stroke-opacity':op, 'stroke-width':w.toFixed(2),
+          'stroke-linecap':'round', 'stroke-linejoin':'round', 'data-keep':1 });
+        const back = mk(s.colorDark, 0.4, th*0.84), front = mk(s.colorDark, 0.62, th), core = mk('#fbfaf2', 0.5, th*0.34);
+        g.appendChild(back); g.appendChild(front); g.appendChild(core);
+        this._helix = { turns, L, W, A:(W - th)/2, steps:Math.max(40, Math.round(turns*14)), back, front, core, spiro };
+        const motor = this._motor;
+        const poleY = p => ()=> [p*L/2, this._helixY(p > 0 ? 1 : 0)];
+        if(motor && motor.type === 'amphitrichous'){
+          // Campylobacter: one long flagellum at each pole
+          [-1, 1].forEach(p=> this._addFlagellum(flagLayer, { kind:'tuft', pole:p, fan:p*0.15, attach:poleY(p), len:L*1.05, amp:W*0.26, wl:W*2.8, sw:0.55 }));
+        } else if(!spiro){
+          // Spirillum: a tuft (fascicle) of filaments at each pole
+          [-1, 1].forEach(p=> [-1, 0, 1].forEach(j=> this._addFlagellum(flagLayer, { kind:'tuft', pole:p, fan:j*0.32 + 0.05, attach:poleY(p),
+            len:L*(0.34 + Math.random()*0.06), amp:W*0.12, wl:W*1.7, sw:0.45, op:0.38 })));
         }
-        const path = el('polyline', {
-          points:'', fill:'none', stroke: s.colorDark, 'stroke-opacity':0.55,
-          'stroke-width': 1.6, 'stroke-linecap':'round', 'stroke-linejoin':'round'
-        });
-        g.appendChild(path);
-        // the coil wave runs along the body: the cell reads as spinning
-        this.wavePoints = { turns, steps, L, W, basePts: pts, travel: true };
-        this.waveEl = path;
         return g;
       }
       case 'stentor-trumpet': {
@@ -2620,34 +2789,23 @@ class Organism {
       }
       case 'vibrio': {
         const g = el('g', {});
-        const path = el('path', {
-          d: `M ${-L/2} 0 Q 0 ${-W*1.4} ${L/2} 0`,
-          fill:'none', stroke: s.colorDark, 'stroke-opacity':0.6, 'stroke-width': W*0.68, 'stroke-linecap':'round'
-        });
+        // a translucent curved tube: dark refractive margins (wide dark stroke),
+        // a pale body inside it, and a light streak along the axis
+        const vd = `M ${-L/2} 0 Q 0 ${-W*1.4} ${L/2} 0`;
+        const path = el('path', { d:vd, fill:'none', stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':(W*0.8).toFixed(2), 'stroke-linecap':'round', 'data-keep':1 });
         g.appendChild(path);
-        const overlay = el('path', {
-          d: `M ${-L/2} 0 Q 0 ${-W*1.4} ${L/2} 0`,
-          fill:'none', stroke: s.color, 'stroke-opacity':0.3, 'stroke-width': W*0.4, 'stroke-linecap':'round'
-        });
+        const overlay = el('path', { d:vd, fill:'none', stroke:s.color, 'stroke-opacity':0.92, 'stroke-width':(W*0.56).toFixed(2), 'stroke-linecap':'round', 'data-keep':1 });
         g.appendChild(overlay);
+        const shine = el('path', { d:vd, fill:'none', stroke:'#ffffff', 'stroke-opacity':0.4, 'stroke-width':(W*0.16).toFixed(2), 'stroke-linecap':'round',
+          transform:`translate(0,${(-W*0.1).toFixed(2)}) scale(0.82)`, 'data-keep':1 });
+        g.appendChild(shine);
         // remember the rest-pose curve control points so render() can redraw
-        // both strokes scaled by the breathing pulse each frame
-        this._vibrioCurve = { L, W, mainEl: path, overlayEl: overlay };
-
-        const segCount = 3;
-        const chain = new TailChain(segCount, 3.2, { stiffness: 0.5, damping: 0.72 });
-        const tailEl = el('path', {
-          d:'', fill:'none', stroke: s.colorDark, 'stroke-width':0.85,
-          'stroke-opacity':0.6, 'stroke-linecap':'round'
-        });
-        g.appendChild(tailEl);
-        this.tails.push({
-          chain, el: tailEl,
-          localAttach: { x: L/2, y: 0 },
-          restAngle: 0.3,
-          flutterPhase: Math.random()*Math.PI*2,
-          flutterAmount: 1.4
-        });
+        // the strokes each frame (pulse, rotation)
+        this._vibrioCurve = { L, W, mainEl: path, overlayEl: overlay, shineEl: shine };
+        // a single sheathed flagellum at the rear pole (drawn under the body)
+        const flagLayer = el('g', {});
+        g.insertBefore(flagLayer, path);
+        this._addFlagellum(flagLayer, { kind:'polar', ax:-L/2, ay:0, side:1, len:L*1.4, amp:W*0.38, wl:W*3.4, spread:0, sw:0.6, op:0.45 });
         return g;
       }
       case 'ovoid-cilia':
@@ -3285,7 +3443,7 @@ class Organism {
     {
       // species can override (long bacterial chains and clusters jiggle in
       // place but don't spin around like a small free cell would)
-      const rate = (this.species.turnRate || TURN_RATE[mot] || 2.0) * (this.fleeing ? 3 : this.suction ? 2.5 : 1);
+      const rate = ((this._motor && this._motor.turnRate) || this.species.turnRate || TURN_RATE[mot] || 2.0) * (this.fleeing ? 3 : this.suction ? 2.5 : 1);
       const eased = delta * (1 - Math.exp(-dt*5));
       const maxStep = rate * dt;
       this.displayAngle += Math.max(-maxStep, Math.min(maxStep, eased));
@@ -3309,6 +3467,11 @@ class Organism {
         const normalAngle = Math.atan2(this.y-cy, this.x-cx);
         this.angle = normalAngle + Math.PI + (Math.random()-0.5)*0.8;
         if(this._avoid) this._avoid = null;
+        if(this._motor){
+          const m = this._motor;
+          m.dir = 1; m.lead = 1;
+          if(m.mode === 'back' || m.mode === 'pause1' || m.mode === 'pause2'){ m.mode = 'fwd'; m.timer = 0.8; }
+        }
         if(this.speed < 0) this.speed = -this.speed;
         let px = this.x, py = this.y;
         for(let i=0;i<6 && !bounds.isInsideMargin(px,py,0.96); i++){
@@ -3317,6 +3480,29 @@ class Organism {
         }
         this.x = px; this.y = py;
       }
+    }
+
+    // bacterial motor clocks: how fast the heading is turning (flagella lag
+    // behind a turn), the body's roll / the helix's rotation, the flagellar
+    // wave, and the small precession wobble the roll gives the body
+    if(this._motor){
+      const m = this._motor;
+      if(m.prevAng === null) m.prevAng = this.displayAngle;
+      const da = Math.atan2(Math.sin(this.displayAngle - m.prevAng), Math.cos(this.displayAngle - m.prevAng));
+      m.prevAng = this.displayAngle;
+      m.angVel += (da/Math.max(dt, 1e-3) - m.angVel) * Math.min(1, dt*10);
+      const sp = this.speed*26*moveMul, dirS = this.speed < 0 ? -1 : 1;
+      if(this._helix){
+        // a rotating helix: its wave scrolls backward ~1.6x faster than the cell swims
+        const k = 2*Math.PI*this._helix.turns/this._helix.L;
+        m.roll += dt*(k*Math.abs(sp)*1.6 + (m.type === 'endoflagella' ? 3 : 2))*dirS;
+      } else if(m.type !== 'brownian'){
+        m.roll += dt*(3 + 9*Math.min(1, Math.abs(sp)/30))*dirS; // the body counter-rotates against the flagella
+      }
+      m.flagPhase += dt*2*Math.PI*(m.type === 'peritrichous' ? 1.2 + 2.6*m.bundle : 3.4);
+      m.wob = (m.type === 'brownian' || (this._helix && m.type !== 'amphitrichous')) ? 0
+        : m.type === 'amphitrichous' ? 3.5*Math.sin(m.roll*0.5)
+        : 1.2*Math.sin(m.roll) + (m.type === 'peritrichous' ? (1 - m.bundle)*7*Math.sin(m.t*31) : 0);
     }
 
     // locomotion-driven animation clocks: body undulation/beat speeds up with
@@ -3343,6 +3529,10 @@ class Organism {
 
     if(this.hasFlagella){
       this._crawlUpdate(dt);
+      return;
+    }
+    if(this._motor){
+      this._motorUpdate(dt);
       return;
     }
 
@@ -3456,6 +3646,155 @@ class Organism {
     }
   }
 
+  // Bacteria: the motor model for their kind of flagella (BACTERIA_MOTOR).
+  // Sets this.speed (negative = backing up along the body axis) and
+  // this.angle; brownian cells are displaced directly by thermal noise.
+  _motorUpdate(dt){
+    const m = this._motor, base = this.baseSpeed;
+    m.t = (m.t || 0) + dt;
+    m.timer -= dt;
+    m.turnRate = 0;
+    const steering = this.steerTo != null; // heading for food/prey: keep running forward
+    const noise = Dr => gauss()*Math.sqrt(2*Dr*dt);
+    switch(m.type){
+      case 'brownian': {
+        // thermal motion: random steps whose size grows like sqrt(time),
+        // larger for small cells, plus a slow drift of the liquid itself
+        this.speed = 0;
+        const sd = Math.sqrt(2*m.D*dt);
+        m.vx += -m.vx*dt/4 + gauss()*0.85*Math.sqrt(dt);
+        m.vy += -m.vy*dt/4 + gauss()*0.85*Math.sqrt(dt);
+        this.x += gauss()*sd + m.vx*dt;
+        this.y += gauss()*sd + m.vy*dt;
+        this.displayAngle += noise(m.Dr);
+        this.angle = this.displayAngle;
+        m.roll += noise(m.Dr*3); // and it turns over about its own axis, too
+        break;
+      }
+      case 'peritrichous': {
+        if(m.mode === 'tumble'){
+          this.speed = base*0.05;
+          m.turnRate = 7;
+          if(m.timer <= 0){ m.mode = 'run'; m.timer = Math.max(0.25, expRand(m.run)); m.ramp = 0.25; }
+        } else {
+          m.ramp = Math.min(1, m.ramp + dt*3);
+          this.speed = base*m.ramp;
+          this.angle = this.displayAngle + noise(0.08) + m.curve*dt;
+          if(m.timer <= 0 && !steering){
+            // a motor reverses: the bundle flies apart and the cell tumbles;
+            // the new heading is random, typically 60-90 degrees away
+            m.mode = 'tumble'; m.timer = Math.max(0.08, expRand(m.tumble));
+            this.angle = this.displayAngle + (Math.random() < 0.5 ? -1 : 1) * Math.PI*(0.12 + 0.75*Math.pow(Math.random(), 1.3));
+          }
+        }
+        m.bundle += ((m.mode === 'tumble' ? 0 : 1) - m.bundle) * Math.min(1, dt*(m.mode === 'tumble' ? 14 : 5));
+        break;
+      }
+      case 'push-pull':
+      case 'flick': {
+        // forward, pause, backward, pause, (flick), forward...
+        if(steering && m.dir < 0){ m.mode = 'fwd'; m.dir = 1; m.timer = 1; }
+        switch(m.mode){
+          case 'run': case 'fwd':
+            m.dir = 1; m.ramp = Math.min(1, m.ramp + dt*4);
+            this.speed = base*m.ramp;
+            this.angle = this.displayAngle + noise(0.06);
+            if(m.timer <= 0 && !steering){ m.mode = 'pause1'; m.timer = 0.06; }
+            break;
+          case 'pause1':
+            this.speed = 0;
+            if(m.timer <= 0){ m.mode = 'back'; m.dir = -1; m.ramp = 0.3; m.timer = Math.max(0.15, expRand(m.back)); this.angle = this.displayAngle + gauss()*0.15; }
+            break;
+          case 'back':
+            m.ramp = Math.min(1, m.ramp + dt*4);
+            this.speed = -base*0.85*m.ramp;
+            this.angle = this.displayAngle + noise(0.06);
+            if(m.timer <= 0){ m.mode = 'pause2'; m.timer = 0.05; }
+            break;
+          case 'pause2':
+            this.speed = 0;
+            if(m.timer <= 0){
+              if(m.type === 'flick'){
+                m.mode = 'flick'; m.timer = 0.16; m.flickSide = Math.random() < 0.5 ? -1 : 1;
+                this.angle = this.displayAngle + m.flickSide*(1.15 + Math.random()*0.75);
+              } else {
+                m.mode = 'fwd'; m.ramp = 0.3; m.timer = Math.max(0.3, expRand(m.fwd));
+                this.angle = this.displayAngle + gauss()*0.2;
+              }
+            }
+            break;
+          case 'flick':
+            m.dir = 1; m.turnRate = 13;
+            this.speed = base*0.35;
+            if(m.timer <= 0){ m.mode = 'fwd'; m.ramp = 0.4; m.timer = Math.max(0.25, expRand(m.fwd)); }
+            break;
+        }
+        // the hook buckles during the flick and springs back afterwards
+        m.flick += ((m.mode === 'flick' ? 1 : 0) - m.flick) * Math.min(1, dt*(m.mode === 'flick' ? 22 : 7));
+        break;
+      }
+      case 'amphitrichous': {
+        // darting corkscrew: a run usually ends with the other pole taking the
+        // lead (a reversal, no turn); now and then it veers instead
+        if(steering) m.dir = 1;
+        if(m.mode === 'switch'){
+          this.speed = 0;
+          m.switchT -= dt;
+          if(m.switchT <= 0){ m.dir = -m.dir; m.mode = 'run'; }
+        } else {
+          m.burst = m.burst || 1;
+          this.speed = base*m.dir*m.burst;
+          this.angle = this.displayAngle + noise(0.35);
+          if(m.timer <= 0){
+            m.timer = Math.max(0.15, expRand(m.run));
+            m.burst = 0.75 + Math.random()*0.6;
+            if(steering || Math.random() < 0.3) this.angle = this.displayAngle + gauss()*0.7;
+            else { m.mode = 'switch'; m.switchT = 0.04; }
+          }
+        }
+        m.lead += (m.dir - m.lead) * Math.min(1, dt*18);
+        break;
+      }
+      case 'rigid-helix': {
+        // both polar tufts flip together, the rigid spiral stops and backs up
+        if(m.mode === 'flip'){
+          this.speed = base*m.dir*Math.max(0, m.timer/0.22 - 0.3);
+          if(m.timer <= 0){
+            if(Math.random() < 0.8) m.dir = -m.dir; else this.angle = this.displayAngle + gauss()*0.5;
+            m.mode = 'run'; m.timer = Math.max(0.8, expRand(m.run));
+          }
+        } else {
+          this.speed = base*m.dir;
+          this.angle = this.displayAngle + noise(0.05);
+          if(m.timer <= 0 && !steering){ m.mode = 'flip'; m.timer = 0.22; }
+        }
+        if(steering) m.dir = 1;
+        m.lead += ((m.mode === 'flip' ? 0 : m.dir) - m.lead) * Math.min(1, dt*9);
+        break;
+      }
+      case 'endoflagella': {
+        // the whole flexible cell rotates and travels; it reverses by
+        // reversing its internal flagella, or stops to bend and flex
+        if(m.mode === 'flex'){
+          this.speed = base*0.06*m.dir;
+          if(m.timer <= 0){ m.mode = 'run'; m.timer = Math.max(0.8, expRand(m.run)); }
+        } else {
+          this.speed = base*m.dir;
+          this.angle = this.displayAngle + noise(0.12) + Math.sin(m.t*0.8)*0.15*dt;
+          if(m.timer <= 0 && !steering){
+            const r = Math.random();
+            if(r < 0.35){ m.mode = 'flex'; m.timer = 1 + Math.random()*0.9; }
+            else if(r < 0.7){ m.dir = -m.dir; m.timer = Math.max(0.8, expRand(m.run)); }
+            else { this.angle = this.displayAngle + gauss()*0.4; m.timer = Math.max(0.8, expRand(m.run)); }
+          }
+        }
+        if(steering) m.dir = 1;
+        m.flexAmt += ((m.mode === 'flex' ? 1 : 0.06) - m.flexAmt) * Math.min(1, dt*3);
+        break;
+      }
+    }
+  }
+
   // Slug-crawl: pulses between a slow forward step and a near-still rest,
   // and only reconsiders heading during that rest (with a brief hesitation
   // before committing) — never a continuous glide or a smooth mid-step turn.
@@ -3541,6 +3880,7 @@ class Organism {
     // struggling in the pipette's suction: a fast, hard wag plus a jitter
     const struggling = (this.suction || this._hitT > 0) && !this.dying;
     const wig = this.dying ? 0 : struggling ? Math.sin(this.phase*3.1) * 7 * this.wobble
+      : this._motor ? this._motor.wob
       : Math.sin(this.phase) * (this.fleeing ? 3 : 0.6 + 1.2*Math.min(1,sf)) * this.wobble;
     const angDeg = this.displayAngle * 180/Math.PI;
     const angRad = this.displayAngle + wig*Math.PI/180;
@@ -3633,22 +3973,34 @@ class Organism {
       const sweep = 0.5 + 0.5*Math.sin(this._beatPhase*0.55);
       this._breast.forEach(b=>{ b.tail.restAngle = b.side*(0.35 + 1.9*sweep); });
     }
-    if(this.chainCurve){
-      const { W, amp, els } = this.chainCurve;
-      els.forEach((c,i)=>{
-        const curve = Math.sin(this.phase*0.6 + i*0.9) * W*amp;
-        c.setAttribute('cy', curve.toFixed(2));
-      });
-    }
-    // chain of rods: each cell bends a little at its septum, like a loose
-    // string of sausages being nudged by the surrounding liquid
-    if(this._rodChain){
-      const { cells, W } = this._rodChain;
-      cells.forEach((c,i)=>{
-        const bend = c.kink + Math.sin(this.phase*0.45 + c.ph)*0.07;
-        const dy = Math.sin(this.phase*0.4 + i*1.1) * W*0.14;
-        c.g.setAttribute('transform', `translate(${c.x.toFixed(2)},${dy.toFixed(2)}) rotate(${(bend*57.3).toFixed(1)})`);
-      });
+    // bacterial chains: each septum is a joint whose angle jiggles thermally
+    // (a random walk pulled back toward its rest kink); the cells are then
+    // laid out link by link and re-centred, so the whole chain flexes and
+    // snakes instead of waving like a sine
+    if(this._chainKin){
+      const c = this._chainKin, n = c.cells.length;
+      if(!c.init){ c.theta = c.rest.slice(); c.init = true; }
+      const flex = (this._motor && this._motor.flex) || 0.1, k = 1.6, h = Math.min(dt, 0.05);
+      const sig = flex*Math.sqrt(2*k)*Math.sqrt(h);
+      for(let i=0;i<n-1;i++) c.theta[i] += (c.rest[i] - c.theta[i])*k*h + sig*gauss();
+      const pts = [], angs = [];
+      let x = 0, y = 0, a = 0;
+      for(let i=0;i<n;i++){
+        if(i){
+          const a0 = a; a += c.theta[i-1];
+          x += (Math.cos(a0) + Math.cos(a))*c.link/2; y += (Math.sin(a0) + Math.sin(a))*c.link/2;
+        }
+        pts.push([x, y]); angs.push(a);
+      }
+      let mx = 0, my = 0, ma = 0;
+      for(let i=0;i<n;i++){ mx += pts[i][0]; my += pts[i][1]; ma += angs[i]; }
+      mx /= n; my /= n; ma /= n;
+      const ca = Math.cos(-ma), sa = Math.sin(-ma);
+      for(let i=0;i<n;i++){
+        const dx = pts[i][0] - mx, dy = pts[i][1] - my;
+        const rx = dx*ca - dy*sa, ry = dx*sa + dy*ca;
+        c.cells[i].g.setAttribute('transform', `translate(${rx.toFixed(2)},${ry.toFixed(2)})` + (c.rod ? ` rotate(${((angs[i] - ma)*57.2958).toFixed(1)})` : ''));
+      }
     }
     // budding yeast: the bud swells over ~25 s, then pinches off and restarts
     if(this._bud){
@@ -3688,6 +4040,18 @@ class Organism {
       this._softPathEl.setAttribute('d', d);
       if(this._softRimEl) this._softRimEl.setAttribute('d', d);
       if(this._softGlowEl) this._softGlowEl.setAttribute('d', d);
+      if(this._softInnerEl) this._softInnerEl.setAttribute('d', d);
+    }
+    // storage granules ride the cell's roll about its long axis: they slide
+    // across the width and dim as they pass to the far side
+    if(this._granules){
+      const roll = this._motor ? this._motor.roll : this.phase;
+      for(const gr of this._granules){
+        const a = roll + gr.ph;
+        gr.el.setAttribute('cx', gr.x.toFixed(2));
+        gr.el.setAttribute('cy', (gr.r*Math.sin(a)).toFixed(2));
+        gr.el.setAttribute('fill-opacity', (0.45 + 0.35*Math.cos(a)).toFixed(2));
+      }
     }
 
     // vibrio: redraw its curved comma-shape scaled by the breathing pulse
@@ -3696,10 +4060,14 @@ class Organism {
     if(this._vibrioCurve){
       const { L, W, mainEl, overlayEl } = this._vibrioCurve;
       const pulse = this.hasFlagella ? (1 + Math.sin(this.pulsePhase)*0.11) : 1;
-      const halfL = (L/2)*pulse, bow = (W*1.4)*pulse;
+      // the curved cell rotates about its axis as it swims: seen from above
+      // its curvature breathes a little
+      const bowMul = this._motor ? 0.82 + 0.18*Math.cos(this._motor.roll) : 1;
+      const halfL = (L/2)*pulse, bow = (W*1.4)*pulse*bowMul;
       const d = `M ${(-halfL).toFixed(1)} 0 Q 0 ${(-bow).toFixed(1)} ${halfL.toFixed(1)} 0`;
       mainEl.setAttribute('d', d);
       overlayEl.setAttribute('d', d);
+      if(this._vibrioCurve.shineEl) this._vibrioCurve.shineEl.setAttribute('d', d);
     }
 
     // jointed worm body: the skeleton simulates 3 real WORLD-space joints
@@ -3776,6 +4144,25 @@ class Organism {
         return `${(xx*pulse).toFixed(1)},${((yy+localWave)*pulse).toFixed(1)}`;
       });
       this.waveEl.setAttribute('points', pts.join(' '));
+    }
+
+    // helical bacteria: rebuild the centre line each frame in the current
+    // rotation phase; near-side segments go to the darker, thicker path and
+    // far-side ones to the faint path, with a light core on the near side
+    if(this._helix){
+      const h = this._helix, N = h.steps;
+      const roll = this._motor ? this._motor.roll : this.phase*2.2;
+      let dF = '', dB = '', dC = '', side = 0;
+      let px = -h.L/2, py = this._helixY(0);
+      for(let i=1;i<=N;i++){
+        const t = i/N, x = -h.L/2 + t*h.L, y = this._helixY(t);
+        const near = Math.cos(2*Math.PI*h.turns*(i - 0.5)/N + roll) > 0;
+        const seg = `L${x.toFixed(1)} ${y.toFixed(1)} `, start = `M${px.toFixed(1)} ${py.toFixed(1)} `;
+        if(near){ if(side !== 1){ dF += start; dC += start; } dF += seg; dC += seg; side = 1; }
+        else { if(side !== -1) dB += start; dB += seg; side = -1; }
+        px = x; py = y;
+      }
+      h.front.setAttribute('d', dF); h.back.setAttribute('d', dB); h.core.setAttribute('d', dC);
     }
 
     // nematode: a single slow, low-frequency S-curve sweeping along the body
@@ -3888,6 +4275,8 @@ class Organism {
         lg.el.setAttribute('transform', `translate(${lg.bx.toFixed(2)},${lg.by.toFixed(2)}) rotate(${ang.toFixed(1)})`);
       });
     }
+
+    if(this._flagella) this._renderFlagella();
 
     // tail/flagella physics: convert each tail's local attach point + rest angle into
     // WORLD space (since the chain simulates in world coordinates so inertia/lag reads
@@ -5260,7 +5649,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     document.getElementById('panel-behavior').textContent = species.behavior;
     document.getElementById('panel-depth').textContent = DEPTH_INFO[species.depth];
     document.getElementById('panel-shape').textContent = species.shapeLabel || shapeLabel(species.shape);
-    document.getElementById('panel-motility').textContent = motilityLabel(species.motility);
+    document.getElementById('panel-motility').textContent = motilityLabel(species);
     document.getElementById('panel-caught-count').textContent = caughtLog[species.id] || 0;
 
     const portrait = document.getElementById('panel-portrait');
@@ -5299,7 +5688,20 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     };
     return map[shape] || shape;
   }
-  function motilityLabel(m){
+  // bacteria are labelled by the motor model they actually use (BACTERIA_MOTOR)
+  const MOTOR_LABEL = {
+    peritrichous:'Flagelos por todo o corpo — corrida e cambalhota',
+    'push-pull':'Flagelos polares — avança e recua',
+    flick:'Flagelo polar — avança, recua e vira de lado',
+    amphitrichous:'Um flagelo em cada ponta — saca-rolhas, troca de sentido',
+    'rigid-helix':'Espiral rígida com tufo de flagelos em cada ponta',
+    endoflagella:'Flagelos internos — o corpo flexível gira e ondula',
+    brownian:'Sem flagelos — só o movimento browniano'
+  };
+  function motilityLabel(species){
+    const motor = BACTERIA_MOTOR[species.id];
+    if(motor) return MOTOR_LABEL[motor.type];
+    const m = species.motility;
     const map = {
       'flagella-run-tumble':'Flagelos — corrida e cambalhota',
       'flagella-smooth':'Flagelos — nado contínuo em espiral',
@@ -5760,7 +6162,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     row('Organismo real', sp.commonName);
     row('Coloração de Gram', sp.gram);
     row('Forma', sp.shapeLabel || shapeLabel(sp.shape));
-    row('Motilidade', motilityLabel(sp.motility));
+    row('Motilidade', motilityLabel(sp));
     row('Plano focal', DEPTH_INFO[sp.depth]);
     row('Habitat', sp.habitat.map(h => HABITAT_LABEL[h] || h).join(' · '));
     row('Nos frascos', String(caughtLog[sp.id] || 0));
