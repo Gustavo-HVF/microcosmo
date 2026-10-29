@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Microcosmo</title>
+<meta name="description" content="Microcosmo: um microscópio digital que vê o invisível. Escolha entre o jogo, a apresentação do projeto e as células em 3D.">
+<meta name="theme-color" content="#050506">
+<link rel="stylesheet" href="saguao.css">
+</head>
+<body>
+<script src="comum/entrada.js" data-id="saguao"></script>
+<script>
+  // as três partes: cor do cartão, cor do texto e nome (o véu da passagem usa os mesmos)
+  window.MC_CARTOES = {
+    'jogo':         { cor: '#11305a', tinta: '#f5f3ee', titulo: 'Jogo' },
+    'apresentacao': { cor: '#3a1a10', tinta: '#f5f3ee', titulo: 'Apresentação' },
+    'celulas-3d':   { cor: '#f4e9da', tinta: '#141110', titulo: 'Células 3D' }
+  };
+  // voltando de uma parte (?volta=jogo): a tela já começa na cor daquele cartão
+  (function(){
+    var v = new URLSearchParams(location.search).get('volta');
+    if(v && window.MC_CARTOES[v] && window.MicrocosmoVeu) window.MC_VOLTA = { id: v, veu: MicrocosmoVeu.veu(window.MC_CARTOES[v]) };
+  })();
+</script>
+
+<canvas id="fundo" aria-hidden="true"></canvas>
+<div class="grao" aria-hidden="true"></div>
+
+<main class="saguao">
+  <header class="topo">
+    <h1 class="logo" aria-label="Microcosmo"><span class="logo-in" data-letras>MICROCOSMO</span></h1>
+    <p class="lead">Um microscópio digital que vê o invisível. <span>Escolha por onde começar.</span></p>
+  </header>
+
+  <nav class="cartoes" id="cartoes" aria-label="Escolha uma parte do projeto">
+    <a class="cartao" href="jogo/index.html" data-id="jogo" style="--c-bg:#11305a; --c-ink:#f5f3ee; --c-dim:rgba(245,243,238,.74); --c-acc:#ff6b5e; --c-line:rgba(245,243,238,.14)">
+      <span class="c-img"><img src="img/jogo.webp" alt="" width="900" height="720" decoding="async"><span class="c-brilho"></span></span>
+      <span class="c-meta mono"><b>01</b>Simulador de microscópio</span>
+      <span class="c-titulo">Jogo</span>
+      <span class="c-texto">Pegue a pipeta e capture microrganismos vivos numa gota de água, de terra ou de leite cru.</span>
+      <span class="c-cta mono">Jogar <i>→</i></span>
+    </a>
+    <a class="cartao" href="apresentacao/index.html" data-id="apresentacao" style="--c-bg:#3a1a10; --c-ink:#f5f3ee; --c-dim:rgba(245,243,238,.74); --c-acc:#ff6b5e; --c-line:rgba(245,243,238,.14)">
+      <span class="c-img"><img src="img/apresentacao.webp" alt="" width="900" height="720" decoding="async"><span class="c-brilho"></span></span>
+      <span class="c-meta mono"><b>02</b>Pitch do projeto</span>
+      <span class="c-titulo">Apresentação</span>
+      <span class="c-texto">O risco do leite contaminado, a NR-32 e como o Microcosmo ajuda a ver o que o olho não vê.</span>
+      <span class="c-cta mono">Assistir <i>→</i></span>
+    </a>
+    <a class="cartao" href="celulas-3d/index.html" data-id="celulas-3d" style="--c-bg:#f4e9da; --c-ink:#141110; --c-dim:rgba(20,17,16,.7); --c-acc:#d23f30; --c-line:rgba(20,17,16,.12)">
+      <span class="c-img"><img src="img/celulas-3d.webp" alt="" width="900" height="720" decoding="async"><span class="c-brilho"></span></span>
+      <span class="c-meta mono"><b>03</b>4 células · 37 estruturas</span>
+      <span class="c-titulo">Células 3D</span>
+      <span class="c-texto">Abra uma bactéria, um lactobacilo, uma levedura e uma célula vegetal, camada por camada.</span>
+      <span class="c-cta mono">Explorar <i>→</i></span>
+    </a>
+  </nav>
+  <div class="pontos" id="pontos" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <footer class="rodape mono">
+    <span>Gustavo Henrique · Pedro Afonso · Ryan Bordes · João Vyctor · Izabelly Kauane</span>
+    <span class="turma">2°B tec · Feira de Ciências</span>
+  </footer>
+</main>
+
+<script src="saguao.js"></script>
+</body>
+</html>

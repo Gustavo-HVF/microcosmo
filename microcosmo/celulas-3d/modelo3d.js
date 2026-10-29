@@ -2,11 +2,14 @@
    A página rola (roda do mouse, trackpad, setas ou o dedo arrastando) e
    cada trecho da rolagem destaca uma estrutura: as camadas de fora são
    cortadas em degraus, como nos desenhos de livro, até chegar ao DNA.
-   O three.js (vendor/three.min.js) só é carregado na primeira abertura. */
+   É uma página própria (aberta pelo saguão) e também aparece dentro do
+   jogo, num quadro (?embed), quando a ficha de uma espécie pede o 3D. */
 (() => {
 'use strict';
 
 const $ = id => document.getElementById(id);
+const PARAMS = new URLSearchParams(location.search);
+const EMBED = PARAMS.has('embed');
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = x => { x = clamp(x, 0, 1); return x * x * (3 - 2 * x); };
@@ -67,7 +70,7 @@ function loadThree(){
   if(V.loading) return V.loading;
   V.loading = new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'vendor/three.min.js';
+    s.src = '../comum/vendor/three.min.js';
     s.onload = () => resolve(window.THREE);
     s.onerror = () => reject(new Error('three.js não carregou'));
     document.head.appendChild(s);
@@ -823,7 +826,7 @@ async function open(modelId, onClose){
   if(!V.T){
     els['m3d-loading'].classList.add('show');
     try { V.T = await loadThree(); }
-    catch(err){ els['m3d-loading'].textContent = 'Não foi possível carregar o 3D (vendor/three.min.js).'; return; }
+    catch(err){ els['m3d-loading'].textContent = 'Não foi possível carregar o 3D (comum/vendor/three.min.js).'; return; }
     els['m3d-loading'].classList.remove('show');
     initRenderer();
     bindDrag();
@@ -864,8 +867,19 @@ function bindUI(){
   });
   els['m3d-prev'].addEventListener('click', () => show(V.idx - 1));
   els['m3d-next'].addEventListener('click', () => show(V.idx + 1));
-  els['m3d-close'].addEventListener('click', close);
-  els['m3d-close'].setAttribute('aria-label', 'Voltar ao jogo');
+  // inside the game the button closes the frame; alone it goes back to the
+  // lobby (comum/entrada.js plays the way out for [data-inicio])
+  const back = els['m3d-close'];
+  if(EMBED){
+    back.addEventListener('click', leave);
+    back.setAttribute('aria-label', 'Voltar ao jogo');
+  } else {
+    back.dataset.inicio = '';
+    back.querySelector('.m3d-close-txt').textContent = 'Início';
+    back.firstChild.before('← ');
+    back.lastChild.remove(); // the ✕
+    back.setAttribute('aria-label', 'Voltar ao início');
+  }
   const sc = els['m3d-scroll'];
   sc.addEventListener('scroll', onScroll, { passive: true });
   // no gliding while a finger is still on the screen
@@ -885,7 +899,7 @@ function bindUI(){
     if(!V.open) return;
     if((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button')) return; // let the button act
     const here = Math.round(V.target);
-    if(e.key === 'Escape') close();
+    if(e.key === 'Escape'){ if(!EMBED) return; leave(); }
     else if(e.key === 'ArrowLeft') show(V.idx - 1);
     else if(e.key === 'ArrowRight') show(V.idx + 1);
     else if(e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) goStep(here + 1);
@@ -897,7 +911,26 @@ function bindUI(){
   });
 }
 
+// ---------------------------------------------------------------- page modes
+// Alone, the page opens on the cell in the address (?modelo=fungo). In the
+// game's frame (?embed) the game says which cell to show and is told when
+// the visitor wants to go back.
+function leave(){
+  close();
+  parent.postMessage({ microcosmo: 'fechar-3d' }, '*');
+}
+window.addEventListener('message', e => {
+  const d = e.data;
+  if(!EMBED || !d || e.source !== parent) return;
+  if(d.microcosmo === 'abrir-3d') open(d.modelo);
+  else if(d.microcosmo === 'parar-3d') close();
+});
+
 const Modelo3D = { open, close, isOpen: false, models: MODELS.map(m => ({ id: m.id, title: m.title })) };
 window.Modelo3D = Modelo3D;
-if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindUI); else bindUI();
+function start(){
+  bindUI();
+  open(PARAMS.get('modelo') || MODELS[0].id);
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

@@ -1,11 +1,11 @@
-/* Microcosmo — página dos modelos 3D, na linguagem do site do pitch:
+/* Microcosmo — página das células 3D, na linguagem do site do pitch:
    fundo tinta, Archivo pesado com ponto lime, rótulos mono de HUD, marcas de
    corte nos cantos e grade de pontos. A página rola por cima do modelo, que
    fica parado no lugar enquanto a célula se abre. */
-@font-face{ font-family:'Archivo'; src:url('fonts/archivo.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:normal; font-display:swap; }
-@font-face{ font-family:'Archivo'; src:url('fonts/archivo-italic.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:italic; font-display:swap; }
-@font-face{ font-family:'JetBrains Mono'; src:url('fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-display:swap; }
-@font-face{ font-family:'JetBrains Mono'; src:url('fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('../comum/fonts/archivo.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('../comum/fonts/archivo-italic.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:italic; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('../comum/fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('../comum/fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-display:swap; }
 
 .m3d{
   --ink:#0b0b0c; --ink-2:#151517; --fg:#f5f3ee; --dim:rgba(245,243,238,.64); --faint:rgba(245,243,238,.36);
@@ -156,10 +156,8 @@
 #m3d-loading{ position:absolute; z-index:2; inset:0; display:none; place-items:center; color:var(--dim); pointer-events:none; }
 #m3d-loading.show{ display:grid; }
 
-/* the game buttons that open it */
-#open-3d{ margin-top:6px; }
-#panel-3d{ display:none; }
-#panel-3d.show{ display:block; }
+/* page of its own (also shown inside the game, in a frame) */
+html, body.m3d-page{ margin:0; height:100%; background:#0b0b0c; }
 
 /* not wide or tall enough for the list of structures */
 @media (max-width: 1099px), (max-height: 639px){

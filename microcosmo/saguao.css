@@ -1,0 +1,146 @@
+/* Microcosmo — saguão: o nome no topo e três cartões (jogo, apresentação,
+   células 3D). Fundo preto com microrganismos passando ao longe; os cartões
+   inclinam atrás do ponteiro e, quando escolhidos, viram e entram na tela. */
+@font-face{ font-family:'Archivo'; src:url('comum/fonts/archivo.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('comum/fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('comum/fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-display:swap; }
+
+:root{
+  --bg:#050506; --fg:#f5f3ee; --dim:rgba(245,243,238,.58); --faint:rgba(245,243,238,.32);
+  --coral:#ff6b5e;
+  --f-d:'Archivo', 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  --f-m:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease:cubic-bezier(.16,.9,.12,1);
+  --r:30px;
+  color-scheme:dark;
+}
+*{ box-sizing:border-box; }
+html, body{ margin:0; height:100%; background:var(--bg); color:var(--fg); font-family:var(--f-d); -webkit-font-smoothing:antialiased; overflow:hidden; }
+::selection{ background:var(--coral); color:#fff; }
+.mono{ font-family:var(--f-m); font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+
+#fundo{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; }
+.grao{ position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.07; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+.saguao{
+  position:relative; z-index:2; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(18px, 4.2vh, 50px);
+  padding:calc(env(safe-area-inset-top, 0px) + clamp(16px, 3.5vh, 40px)) 24px calc(env(safe-area-inset-bottom, 0px) + clamp(14px, 3vh, 34px));
+}
+
+/* the name: tall condensed letters that rise out of a mask */
+.topo{ text-align:center; }
+.logo{ margin:0; font-weight:700; font-stretch:62%; font-size:clamp(3.4rem, 8.6vw, 8.4rem); line-height:.84; letter-spacing:.015em; overflow:hidden; padding:.04em .02em .02em; }
+.logo-in{ display:inline-block; }
+.logo .ch{ display:inline-block; }
+.lead{ margin:clamp(10px, 1.6vh, 16px) 0 0; color:var(--dim); font-size:clamp(.95rem, 1.12vw, 1.1rem); line-height:1.45; }
+.lead span{ color:var(--fg); }
+
+/* ---------------------------------------------------------------- cards */
+.cartoes{ position:relative; display:flex; justify-content:center; align-items:stretch; gap:clamp(18px, 2.6vw, 46px); }
+.cartao{
+  --rx:0deg; --ry:0deg; --lz:0px; --mx:50%; --my:0%; --px:0; --py:0; --sx:0px; --sy:0px;
+  position:relative; flex:0 0 auto;
+  width:min(clamp(240px, 24vw, 392px), calc((100vh - 270px) * .6));
+  min-width:220px;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:clamp(12px, 1.15vw, 18px) clamp(12px, 1.15vw, 18px) clamp(20px, 2.1vw, 30px);
+  border-radius:var(--r); color:var(--c-ink); text-decoration:none; outline:none;
+  background-color:var(--c-bg);
+  background-image:radial-gradient(120% 70% at var(--mx) var(--my), rgba(255,255,255,.13), rgba(255,255,255,0) 62%);
+  box-shadow:var(--sx) calc(var(--sy) + 28px) 60px -26px rgba(0,0,0,.85), inset 0 0 0 1px var(--c-line);
+  transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(var(--lz));
+  transform-style:preserve-3d;
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.c-img{
+  position:relative; display:block; width:100%; aspect-ratio:5 / 4; border-radius:calc(var(--r) - 8px); overflow:hidden;
+  background:rgba(0,0,0,.25); box-shadow:inset 0 0 0 1px var(--c-line), 0 14px 28px -18px rgba(0,0,0,.7);
+  transform:translateZ(38px);
+}
+.c-img img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  transform:scale(1.07) translate(calc(var(--px) * -10px), calc(var(--py) * -8px));
+  transition:transform .6s var(--ease);
+}
+.c-brilho{ position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .35s;
+  background:radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.32), rgba(255,255,255,0) 52%); mix-blend-mode:soft-light; }
+.c-meta{ display:flex; align-items:center; gap:9px; margin-top:clamp(14px, 1.8vh, 22px); color:var(--c-dim); font-size:10.5px; transform:translateZ(20px); }
+.c-meta b{ color:var(--c-acc); font-weight:700; }
+.c-titulo{ display:block; margin-top:clamp(6px, 1vh, 10px); font-weight:900; font-stretch:108%; text-transform:uppercase; font-size:clamp(1.4rem, 2.02vw, 2.3rem); line-height:.95; letter-spacing:-.01em; transform:translateZ(30px); }
+.c-texto{ display:block; margin-top:clamp(8px, 1.3vh, 14px); color:var(--c-dim); font-size:clamp(.88rem, .98vw, 1rem); line-height:1.5; max-width:30ch; transform:translateZ(18px); }
+.c-cta{ display:inline-flex; align-items:center; gap:8px; margin-top:auto; padding-top:clamp(14px, 2vh, 22px); color:var(--c-ink); font-weight:700; transform:translateZ(16px); }
+.c-cta i{ font-style:normal; color:var(--c-acc); transition:transform .35s var(--ease); }
+.cartao:focus-visible{ box-shadow:var(--sx) calc(var(--sy) + 28px) 60px -26px rgba(0,0,0,.85), 0 0 0 3px var(--bg), 0 0 0 6px var(--coral); }
+.cartao.sobre .c-brilho{ opacity:1; }
+.cartao.sobre .c-cta i, .cartao:focus-visible .c-cta i{ transform:translateX(5px); }
+.cartao.sobre .c-img img{ transition:transform .2s linear; }
+
+/* carousel dots (phones) */
+.pontos{ display:none; gap:8px; }
+.pontos i{ width:6px; height:6px; border-radius:50%; background:var(--faint); transition:background .25s, transform .25s; }
+.pontos i.on{ background:var(--fg); transform:scale(1.3); }
+
+.rodape{ display:flex; flex-wrap:wrap; justify-content:center; gap:6px 18px; color:var(--faint); font-size:10px; text-align:center; }
+.rodape .turma{ color:var(--dim); }
+
+/* ---------------------------------------------------------------- choosing */
+.portal-cena{ position:fixed; inset:0; z-index:50; pointer-events:none; perspective:1400px; }
+.portal{ position:absolute; transform-style:preserve-3d; transform-origin:50% 50%; will-change:transform; }
+.portal .pf{ position:absolute; inset:0; margin:0; border-radius:var(--r); backface-visibility:hidden; -webkit-backface-visibility:hidden; transform-style:flat; overflow:hidden; }
+.portal .pf.cartao{ width:auto; min-width:0; transform:none; box-shadow:0 40px 80px -30px rgba(0,0,0,.9), inset 0 0 0 1px var(--c-line); }
+.portal .pf.cartao > *{ transform:none; }
+.portal .pf.verso{
+  transform:rotateY(180deg); background:var(--c-bg); color:var(--c-ink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+}
+.portal .verso .vk{ font:700 12px/1 var(--f-m); letter-spacing:.28em; text-transform:uppercase; opacity:.62; }
+.portal .verso .vt{ font-weight:900; font-stretch:112%; text-transform:uppercase; line-height:.9; letter-spacing:-.01em; }
+.portal .verso .vb{ display:block; height:2px; background:currentColor; opacity:.25; }
+.saindo .cartao:not(.escolhido), .saindo .topo, .saindo .rodape, .saindo .pontos{ pointer-events:none; }
+.cartao.escolhido{ visibility:hidden; }
+
+/* tablets standing: same row of cards, but filling the width */
+@media (orientation: portrait) and (min-width: 821px){
+  .logo{ font-size:min(13vw, 9rem); }
+  .cartoes{ gap:2.4vw; }
+  .cartao{ width:min(29.5vw, 420px); }
+  .c-titulo{ font-size:clamp(1.4rem, 2.7vw, 2.3rem); }
+}
+
+/* ---------------------------------------------------------------- phones standing: a carousel */
+@media (max-width: 820px) and (min-height: 521px){
+  .saguao{ justify-content:center; gap:clamp(14px, 3vh, 28px); padding-left:0; padding-right:0; }
+  .logo{ font-size:clamp(3.2rem, 17vw, 5.4rem); }
+  .lead{ padding:0 24px; font-size:.95rem; }
+  .lead span{ display:block; }
+  .cartoes{
+    width:100%; justify-content:flex-start; overflow-x:auto; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    padding:14px calc((100vw - var(--cw)) / 2) 26px; gap:16px; --cw:min(76vw, 340px, calc((100vh - 300px) * .62));
+  }
+  .cartoes::-webkit-scrollbar{ display:none; }
+  .cartao{ width:var(--cw); min-width:0; scroll-snap-align:center; }
+  .pontos{ display:flex; margin-top:-8px; }
+  .rodape{ padding:0 20px; font-size:9.5px; }
+  .rodape span:first-child{ display:none; }
+}
+/* phones lying down: three small cards in a row */
+@media (max-height: 520px){
+  .saguao{ gap:12px; padding-top:calc(env(safe-area-inset-top, 0px) + 10px); padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 8px); }
+  .logo{ font-size:clamp(2.2rem, 7vw, 3.4rem); }
+  .lead{ display:none; }
+  .cartoes{ gap:14px; }
+  .cartao{ width:min(30vw, calc((100vh - 100px) * .78)); min-width:0; padding:10px 10px 14px; --r:22px; }
+  .c-img{ aspect-ratio:16 / 9; }
+  .c-meta{ margin-top:8px; font-size:9px; }
+  .c-titulo{ font-size:clamp(1rem, 2.4vw, 1.4rem); margin-top:4px; }
+  .c-texto{ font-size:.74rem; margin-top:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .c-cta{ display:none; }
+  .rodape{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .c-img img, .c-cta i{ transition:none; }
+}

@@ -4136,9 +4136,10 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0],
     w:[0,-1], s:[0,1], a:[-1,0], d:[1,0], W:[0,-1], S:[0,1], A:[-1,0], D:[1,0]
   };
-  // the 3D model page (modelo3d.js) covers the game; while it is open the
-  // game is paused and leaves the keys alone (arrows scroll and switch cells there)
-  const m3dOpen = () => !!(window.Modelo3D && window.Modelo3D.isOpen);
+  // the 3D cells page (../celulas-3d/, in a frame) covers the game; while it
+  // is open the game is paused and leaves the keys alone
+  let m3dShown = false;
+  const m3dOpen = () => m3dShown;
   window.addEventListener('keydown', (e)=>{
     if(m3dOpen()) return;
     if(e.key >= '1' && e.key <= '4') applyDepth(parseInt(e.key));
@@ -5345,14 +5346,45 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     if(e.key === 'Escape' && labOpen && !panelOverlay.classList.contains('open') && !m3dOpen()) closeLab();
   });
 
-  // ---- 3D cell models (modelo3d.js) ----
+  // ---- 3D cells: ../celulas-3d/ opens over the game in a frame, so the
+  // slide, the vials and the collection are all still here when it closes ----
+  let m3dFrame = null;
   function open3D(modelId){
-    if(!window.Modelo3D) return;
     dropHold();
     keysDown.clear();
     panelOverlay.classList.remove('open');
-    window.Modelo3D.open(modelId);
+    if(!m3dFrame){
+      const wrap = document.createElement('div'), fr = document.createElement('iframe');
+      wrap.id = 'm3d-frame';
+      fr.title = 'Células 3D';
+      fr.src = `../celulas-3d/index.html?embed&modelo=${encodeURIComponent(modelId)}`;
+      m3dFrame = { wrap, fr, ready: false, pending: null };
+      fr.addEventListener('load', ()=>{
+        m3dFrame.ready = true;
+        if(m3dFrame.pending) fr.contentWindow.postMessage({ microcosmo:'abrir-3d', modelo:m3dFrame.pending }, '*');
+        m3dFrame.pending = null;
+        if(m3dShown) fr.contentWindow.focus();
+      });
+      wrap.appendChild(fr);
+      document.body.appendChild(wrap);
+    } else if(m3dFrame.ready){
+      m3dFrame.fr.contentWindow.postMessage({ microcosmo:'abrir-3d', modelo:modelId }, '*');
+      m3dFrame.fr.contentWindow.focus();
+    } else m3dFrame.pending = modelId;
+    m3dShown = true;
+    requestAnimationFrame(()=> m3dFrame.wrap.classList.add('open'));
   }
+  function close3D(){
+    if(!m3dFrame || !m3dShown) return;
+    m3dShown = false;
+    m3dFrame.wrap.classList.remove('open');
+    if(m3dFrame.ready) m3dFrame.fr.contentWindow.postMessage({ microcosmo:'parar-3d' }, '*');
+    window.focus();
+  }
+  window.addEventListener('message', (e)=>{
+    if(m3dFrame && e.source === m3dFrame.fr.contentWindow && e.data && e.data.microcosmo === 'fechar-3d') close3D();
+  });
+  window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && m3dShown) close3D(); });
   document.getElementById('open-3d').addEventListener('click', ()=> open3D('bacteria'));
   document.getElementById('panel-3d').addEventListener('click', ()=>{ if(panelSpecies) open3D(MODEL_3D_FOR[panelSpecies.id]); });
   window.addEventListener('resize', ()=>{ if(labOpen && labPage === 'analysis') fitAnalysisView(); });
