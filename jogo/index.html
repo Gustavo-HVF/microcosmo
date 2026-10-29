@@ -335,31 +335,48 @@
 
 <!-- MODELO 3D: a célula aberta camada por camada. A página rola por cima
      do modelo (roda do mouse ou o dedo) e cada trecho mostra uma estrutura. -->
-<section id="m3d" class="m3d" aria-hidden="true" aria-label="Modelo 3D da célula">
+<section id="m3d" class="m3d" aria-hidden="true" aria-label="Modelos 3D das células">
   <div id="m3d-scroll" class="m3d-scroll" tabindex="-1">
     <div id="m3d-stage" class="m3d-stage">
+      <div id="m3d-bg" class="m3d-bg" aria-hidden="true"></div>
       <canvas id="m3d-canvas" aria-hidden="true"></canvas>
       <svg id="m3d-lines" aria-hidden="true"></svg>
       <div id="m3d-label" aria-hidden="true"></div>
-      <header id="m3d-head" class="m3d-head">
-        <h1 id="m3d-title"></h1>
-        <p id="m3d-sub"></p>
-        <div class="m3d-foot">
-          <div id="m3d-steps" class="m3d-steps" aria-label="Estruturas"></div>
-          <p id="m3d-hint"></p>
+      <i class="m3d-crop tl"></i><i class="m3d-crop tr"></i><i class="m3d-crop bl"></i><i class="m3d-crop br"></i>
+
+      <header id="m3d-top" class="m3d-top">
+        <div class="m3d-hud m3d-mono">
+          <b><i class="m3d-sq"></i>Microcosmo / Modelo 3D</b>
+          <span id="m3d-kicker"></span>
         </div>
+        <nav class="m3d-tabs" aria-label="Escolha a célula">
+          <button id="m3d-prev" class="m3d-arrow" aria-label="Célula anterior"><svg viewBox="0 0 24 24"><polyline points="15,5 8,12 15,19"/></svg></button>
+          <div id="m3d-tablist" class="m3d-tablist"></div>
+          <button id="m3d-next" class="m3d-arrow" aria-label="Próxima célula"><svg viewBox="0 0 24 24"><polyline points="9,5 16,12 9,19"/></svg></button>
+        </nav>
+        <button id="m3d-close" class="m3d-close m3d-mono"><span class="m3d-close-txt">Voltar ao jogo</span> ✕</button>
       </header>
-      <button id="m3d-prev" class="m3d-arrow" aria-label="Célula anterior"><svg viewBox="0 0 60 90"><polyline points="52,10 12,45 52,80"/></svg></button>
-      <button id="m3d-next" class="m3d-arrow" aria-label="Próxima célula"><svg viewBox="0 0 60 90"><polyline points="8,10 48,45 8,80"/></svg></button>
+
+      <div id="m3d-head" class="m3d-head">
+        <p id="m3d-count" class="m3d-mono"></p>
+        <h1 id="m3d-title"></h1>
+        <ul id="m3d-tags" class="m3d-tags m3d-mono"></ul>
+      </div>
+
       <div id="m3d-desc" class="m3d-desc" aria-live="polite">
-        <p class="m3d-desc-label">descrição</p>
+        <div class="m3d-desc-head m3d-mono"><span>Descrição</span><span id="m3d-stepno"></span></div>
+        <div id="m3d-progress" class="m3d-progress" aria-hidden="true"></div>
         <div id="m3d-box" class="m3d-box">
           <h2 id="m3d-desc-title"></h2>
           <p id="m3d-desc-text"></p>
         </div>
+        <p id="m3d-hint" class="m3d-mono"></p>
       </div>
-      <button id="m3d-close" class="m3d-close">← Voltar ao microscópio</button>
-      <div id="m3d-loading">Carregando o modelo 3D…</div>
+
+      <ol id="m3d-steps" class="m3d-index" aria-label="Estruturas"></ol>
+
+      <div id="m3d-scale" class="m3d-scale m3d-mono" aria-hidden="true"><i id="m3d-scalebar"></i><span id="m3d-scaletxt"></span></div>
+      <div id="m3d-loading" class="m3d-mono">Carregando o modelo 3D…</div>
     </div>
     <div id="m3d-spacer" aria-hidden="true"></div>
   </div>
