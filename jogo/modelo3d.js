@@ -14,28 +14,33 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const isTouch = () => document.body.classList.contains('touch');
 
 // ---------------------------------------------------------------- the four cells
-// Every structure: name, what it is for (shown in the green box), and its
+// Every structure: name, what it is for (shown in the description), and its
 // kind: 'shell' = a layer that gets cut open after its turn; 'part' = a piece
-// that is highlighted in place. Builders are below.
+// that is highlighted in place. Builders are below. umPerUnit sets the scale
+// bar (how many micrometres one unit of the model is).
 const MODELS = [
   {
-    id: 'bacteria', title: 'Escherichia coli', sub: 'célula bacteriana · Gram-negativa',
+    id: 'bacteria', tab: 'Bactéria', kicker: 'Célula bacteriana', title: 'Escherichia coli', italic: true,
+    tags: ['Procarionte', 'Gram-negativa', 'Bastonete · ~2 µm'], umPerUnit: 0.54, scaleUm: 1,
     desc: 'Bactéria em bastonete que vive no intestino e é o modelo clássico de célula bacteriana. Não tem núcleo nem organelas com membrana: o DNA fica solto no citoplasma.',
     build: buildBacterium
   },
   {
-    id: 'lactobacillus', title: 'Lactobacillus acidophilus', sub: 'bactéria láctica · Gram-positiva',
+    id: 'lactobacillus', tab: 'Lactobacilo', kicker: 'Bactéria láctica', title: 'Lactobacillus acidophilus', italic: true,
+    tags: ['Procarionte', 'Gram-positiva', 'Bacilo · 2–6 µm'], umPerUnit: 0.75, scaleUm: 1,
     desc: 'Bacilo do iogurte e dos leites fermentados. Não tem flagelos nem membrana externa; sua parede grossa fica roxa na coloração de Gram. Transforma a lactose em ácido lático.',
     build: buildLactobacillus
   },
   {
-    id: 'fungo', title: 'Levedura', sub: 'célula de um fungo · Saccharomyces cerevisiae',
-    desc: 'Fungo de uma só célula, usado no pão, na cerveja e no kefir. Diferente das bactérias, é eucarionte: tem núcleo e organelas envoltas por membrana, e se reproduz por brotamento.',
+    id: 'fungo', tab: 'Levedura', kicker: 'Célula de um fungo', title: 'Levedura', italic: false,
+    tags: ['Eucarionte', 'Fungo unicelular', '5–10 µm'], umPerUnit: 2.2, scaleUm: 2,
+    desc: 'Fungo de uma só célula (Saccharomyces cerevisiae), usado no pão, na cerveja e no kefir. Diferente das bactérias, é eucarionte: tem núcleo e organelas envoltas por membrana, e se reproduz por brotamento.',
     build: buildYeast
   },
   {
-    id: 'planta', title: 'Célula vegetal', sub: 'célula de uma planta · para comparar',
-    desc: 'Célula eucarionte de planta. Além do núcleo e das organelas, tem parede de celulose, cloroplastos que fazem fotossíntese e um grande vacúolo central.',
+    id: 'planta', tab: 'Planta', kicker: 'Célula de uma planta', title: 'Célula vegetal', italic: false,
+    tags: ['Eucarionte', 'Faz fotossíntese', '10–100 µm'], umPerUnit: 15, scaleUm: 10,
+    desc: 'Célula eucarionte de planta, para comparar. Além do núcleo e das organelas, tem parede de celulose, cloroplastos que fazem fotossíntese e um grande vacúolo central.',
     build: buildPlant
   }
 ];
@@ -44,14 +49,16 @@ const MODELS = [
 const V = {
   T: null, renderer: null, scene: null, camera: null, model: null, idx: 0,
   open: false, raf: 0, last: 0, t: 0, p: 0, target: 0, stepPx: 600,
-  yaw: 0, pitch: 0, drag: null, loading: null, onClose: null,
+  yaw: 0, pitch: 0, drag: null, loading: null, onClose: null, intro: 1, free: null,
   settled: 0, autoGoal: 0, auto: 0, fingers: 0
 };
 const els = {};
 
 function cacheEls(){
-  ['m3d', 'm3d-scroll', 'm3d-stage', 'm3d-canvas', 'm3d-lines', 'm3d-label', 'm3d-title', 'm3d-sub', 'm3d-prev', 'm3d-next',
-   'm3d-desc-title', 'm3d-desc-text', 'm3d-steps', 'm3d-hint', 'm3d-close', 'm3d-spacer', 'm3d-loading', 'm3d-desc', 'm3d-head', 'm3d-box']
+  ['m3d', 'm3d-scroll', 'm3d-stage', 'm3d-bg', 'm3d-canvas', 'm3d-lines', 'm3d-label', 'm3d-top', 'm3d-kicker', 'm3d-tablist',
+   'm3d-prev', 'm3d-next', 'm3d-close', 'm3d-head', 'm3d-count', 'm3d-title', 'm3d-tags', 'm3d-desc', 'm3d-stepno',
+   'm3d-progress', 'm3d-box', 'm3d-desc-title', 'm3d-desc-text', 'm3d-hint', 'm3d-steps', 'm3d-scale', 'm3d-scalebar',
+   'm3d-scaletxt', 'm3d-loading', 'm3d-spacer']
     .forEach(id => { els[id] = $(id); });
 }
 
@@ -389,7 +396,10 @@ function buildYeast(kit){
 
   const ves = kit.part('Vesículas', 'Pequenas bolsas de membrana que levam substâncias de um lugar para outro dentro da célula, e também para fora dela.');
   const vp = [];
-  for(let i = 0; i < 9; i++) vp.push(gc.clone().add(new T.Vector3(rand(-0.3, 0.25), rand(-0.25, 0.3), rand(-0.05, 0.15))));
+  while(vp.length < 9){ // around the Golgi, but well inside the membrane
+    const q = gc.clone().add(new T.Vector3(rand(-0.3, 0.25), rand(-0.25, 0.3), rand(-0.05, 0.15)));
+    if((q.x / ex) ** 2 + (q.y / ey) ** 2 + (q.z / ez) ** 2 < 0.62) vp.push(q);
+  }
   const vd = kit.dots(vp, 0.04, '#f7cfe2');
   kit.add(ves, vd); root.add(vd);
   ves.anchor = vp[0].clone();
@@ -509,17 +519,20 @@ function initRenderer(){
   const T = V.T;
   if(T.ColorManagement) T.ColorManagement.legacyMode = false;
   const r = new T.WebGLRenderer({ canvas: els['m3d-canvas'], antialias: true, alpha: true });
-  r.setClearColor(0xffffff, 0);
+  r.setClearColor(0x000000, 0);
   r.localClippingEnabled = true;
   r.outputEncoding = T.sRGBEncoding;
   r.toneMapping = T.ACESFilmicToneMapping;
-  r.toneMappingExposure = 1.05;
+  r.toneMappingExposure = 1.12;
   V.renderer = r;
   V.scene = new T.Scene();
   V.camera = new T.PerspectiveCamera(30, 1, 0.1, 100);
-  V.scene.add(new T.HemisphereLight(0xffffff, 0xd8e2ea, 0.95));
-  const key = new T.DirectionalLight(0xffffff, 1.35); key.position.set(3, 5, 6); V.scene.add(key);
-  const rim = new T.DirectionalLight(0xfff0dc, 0.55); rim.position.set(-5, -2, -4); V.scene.add(rim);
+  // studio light on a dark stage: soft fill, a key from the top right and a
+  // cool rim from behind that draws the outline of the cell
+  V.scene.add(new T.HemisphereLight(0xffffff, 0x23262c, 0.85));
+  const key = new T.DirectionalLight(0xffffff, 1.45); key.position.set(3, 5, 6); V.scene.add(key);
+  const rim = new T.DirectionalLight(0xe6ffd2, 1.25); rim.position.set(-4, 3.5, -5); V.scene.add(rim);
+  const low = new T.DirectionalLight(0xfff1e0, 0.3); low.position.set(0, -4, 3); V.scene.add(low);
   V.pivot = new T.Group(); V.pivot.rotation.order = 'XYZ'; V.scene.add(V.pivot);
 }
 
@@ -532,6 +545,8 @@ function disposeModel(){
   });
   V.model = null;
 }
+
+const pad2 = n => String(n).padStart(2, '0');
 
 function buildModel(idx){
   const T = V.T, def = MODELS[idx];
@@ -555,13 +570,30 @@ function buildModel(idx){
   V.idx = idx;
   V.p = V.target = 0;
   V.settled = 0; V.auto = 0;
-  V.yaw = 0; V.pitch = 0;
-  els['m3d-title'].textContent = def.title;
-  els['m3d-sub'].textContent = def.sub;
+  V.yaw = 0; V.pitch = 0; V.intro = 0;
+  fillHead(def, idx);
   buildStepsUI();
   updateText(true);
   layout();
   els['m3d-scroll'].scrollTop = 0;
+}
+
+// name, number and tags of the cell; the name rises out of a mask
+function fillHead(def, idx){
+  els['m3d-kicker'].textContent = `(${pad2(idx + 1)}) ${def.kicker}`;
+  els['m3d-count'].textContent = `${pad2(idx + 1)} — ${pad2(MODELS.length)}`;
+  const t = els['m3d-title'];
+  t.textContent = '';
+  const rv = document.createElement('span'); rv.className = 'rv';
+  const name = document.createElement(def.italic ? 'em' : 'span'); name.textContent = def.title;
+  const dot = document.createElement('span'); dot.className = 'dot'; dot.textContent = '.';
+  rv.append(name, dot); t.appendChild(rv);
+  els['m3d-tags'].textContent = '';
+  def.tags.forEach(x => { const li = document.createElement('li'); li.textContent = x; els['m3d-tags'].appendChild(li); });
+  els['m3d-scaletxt'].textContent = `${def.scaleUm} µm`;
+  Array.from(els['m3d-tablist'].children).forEach((b, i) => { b.classList.toggle('on', i === idx); b.setAttribute('aria-pressed', i === idx); });
+  const head = els['m3d-head'];
+  head.classList.remove('enter'); void head.offsetWidth; head.classList.add('enter');
 }
 
 // ---------------------------------------------------------------- layout + scroll
@@ -576,24 +608,28 @@ function layout(){
   const sp = els['m3d-spacer'];
   sp.innerHTML = '';
   for(let i = 0; i < n; i++){ const d = document.createElement('div'); d.className = 'm3d-step'; d.style.height = V.stepPx + 'px'; sp.appendChild(d); }
-  // where the model goes: on a computer in the middle, as in the template
-  // (the description sits in a corner); on phones in the space the texts
-  // leave free (same breakpoints as modelo3d.css)
+  // the model goes in the space the texts leave free (same breakpoints as
+  // modelo3d.css): right of the text column on a computer or a phone lying
+  // down, between the name and the bottom sheet on a phone standing up
   const sr = st.getBoundingClientRect();
   const box = id => { const r = els[id].getBoundingClientRect(); return { l: r.left - sr.left, r: r.right - sr.left, t: r.top - sr.top, b: r.bottom - sr.top }; };
-  const head = box('m3d-head'), desc = box('m3d-desc'), prev = box('m3d-prev'), next = box('m3d-next');
-  V.lblL = Math.max(10, prev.r + 4); V.lblR = Math.min(w - 10, next.l - 4); // labels stay between the arrows
+  const top = box('m3d-top'), head = box('m3d-head'), desc = box('m3d-desc');
+  const index = getComputedStyle(els['m3d-steps']).display !== 'none' ? box('m3d-steps') : null;
   let free;
-  if(matchMedia('(max-height: 520px)').matches) free = { l: desc.r + 8, r: next.l - 4, t: head.b + 4, b: h - 8 };
-  else if(matchMedia('(max-width: 820px)').matches) free = { l: prev.r, r: next.l, t: head.b + 8, b: desc.t - 8 };
-  else free = { l: w * 0.2, r: w * 0.8, t: h * 0.23, b: h * 0.77 };
-  V.camera.setViewOffset(w, h, w / 2 - (free.l + free.r) / 2, h / 2 - (free.t + free.b) / 2, w, h);
+  if(matchMedia('(max-height: 520px)').matches) free = { l: Math.max(head.r, desc.r) + 12, r: w - 14, t: top.b + 6, b: h - 12 };
+  else if(matchMedia('(max-width: 820px)').matches) free = { l: 12, r: w - 12, t: head.b + 10, b: desc.t - 12 };
+  else free = { l: Math.max(head.r, desc.r) + 20, r: (index ? index.l : w) - 28, t: top.b + 20, b: h - 40 };
+  V.free = free;
+  const cx = (free.l + free.r) / 2, cy = (free.t + free.b) / 2;
+  V.camera.setViewOffset(w, h, w / 2 - cx, h / 2 - cy, w, h);
   V.camera.updateProjectionMatrix();
+  els['m3d-bg'].style.setProperty('--cx', `${cx.toFixed(0)}px`);
+  els['m3d-bg'].style.setProperty('--cy', `${cy.toFixed(0)}px`);
   if(V.model){
     // fit the box (turned toward the viewer) into that space, with room for
     // the small zoom-in when the inside is shown
     const sz = V.model.size, tv = Math.tan(V.camera.fov * Math.PI / 360), th = tv * V.camera.aspect;
-    const fw = Math.max(0.2, (free.r - free.l) / w) * 0.94, fh = Math.max(0.2, (free.b - free.t) / h) * 0.94;
+    const fw = Math.max(0.2, (free.r - free.l) / w) * 0.9, fh = Math.max(0.2, (free.b - free.t) / h) * 0.86;
     const hx = (sz.x * Math.cos(0.32) + sz.z * Math.sin(0.32)) / 2;
     const hy = (sz.y * Math.cos(0.4) + sz.z * Math.sin(0.4)) / 2;
     V.baseDist = Math.max(hx / (th * fw), hy / (tv * fh)) + Math.max(sz.y, sz.z) / 2;
@@ -628,17 +664,20 @@ function onScroll(){
   scheduleSettle();
 }
 
+// the numbered list of structures and the progress segments
 function buildStepsUI(){
-  const box = els['m3d-steps'];
-  box.innerHTML = '';
+  const list = els['m3d-steps'], bar = els['m3d-progress'];
+  list.textContent = ''; bar.textContent = '';
   const n = V.model.structures.length;
   for(let i = 0; i <= n; i++){
-    const b = document.createElement('button');
+    const li = document.createElement('li'), b = document.createElement('button');
     b.type = 'button';
-    b.title = i ? V.model.structures[i - 1].name : 'Célula inteira';
-    b.setAttribute('aria-label', b.title);
+    const num = document.createElement('span'); num.className = 'n'; num.textContent = pad2(i);
+    const name = document.createElement('span'); name.textContent = i ? V.model.structures[i - 1].name : 'Célula inteira';
+    b.append(num, name);
     b.addEventListener('click', () => goStep(i));
-    box.appendChild(b);
+    li.appendChild(b); list.appendChild(li);
+    if(i) bar.appendChild(document.createElement('i'));
   }
 }
 
@@ -649,34 +688,46 @@ function updateText(force){
   if(step === lastStep && !force) return;
   lastStep = step;
   const s = step ? V.model.structures[step - 1] : null;
-  els['m3d-desc-title'].textContent = s ? s.name : V.model.def.title;
+  els['m3d-desc-title'].textContent = s ? s.name : 'Visão geral';
   els['m3d-desc-text'].textContent = s ? s.text : V.model.def.desc;
+  els['m3d-stepno'].textContent = `${pad2(step)} / ${pad2(n)}`;
   const box = els['m3d-box'];
   box.classList.remove('swap'); void box.offsetWidth; box.classList.add('swap');
-  box.scrollTop = 0;
-  Array.from(els['m3d-steps'].children).forEach((b, i) => b.classList.toggle('on', i === step));
-  const hint = els['m3d-hint'];
-  if(step === 0) hint.textContent = isTouch() ? 'Arraste para cima para abrir a célula ↑' : 'Role o mouse para abrir a célula ↓';
-  else if(step === n) hint.textContent = 'Fim · use ‹ › para ver outra célula';
-  else hint.textContent = `${step} / ${n}`;
-  hint.classList.toggle('quiet', step > 0 && step < n);
+  els['m3d-desc-text'].scrollTop = 0;
+  Array.from(els['m3d-progress'].children).forEach((seg, i) => { seg.classList.toggle('on', i + 1 === step); seg.classList.toggle('done', i + 1 < step); });
+  Array.from(els['m3d-steps'].querySelectorAll('button')).forEach((b, i) => {
+    b.classList.toggle('on', i === step); b.classList.toggle('done', i < step);
+    if(i === step) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+  });
+  // what to do next, and what comes next
+  const hint = els['m3d-hint'], touch = isTouch();
+  const arrow = `<span class="bob">${touch ? '↑' : '↓'}</span>`;
+  if(step === 0) hint.innerHTML = `${arrow} ${touch ? 'Arraste para cima para abrir a célula' : 'Role para abrir a célula'}`;
+  else if(step < n){ hint.innerHTML = `${arrow} Próxima: `; hint.appendChild(document.createTextNode(V.model.structures[step].name)); }
+  else hint.textContent = 'Fim · escolha outra célula lá em cima';
+  hint.classList.toggle('quiet', step > 0);
 }
 
 // ---------------------------------------------------------------- frame
+const easeOut = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3);
 function frame(now){
   if(!V.open) return;
   V.raf = requestAnimationFrame(frame);
   const dt = Math.min(0.1, (now - (V.last || now)) / 1000); V.last = now;
   V.t += dt;
-  const T = V.T, m = V.model;
+  const m = V.model;
   if(!m) return;
   V.p += (V.target - V.p) * Math.min(1, dt * 7);
   const p = V.p, n = m.structures.length;
 
-  // pose: tilted toward the viewer, gently swaying, plus what the user dragged
-  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // pose: tilted toward the viewer, gently swaying, plus what the user dragged;
+  // a new cell comes in turning and growing a little
+  const reduce = reduceMotion();
+  V.intro = reduce ? 1 : Math.min(1, V.intro + dt / 0.9);
+  const e = easeOut(V.intro);
   const sway = reduce ? 0 : Math.sin(V.t * 0.35) * 0.2;
-  V.pivot.rotation.set(0.4 + V.pitch, -0.32 + sway + V.yaw, 0);
+  V.pivot.rotation.set(0.4 + V.pitch, -0.32 + sway + V.yaw - (1 - e) * 0.7, 0);
+  V.pivot.scale.setScalar(0.88 + 0.12 * e);
   const deep = smooth((p - (m.deepFrom - 1.1)) / 0.8);
   const dist = V.baseDist * (1 - 0.14 * deep);
   V.camera.position.set(0, 0, dist);
@@ -704,6 +755,7 @@ function frame(now){
   if(m.tick) m.tick(V.t, dt);
   V.renderer.render(V.scene, V.camera);
   placeLabel(active);
+  placeScale(dist * (0.88 + 0.12 * e) ** -1);
   updateText(false);
 }
 
@@ -711,22 +763,35 @@ function frame(now){
 function placeLabel(s){
   const lab = els['m3d-label'], line = els['m3d-lines'];
   if(!s || !s.anchor){ lab.style.opacity = 0; line.innerHTML = ''; return; }
-  const st = els['m3d-stage'], w = st.clientWidth, h = st.clientHeight;
+  const st = els['m3d-stage'], w = st.clientWidth, h = st.clientHeight, f = V.free;
   const v = s.anchor.clone().applyMatrix4(V.model.root.matrixWorld).project(V.camera);
   const ax = (v.x * 0.5 + 0.5) * w, ay = (-v.y * 0.5 + 0.5) * h;
-  if(lab.textContent !== s.name) lab.textContent = s.name;
+  if(lab.textContent !== s.name){ lab.textContent = s.name; lab.dataset.n = pad2(s.step); }
   const lw = lab.offsetWidth, lh = lab.offsetHeight;
-  const right = ax < w * 0.62;
-  const titleB = els['m3d-head'].getBoundingClientRect().bottom - st.getBoundingClientRect().top + 8;
-  const descT = els['m3d-desc'].getBoundingClientRect().top - st.getBoundingClientRect().top - lh - 8;
-  let lx = right ? ax + Math.max(46, w * 0.07) : ax - Math.max(46, w * 0.07) - lw;
-  let ly = ay - Math.max(36, h * 0.07) - lh / 2;
-  lx = clamp(lx, V.lblL, Math.max(V.lblL, V.lblR - lw));
-  ly = clamp(ly, titleB, Math.max(titleB, descT));
+  const right = ax < (f.l + f.r) / 2 + (f.r - f.l) * 0.12;
+  let lx = right ? ax + Math.max(44, w * 0.05) : ax - Math.max(44, w * 0.05) - lw;
+  let ly = ay - Math.max(34, h * 0.06) - lh / 2;
+  lx = clamp(lx, f.l, Math.max(f.l, f.r - lw));
+  ly = clamp(ly, f.t, Math.max(f.t, f.b - lh));
   lab.style.transform = `translate(${lx.toFixed(1)}px,${ly.toFixed(1)}px)`;
   lab.style.opacity = 1;
-  const ex = right ? lx - 4 : lx + lw + 4, ey = ly + lh / 2;
-  line.innerHTML = `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/><circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="3.5"/>`;
+  const ex = right ? lx : lx + lw, ey = ly + lh / 2;
+  line.innerHTML = `<line x1="${ax.toFixed(1)}" y1="${ay.toFixed(1)}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}"/><circle cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="4"/>`;
+}
+
+// scale bar at the bottom right of the model's space: the length of
+// scaleUm micrometres at the depth of the model's centre
+let lastScale = '';
+function placeScale(dist){
+  const m = V.model, f = V.free, h = els['m3d-stage'].clientHeight;
+  const pxPerUnit = h / (2 * dist * Math.tan(V.camera.fov * Math.PI / 360));
+  const len = Math.round(m.def.scaleUm / m.def.umPerUnit * pxPerUnit);
+  const key = `${len}|${f.r}|${f.b}`;
+  if(key === lastScale) return;
+  lastScale = key;
+  els['m3d-scalebar'].style.width = `${len}px`;
+  const sc = els['m3d-scale'];
+  sc.style.transform = `translate(${(f.r - sc.offsetWidth).toFixed(0)}px,${(f.b - sc.offsetHeight).toFixed(0)}px)`;
 }
 
 // ---------------------------------------------------------------- drag to turn
@@ -782,16 +847,25 @@ function close(){
   if(V.onClose) V.onClose();
 }
 
-function go(delta){
-  if(!V.T) return;
-  buildModel((V.idx + delta + MODELS.length) % MODELS.length);
+function show(idx){
+  if(!V.T || idx === V.idx && V.model) return;
+  buildModel((idx + MODELS.length) % MODELS.length);
 }
 
 function bindUI(){
   cacheEls();
-  els['m3d-prev'].addEventListener('click', () => go(-1));
-  els['m3d-next'].addEventListener('click', () => go(1));
+  MODELS.forEach((def, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'm3d-tab';
+    const no = document.createElement('span'); no.className = 'no'; no.textContent = pad2(i + 1);
+    b.append(no, document.createTextNode(def.tab));
+    b.addEventListener('click', () => show(i));
+    els['m3d-tablist'].appendChild(b);
+  });
+  els['m3d-prev'].addEventListener('click', () => show(V.idx - 1));
+  els['m3d-next'].addEventListener('click', () => show(V.idx + 1));
   els['m3d-close'].addEventListener('click', close);
+  els['m3d-close'].setAttribute('aria-label', 'Voltar ao jogo');
   const sc = els['m3d-scroll'];
   sc.addEventListener('scroll', onScroll, { passive: true });
   // no gliding while a finger is still on the screen
@@ -803,15 +877,17 @@ function bindUI(){
   window.addEventListener('resize', () => {
     if(!V.open || !V.model) return;
     layout();
+    lastScale = '';
     sc.scrollTop = V.settled * V.stepPx;
     V.target = V.settled;
   });
   window.addEventListener('keydown', e => {
     if(!V.open) return;
+    if((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button')) return; // let the button act
     const here = Math.round(V.target);
     if(e.key === 'Escape') close();
-    else if(e.key === 'ArrowLeft') go(-1);
-    else if(e.key === 'ArrowRight') go(1);
+    else if(e.key === 'ArrowLeft') show(V.idx - 1);
+    else if(e.key === 'ArrowRight') show(V.idx + 1);
     else if(e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) goStep(here + 1);
     else if(e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) goStep(here - 1);
     else if(e.key === 'Home') goStep(0);
