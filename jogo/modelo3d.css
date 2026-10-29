@@ -1,90 +1,159 @@
-/* Microcosmo — página do modelo 3D (segue o template: nome em vermelho no
-   topo, setas < > para trocar de célula, "descrição" em rosa e a caixa
-   verde com o texto). A página rola por cima do modelo, que fica parado. */
-@font-face{ font-family:'Archivo'; src:url('fonts/archivo.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-display:swap; }
+/* Microcosmo — página dos modelos 3D, na linguagem do site do pitch:
+   fundo tinta, Archivo pesado com ponto lime, rótulos mono de HUD, marcas de
+   corte nos cantos e grade de pontos. A página rola por cima do modelo, que
+   fica parado no lugar enquanto a célula se abre. */
+@font-face{ font-family:'Archivo'; src:url('fonts/archivo.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('fonts/archivo-italic.woff2') format('woff2'); font-weight:100 900; font-stretch:62% 125%; font-style:italic; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('fonts/jetbrains-mono-400.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face{ font-family:'JetBrains Mono'; src:url('fonts/jetbrains-mono-700.woff2') format('woff2'); font-weight:700; font-display:swap; }
 
 .m3d{
-  --m3d-red:#f03a3a; --m3d-pink:#d94bd9; --m3d-green:#77bf38; --m3d-green-ink:#12290a;
-  --m3d-ink:#151515; --m3d-ink-2:#5c5c5c; --m3d-line:#d6d6d6;
+  --ink:#0b0b0c; --ink-2:#151517; --fg:#f5f3ee; --dim:rgba(245,243,238,.64); --faint:rgba(245,243,238,.36);
+  --line:rgba(245,243,238,.15); --lime:#d4ff1e;
+  --f-d:'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-m:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ease:cubic-bezier(.16,.9,.12,1);
+  --px:clamp(16px, 3.6vw, 64px);
+  --top:calc(env(safe-area-inset-top, 0px) + clamp(14px, 2.6vh, 26px));
+  --col:clamp(300px, 29vw, 440px);
   position:fixed; inset:0; z-index:400; display:none;
-  background:#fff; color:var(--m3d-ink);
-  font-family:'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  background:var(--ink); color:var(--fg); font-family:var(--f-d);
+  -webkit-font-smoothing:antialiased; color-scheme:dark;
 }
 .m3d.open{ display:block; }
+.m3d ::selection{ background:var(--lime); color:var(--ink); }
+.m3d-mono{ font-family:var(--f-m); font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+.m3d button{ -webkit-tap-highlight-color:transparent; }
+.m3d button:focus-visible{ outline:2px solid var(--lime); outline-offset:3px; }
+
 .m3d-scroll{
   position:absolute; inset:0; overflow-x:hidden; overflow-y:auto;
-  overscroll-behavior:contain;
-  scrollbar-width:none; outline:none; -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain; scrollbar-width:none; outline:none; -webkit-overflow-scrolling:touch;
 }
 .m3d-scroll::-webkit-scrollbar{ display:none; }
 .m3d-stage{ position:sticky; top:0; height:100%; overflow:hidden; }
 
+/* backdrop: a soft lime light behind the model and a dot grid that fades out */
+.m3d-bg{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), rgba(212,255,30,.07), rgba(212,255,30,0) 34%),
+    radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), rgba(245,243,238,.045), rgba(245,243,238,0) 62%);
+}
+.m3d-bg::before{
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(rgba(245,243,238,.17) 1px, transparent 1.4px); background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), #000 0, rgba(0,0,0,.4) 40%, transparent 72%);
+          mask-image:radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), #000 0, rgba(0,0,0,.4) 40%, transparent 72%);
+}
+.m3d-crop{ position:absolute; z-index:1; width:14px; height:14px; border:0 solid var(--faint); pointer-events:none; }
+.m3d-crop.tl{ top:10px; left:10px; border-top-width:1px; border-left-width:1px; }
+.m3d-crop.tr{ top:10px; right:10px; border-top-width:1px; border-right-width:1px; }
+.m3d-crop.bl{ bottom:10px; left:10px; border-bottom-width:1px; border-left-width:1px; }
+.m3d-crop.br{ bottom:10px; right:10px; border-bottom-width:1px; border-right-width:1px; }
+
 #m3d-canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; cursor:grab; }
 #m3d-canvas.dragging{ cursor:grabbing; }
 #m3d-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
-#m3d-lines line{ stroke:var(--m3d-ink); stroke-width:1.3; }
-#m3d-lines circle{ fill:#fff; stroke:var(--m3d-ink); stroke-width:1.6; }
+#m3d-lines line{ stroke:rgba(245,243,238,.75); stroke-width:1; }
+#m3d-lines circle{ fill:var(--lime); stroke:var(--ink); stroke-width:2; }
 #m3d-label{
-  position:absolute; left:0; top:0; opacity:0; pointer-events:none; white-space:nowrap;
-  font-size:clamp(.92rem, 1.25vw, 1.2rem); font-weight:600; color:var(--m3d-ink);
-  background:rgba(255,255,255,.86); padding:3px 8px; border-radius:6px;
+  position:absolute; left:0; top:0; z-index:2; opacity:0; pointer-events:none; white-space:nowrap;
+  font:600 13px/1 var(--f-d); color:var(--fg);
+  background:rgba(11,11,12,.84); border:1px solid var(--lime); border-radius:999px; padding:7px 11px;
   transition:opacity .25s;
 }
+#m3d-label::before{ content:attr(data-n); font:700 10px/1 var(--f-m); letter-spacing:.06em; color:var(--lime); margin-right:8px; }
 
-/* header: organism name (red) + a line under it */
-.m3d-head{ text-align:center; padding:clamp(18px, 4.2vh, 46px) 120px 0; pointer-events:none; }
-#m3d-title, #m3d-sub{ position:relative; z-index:2; }
-#m3d-title{
-  margin:0; color:var(--m3d-red); font-weight:900; font-stretch:112%; text-transform:uppercase;
-  font-size:clamp(1.7rem, 3.6vw, 3.5rem); line-height:1.02; letter-spacing:.01em;
+/* top bar: HUD on the left, the four cells in the middle, back on the right */
+.m3d-top{
+  position:absolute; z-index:4; top:var(--top); left:var(--px); right:var(--px);
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:start; gap:16px;
 }
-#m3d-sub{ margin:.45em 0 0; font-size:clamp(.82rem, 1vw, 1rem); color:var(--m3d-ink-2); letter-spacing:.02em; }
-
-/* < > switch cells (the blue "troca de bactéria" notes of the template are not shown) */
+.m3d-hud{ display:flex; flex-direction:column; gap:6px; color:var(--dim); line-height:1.25; }
+.m3d-hud b{ display:flex; align-items:center; gap:8px; color:var(--fg); font-weight:700; }
+.m3d-sq{ display:inline-block; width:7px; height:7px; background:var(--lime); }
+.m3d-tabs{ display:flex; align-items:center; gap:8px; }
+.m3d-tablist{ display:flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:rgba(11,11,12,.6); }
+.m3d-tab{
+  font:700 11px/1 var(--f-m); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap;
+  color:var(--dim); background:none; border:none; border-radius:999px; padding:9px 14px; cursor:pointer;
+  transition:background .25s, color .25s;
+}
+.m3d-tab .no{ opacity:.5; margin-right:7px; }
+.m3d-tab.on{ background:var(--lime); color:var(--ink); }
+.m3d-tab.on .no{ opacity:.6; }
 .m3d-arrow{
-  position:absolute; z-index:3; top:50%; transform:translateY(-50%);
-  width:clamp(64px, 7vw, 120px); height:clamp(96px, 12vw, 170px);
-  display:grid; place-items:center; padding:0; border:none; background:none; color:var(--m3d-ink);
-  cursor:pointer; border-radius:14px; -webkit-tap-highlight-color:transparent;
+  width:38px; height:38px; padding:0; border-radius:50%; border:1px solid var(--line); background:rgba(11,11,12,.6);
+  color:var(--fg); display:grid; place-items:center; cursor:pointer; transition:border-color .2s, color .2s;
 }
-.m3d-arrow svg{ width:62%; height:auto; overflow:visible; }
-.m3d-arrow polyline{ fill:none; stroke:currentColor; stroke-width:15; stroke-linejoin:miter; stroke-linecap:butt; }
-@media (hover:hover){ .m3d-arrow:hover{ background:#f3f3f3; } }
-.m3d-arrow:active{ transform:translateY(-50%) scale(.94); }
-.m3d-arrow:focus-visible, .m3d-close:focus-visible, .m3d-steps button:focus-visible{ outline:3px solid var(--m3d-pink); outline-offset:3px; }
-#m3d-prev{ left:clamp(10px, 3.4vw, 64px); }
-#m3d-next{ right:clamp(10px, 3.4vw, 64px); }
-
-/* "descrição" + green box */
-.m3d-desc{ position:absolute; z-index:2; left:clamp(16px, 3.8vw, 74px); bottom:clamp(14px, 2.6vh, 30px); width:min(30vw, 470px); min-width:300px; }
-.m3d-desc-label{ margin:0 0 .18em .35em; color:var(--m3d-pink); font-size:clamp(1.7rem, 2.5vw, 2.6rem); font-weight:400; line-height:1.1; }
-.m3d-box{
-  background:var(--m3d-green); color:var(--m3d-green-ink); border-radius:28px;
-  padding:18px 24px 20px; min-height:clamp(150px, 20vh, 220px);
-  box-shadow:0 1px 0 rgba(0,0,0,.04);
-}
-#m3d-desc-title{ margin:0 0 6px; font-size:clamp(1.05rem, 1.35vw, 1.3rem); font-weight:800; line-height:1.2; }
-#m3d-desc-text{ margin:0; font-size:clamp(.9rem, 1.02vw, 1.02rem); line-height:1.5; font-weight:450; }
-.m3d-box.swap{ animation:m3d-swap .35s ease-out; }
-@keyframes m3d-swap{ from{ opacity:.25; transform:translateY(6px); } to{ opacity:1; transform:none; } }
-
-/* progress: one dot per step, plus the scroll hint */
-.m3d-foot{ position:absolute; z-index:2; right:clamp(16px, 3.8vw, 74px); bottom:clamp(18px, 3.2vh, 36px); display:flex; flex-direction:column; align-items:flex-end; gap:10px; pointer-events:none; }
-.m3d-steps{ display:flex; gap:4px; pointer-events:auto; }
-.m3d-steps button{ width:22px; height:22px; padding:0; border:none; background:none; cursor:pointer; display:grid; place-items:center; }
-.m3d-steps button::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--m3d-line); transition:background .2s, transform .2s; }
-.m3d-steps button:hover::before{ background:#9a9a9a; }
-.m3d-steps button.on::before{ background:var(--m3d-ink); transform:scale(1.35); }
-#m3d-hint{ margin:0; font-size:.95rem; font-weight:600; color:var(--m3d-ink); letter-spacing:.01em; transition:opacity .3s; }
-#m3d-hint.quiet{ color:var(--m3d-ink-2); font-weight:500; font-variant-numeric:tabular-nums; }
-
+.m3d-arrow svg{ width:16px; height:16px; }
+.m3d-arrow polyline{ fill:none; stroke:currentColor; stroke-width:2; }
+.m3d-arrow:active{ transform:scale(.94); }
 .m3d-close{
-  position:absolute; z-index:3; top:clamp(12px, 2.2vh, 24px); left:clamp(12px, 1.6vw, 28px);
-  border:1.5px solid var(--m3d-ink); background:#fff; color:var(--m3d-ink); border-radius:999px;
-  padding:8px 16px; font:600 .9rem 'Archivo', Arial, sans-serif; cursor:pointer;
+  justify-self:end; border:1px solid var(--line); background:rgba(11,11,12,.6); color:var(--fg);
+  border-radius:999px; padding:11px 16px; cursor:pointer; font-weight:700; transition:background .2s, color .2s, border-color .2s;
 }
-.m3d-close:hover{ background:var(--m3d-ink); color:#fff; }
-#m3d-loading{ position:absolute; z-index:2; inset:0; display:none; place-items:center; font-size:1.05rem; color:var(--m3d-ink-2); pointer-events:none; }
+@media (hover:hover){
+  .m3d-tab:not(.on):hover{ color:var(--fg); }
+  .m3d-arrow:hover{ border-color:var(--lime); color:var(--lime); }
+  .m3d-close:hover{ background:var(--lime); border-color:var(--lime); color:var(--ink); }
+}
+
+/* name of the cell: heavy type with a lime full stop, rising out of a mask */
+.m3d-head{ position:absolute; z-index:3; left:var(--px); top:calc(var(--top) + clamp(70px, 11vh, 118px)); width:var(--col); pointer-events:none; }
+#m3d-count{ margin:0 0 14px; color:var(--lime); }
+#m3d-title{ margin:0; font-weight:900; font-size:clamp(2.3rem, 4.2vw, 4.4rem); line-height:.95; letter-spacing:-.025em; overflow:hidden; padding-bottom:.08em; }
+#m3d-title .rv{ display:block; }
+#m3d-title em{ font-style:italic; font-weight:850; letter-spacing:-.02em; }
+#m3d-title .dot{ color:var(--lime); }
+.m3d-tags{ list-style:none; margin:18px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:6px; text-transform:none; letter-spacing:.03em; }
+.m3d-tags li{ border:1px solid var(--line); border-radius:999px; padding:6px 10px; color:var(--dim); white-space:nowrap; }
+.m3d-tags li:first-child{ border-color:var(--lime); color:var(--lime); }
+.m3d-head.enter .rv{ animation:m3d-rise .9s var(--ease) both; }
+.m3d-head.enter #m3d-count, .m3d-head.enter .m3d-tags li{ animation:m3d-fade .7s var(--ease) both; }
+.m3d-head.enter .m3d-tags li:nth-child(1){ animation-delay:.12s; }
+.m3d-head.enter .m3d-tags li:nth-child(2){ animation-delay:.18s; }
+.m3d-head.enter .m3d-tags li:nth-child(3){ animation-delay:.24s; }
+@keyframes m3d-rise{ from{ transform:translateY(105%); } to{ transform:none; } }
+@keyframes m3d-fade{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+
+/* description of the structure whose turn it is */
+.m3d-desc{ position:absolute; z-index:3; left:var(--px); bottom:calc(env(safe-area-inset-bottom, 0px) + clamp(24px, 4.4vh, 48px)); width:var(--col); }
+.m3d-desc-head{ display:flex; justify-content:space-between; color:var(--dim); padding-bottom:10px; }
+#m3d-stepno{ color:var(--fg); font-weight:700; }
+.m3d-progress{ display:flex; gap:3px; height:3px; margin-bottom:20px; }
+.m3d-progress i{ flex:1; border-radius:2px; background:var(--line); transition:background .3s; }
+.m3d-progress i.done{ background:rgba(245,243,238,.62); }
+.m3d-progress i.on{ background:var(--lime); }
+#m3d-desc-title{ margin:0 0 10px; font-weight:800; font-size:clamp(1.5rem, 2.2vw, 2.2rem); line-height:1.04; letter-spacing:-.015em; }
+#m3d-desc-text{ margin:0; color:var(--dim); font-size:clamp(.95rem, 1.05vw, 1.07rem); line-height:1.58; max-width:46ch; }
+.m3d-box.swap{ animation:m3d-swap .5s var(--ease); }
+@keyframes m3d-swap{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+#m3d-hint{ margin:20px 0 0; color:var(--lime); display:flex; align-items:center; gap:10px; min-height:14px; }
+#m3d-hint.quiet{ color:var(--faint); }
+#m3d-hint .bob{ display:inline-block; animation:m3d-bob 1.4s ease-in-out infinite; }
+@keyframes m3d-bob{ 0%, 100%{ transform:translateY(-2px); } 50%{ transform:translateY(3px); } }
+
+/* every structure, numbered; the current one is marked in lime */
+.m3d-index{ position:absolute; z-index:3; right:var(--px); top:50%; transform:translateY(-46%); width:clamp(190px, 15vw, 240px); list-style:none; margin:0; padding:0; }
+.m3d-index li{ border-top:1px solid var(--line); }
+.m3d-index li:last-child{ border-bottom:1px solid var(--line); }
+.m3d-index button{
+  display:flex; align-items:baseline; gap:12px; width:100%; padding:8px 0 8px 2px; text-align:left;
+  background:none; border:none; cursor:pointer; color:var(--faint); font:500 13.5px/1.25 var(--f-d);
+  transition:color .25s, padding .35s var(--ease), box-shadow .35s var(--ease);
+}
+.m3d-index .n{ font:700 10px/1 var(--f-m); letter-spacing:.08em; min-width:18px; }
+.m3d-index button.done{ color:var(--dim); }
+.m3d-index button.on{ color:var(--fg); font-weight:700; padding-left:14px; box-shadow:inset 3px 0 0 var(--lime); }
+.m3d-index button.on .n{ color:var(--lime); }
+@media (hover:hover){ .m3d-index button:hover{ color:var(--fg); } }
+
+/* scale bar under the model (placed by modelo3d.js) */
+.m3d-scale{ position:absolute; z-index:3; left:0; top:0; display:flex; flex-direction:column; align-items:flex-end; gap:6px; color:var(--dim); pointer-events:none; text-transform:none; letter-spacing:.04em; }
+#m3d-scalebar{ display:block; height:6px; width:60px; border:1px solid var(--fg); border-top:none; }
+#m3d-loading{ position:absolute; z-index:2; inset:0; display:none; place-items:center; color:var(--dim); pointer-events:none; }
 #m3d-loading.show{ display:grid; }
 
 /* the game buttons that open it */
@@ -92,41 +161,79 @@
 #panel-3d{ display:none; }
 #panel-3d.show{ display:block; }
 
-/* phones: name on top, model in the middle, description along the bottom */
-@media (max-width: 820px){
-  .m3d-head{ padding:calc(env(safe-area-inset-top, 0px) + 58px) 18px 0; }
-  #m3d-title{ font-size:clamp(1.35rem, 6.4vw, 2.1rem); }
-  #m3d-sub{ font-size:.8rem; }
-  .m3d-close{ top:calc(env(safe-area-inset-top, 0px) + 10px); padding:7px 13px; font-size:.82rem; }
-  .m3d-foot{ position:static; align-items:center; margin-top:8px; gap:2px; }
-  .m3d-steps{ flex-wrap:wrap; justify-content:center; gap:0; }
-  .m3d-steps button{ width:20px; height:24px; }
-  #m3d-hint{ font-size:.82rem; }
-  .m3d-arrow{ top:44%; width:52px; height:92px; }
-  .m3d-arrow svg{ width:58%; }
-  #m3d-prev{ left:2px; } #m3d-next{ right:2px; }
-  .m3d-desc{ left:12px; right:12px; width:auto; min-width:0; max-width:640px; margin:0 auto; bottom:calc(env(safe-area-inset-bottom, 0px) + 12px); }
-  .m3d-desc-label{ font-size:1.5rem; }
-  .m3d-box{ border-radius:22px; padding:13px 17px 15px; min-height:0; max-height:31vh; overflow-y:auto; }
-  #m3d-desc-title{ font-size:1.02rem; margin-bottom:4px; }
-  #m3d-desc-text{ font-size:.9rem; line-height:1.45; }
-  #m3d-label{ font-size:.86rem; }
+/* not wide or tall enough for the list of structures */
+@media (max-width: 1099px), (max-height: 639px){
+  .m3d-index{ display:none; }
 }
-/* phones lying down: everything smaller, box on the left */
+@media (max-height: 760px) and (min-width: 821px){
+  #m3d-title{ font-size:clamp(2rem, 3.6vw, 3.4rem); }
+  .m3d-head{ top:calc(var(--top) + 64px); }
+  #m3d-count{ margin-bottom:10px; }
+  .m3d-progress{ margin-bottom:14px; }
+  #m3d-hint{ margin-top:14px; }
+}
+
+/* phones standing: name on top, model in the middle, text in a bottom sheet */
+@media (max-width: 820px){
+  .m3d{ --px:16px; --top:calc(env(safe-area-inset-top, 0px) + 12px); }
+  .m3d-top{ grid-template-columns:1fr auto; row-gap:12px; }
+  .m3d-hud span{ display:none; }
+  .m3d-hud{ padding-top:11px; }
+  .m3d-close{ grid-column:2; grid-row:1; padding:10px 13px; }
+  .m3d-close-txt{ display:none; }
+  .m3d-tabs{ grid-column:1 / -1; grid-row:2; margin:0 -16px; padding:0 16px; overflow-x:auto; scrollbar-width:none; }
+  .m3d-tabs::-webkit-scrollbar{ display:none; }
+  .m3d-arrow{ display:none; }
+  .m3d-tablist{ flex:1 0 auto; justify-content:space-between; }
+  .m3d-tab{ padding:9px 11px; font-size:10.5px; }
+  .m3d-tab .no{ display:none; }
+  .m3d-head{ top:calc(var(--top) + 100px); right:var(--px); width:auto; }
+  #m3d-count{ display:none; }
+  #m3d-title{ font-size:clamp(1.75rem, 8.2vw, 2.6rem); }
+  .m3d-tags{ margin-top:10px; flex-wrap:nowrap; overflow:hidden; font-size:10px; }
+  .m3d-tags li{ padding:5px 8px; }
+  .m3d-desc{
+    left:0; right:0; bottom:0; width:auto; max-width:none;
+    padding:14px 18px calc(env(safe-area-inset-bottom, 0px) + 14px);
+    background:rgba(21,21,23,.94); border-top:1px solid var(--line); border-radius:20px 20px 0 0;
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  }
+  .m3d-progress{ margin-bottom:12px; }
+  #m3d-desc-title{ font-size:1.35rem; margin-bottom:6px; }
+  #m3d-desc-text{ font-size:.93rem; line-height:1.5; max-width:none; max-height:24vh; overflow-y:auto; }
+  #m3d-hint{ margin-top:10px; }
+  #m3d-label{ font-size:12px; padding:6px 9px; }
+  .m3d-crop{ display:none; }
+}
+@media (max-width: 820px) and (min-width: 600px){
+  .m3d-desc{ left:50%; right:auto; width:min(640px, 100%); transform:translateX(-50%); }
+}
+
+/* phones lying down: name and text on the left, model on the right */
 @media (max-height: 520px){
-  .m3d-head{ padding:calc(env(safe-area-inset-top, 0px) + 10px) 190px 0; }
-  #m3d-title{ font-size:clamp(1.05rem, 3vw, 1.5rem); }
-  #m3d-sub{ font-size:.72rem; margin-top:.25em; }
-  .m3d-close{ top:10px; padding:6px 12px; font-size:.78rem; }
-  .m3d-foot{ position:absolute; right:calc(env(safe-area-inset-right, 0px) + 14px); bottom:10px; margin:0; align-items:flex-end; }
-  .m3d-arrow{ top:50%; width:48px; height:80px; }
-  #m3d-prev{ left:calc(env(safe-area-inset-left, 0px) + 4px); } #m3d-next{ right:calc(env(safe-area-inset-right, 0px) + 4px); }
-  .m3d-desc{ left:calc(env(safe-area-inset-left, 0px) + 56px); right:auto; width:min(40vw, 340px); max-width:none; margin:0; bottom:10px; }
-  .m3d-desc-label{ font-size:1.2rem; }
-  .m3d-box{ border-radius:18px; padding:10px 14px 12px; max-height:52vh; }
-  #m3d-desc-title{ font-size:.92rem; }
-  #m3d-desc-text{ font-size:.8rem; line-height:1.4; }
+  .m3d{ --px:calc(env(safe-area-inset-left, 0px) + 16px); --top:calc(env(safe-area-inset-top, 0px) + 10px); --col:min(42vw, 360px); }
+  .m3d-top{ grid-template-columns:auto 1fr auto; row-gap:0; }
+  .m3d-hud{ display:none; }
+  .m3d-tabs{ grid-column:1; grid-row:1; margin:0; padding:0; overflow:visible; }
+  .m3d-arrow{ display:none; }
+  .m3d-tab{ padding:8px 10px; font-size:10px; }
+  .m3d-tab .no{ display:none; }
+  .m3d-close{ grid-column:3; grid-row:1; padding:9px 12px; }
+  .m3d-close-txt{ display:none; }
+  .m3d-head{ top:calc(var(--top) + 50px); right:auto; width:var(--col); }
+  #m3d-count, .m3d-tags{ display:none; }
+  #m3d-title{ font-size:clamp(1.3rem, 3.4vw, 1.9rem); }
+  .m3d-desc{
+    left:var(--px); right:auto; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); width:var(--col); transform:none;
+    padding:0; background:none; border:none; border-radius:0; -webkit-backdrop-filter:none; backdrop-filter:none;
+  }
+  .m3d-desc-head{ padding-bottom:6px; }
+  .m3d-progress{ margin-bottom:8px; }
+  #m3d-desc-title{ font-size:1.1rem; margin-bottom:4px; }
+  #m3d-desc-text{ font-size:.82rem; line-height:1.42; max-height:36vh; overflow-y:auto; }
+  #m3d-hint{ margin-top:6px; }
+  .m3d-crop{ display:none; }
 }
 @media (prefers-reduced-motion: reduce){
-  .m3d-box.swap{ animation:none; }
+  .m3d-box.swap, .m3d-head.enter .rv, .m3d-head.enter #m3d-count, .m3d-head.enter .m3d-tags li, #m3d-hint .bob{ animation:none; }
 }
