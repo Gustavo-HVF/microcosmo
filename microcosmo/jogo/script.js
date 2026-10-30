@@ -19,8 +19,8 @@ const SPECIES = [
     sciName: 'Colpoda cucullus',
     wikiTitle: 'Colpoda',
     shape: 'ovoid-cilia',
-    color: '#dcdbd2', colorDark: '#5e6058',
-    length: 24, width: 17,
+    color: '#bdb57f', colorDark: '#5a5430',
+    length: 28, width: 21,
     depth: 1, rarity: 'comum', habitat: ['soil'],
     motility: 'cilia', speed: 1.1,
     desc: 'Ciliado ovalado muito comum em solo úmido e poças temporárias, formando cistos resistentes à dessecação que permitem recolonizar a água rapidamente após a chuva.',
@@ -33,8 +33,8 @@ const SPECIES = [
     sciName: 'Colpidium colpoda',
     wikiTitle: 'Colpidium',
     shape: 'bean-cilia',
-    color: '#dcdbd2', colorDark: '#5e6058',
-    length: 26, width: 15,
+    color: '#dde1e8', colorDark: '#5a5f70',
+    length: 32, width: 14,
     depth: 1, rarity: 'comum', habitat: ['water'],
     motility: 'cilia', speed: 1.3,
     eats: ['bacillus', 'vibrio'],
@@ -45,14 +45,14 @@ const SPECIES = [
     id: 'round',
     displayName: 'round',
     commonName: 'Arcella',
-    sciName: 'Arcella vulgaris',
+    sciName: 'Arcella conica',
     wikiTitle: 'Arcella',
     shape: 'testate-amoeba',
-    color: '#cdbf9f', colorDark: '#6e6248',
-    length: 20, width: 20,
+    color: '#c99e5c', colorDark: '#6b471c',
+    length: 28, width: 28,
     depth: 1, rarity: 'comum', habitat: ['soil', 'water'],
     motility: 'crawl', speed: 0.3,
-    desc: 'Ameba testácea protegida por uma carapaça (teca) em forma de disco, com um poro central por onde projeta pseudópodes finos para se locomover e capturar alimento.',
+    desc: 'Ameba testácea protegida por uma carapaça (teca) marrom-dourada, facetada como uma pedra lapidada e coberta por um padrão de favo de mel. Pelo poro no centro da teca ela projeta pseudópodes para andar e capturar alimento.',
     behavior: 'Move-se muito lentamente pelo fundo, projetando pseudópodes finos pela abertura da teca; a carapaça em si nunca muda de forma.'
   },
   {
@@ -62,8 +62,8 @@ const SPECIES = [
     sciName: 'Paramecium caudatum',
     wikiTitle: 'Paramecium',
     shape: 'slipper-cilia',
-    color: '#dddcd3', colorDark: '#5c5e56',
-    length: 46, width: 22,
+    color: '#d8cfbc', colorDark: '#635947',
+    length: 54, width: 21,
     depth: 1, rarity: 'incomum', habitat: ['water'],
     motility: 'cilia', speed: 1.5,
     eats: ['bacillus', 'vibrio'],
@@ -77,8 +77,8 @@ const SPECIES = [
     sciName: 'Aeolosoma hemprichi',
     wikiTitle: 'Aeolosoma',
     shape: 'segmented-worm',
-    color: '#dad7cc', colorDark: '#5d5c52',
-    length: 48, width: 8,
+    color: '#dfe7e5', colorDark: '#596764',
+    length: 70, width: 8,
     depth: 2, rarity: 'incomum', habitat: ['water'],
     motility: 'crawl', speed: 0.9,
     desc: 'Pequeno anelídeo aquático de corpo segmentado, coberto por glândulas que secretam gotículas oleosas coloridas. Comum deslizando sobre detritos e algas no fundo de lagoas.',
@@ -106,8 +106,8 @@ const SPECIES = [
     sciName: 'Blepharisma japonicum',
     wikiTitle: 'Blepharisma',
     shape: 'blepharisma-shape',
-    color: '#ddd1cf', colorDark: '#6e5f5d',
-    length: 40, width: 18,
+    color: '#e8c1cb', colorDark: '#7a4757',
+    length: 48, width: 20,
     depth: 2, rarity: 'incomum', habitat: ['water'],
     motility: 'cilia', speed: 1.0,
     desc: 'Ciliado de água doce e salgada facilmente reconhecível por sua coloração rosada a avermelhada, causada pelo pigmento blepharismina presente em grânulos na membrana.',
@@ -120,8 +120,8 @@ const SPECIES = [
     sciName: 'Rhabditis sp.',
     wikiTitle: 'Nematoda',
     shape: 'nematode-worm',
-    color: '#dfddd3', colorDark: '#56584f',
-    length: 58, width: 6,
+    color: '#cdd4c8', colorDark: '#535d4f',
+    length: 72, width: 6,
     depth: 2, rarity: 'incomum', habitat: ['soil', 'water'],
     motility: 'crawl', speed: 1.1,
     eats: ['spirillum'],
@@ -135,12 +135,13 @@ const SPECIES = [
     sciName: 'Spirogyra sp.',
     wikiTitle: 'Spirogyra',
     shape: 'spirogyra-filament',
-    color: '#d8dccf', colorDark: '#6b8253',
-    length: 70, width: 10,
+    color: '#d3e9b1', colorDark: '#4a7a1f',
+    length: 360, width: 16,
     depth: 2, rarity: 'comum', habitat: ['water'],
-    motility: 'brownian', speed: 0.05, turnRate: 0.15,
+    motility: 'brownian', speed: 0.02, turnRate: 0.03,
+    scan: true, maxInView: 2, // too big for the pipette: it is scanned
     desc: 'Alga verde filamentosa de água doce, famosa por seus cloroplastos dispostos em espiral dentro de cada célula do filamento — visíveis até em microscópios escolares simples.',
-    behavior: 'Não possui locomoção própria; os filamentos flutuam livremente na água, movendo-se apenas com a correnteza.'
+    behavior: 'Não possui locomoção própria; os filamentos, longos demais para caber na pipeta, flutuam quase parados. Segure o clique sobre um deles para escaneá-lo.'
   },
   {
     id: 'oscillatoria',
@@ -149,12 +150,13 @@ const SPECIES = [
     sciName: 'Oscillatoria sp.',
     wikiTitle: 'Oscillatoria',
     shape: 'oscillatoria-filament',
-    color: '#b6beb0', colorDark: '#5a675d',
-    length: 65, width: 7,
+    color: '#d2ccb0', colorDark: '#5e5842',
+    length: 300, width: 12,
     depth: 2, rarity: 'comum', habitat: ['soil', 'water'],
-    motility: 'gliding', speed: 0.5,
+    motility: 'gliding', speed: 0.1, turnRate: 0.04,
+    scan: true, maxInView: 2,
     desc: 'Cianobactéria filamentosa que forma esteiras esverdeadas em águas paradas e solos úmidos. O nome vem do característico movimento oscilante do filamento.',
-    behavior: 'Desliza lentamente sobre superfícies balançando a ponta do filamento de um lado para o outro, sem flagelos — o deslize é gerado por secreção de muco.'
+    behavior: 'Desliza muito devagar balançando a ponta do filamento de um lado para o outro, sem flagelos — o deslize é gerado por secreção de muco. Comprida demais para a pipeta: escaneie segurando o clique sobre ela.'
   },
   {
     id: 'diatomP',
@@ -163,8 +165,8 @@ const SPECIES = [
     sciName: 'Pinnularia sp.',
     wikiTitle: 'Pinnularia',
     shape: 'diatom-pennate',
-    color: '#d9d1bf', colorDark: '#7a6c52',
-    length: 38, width: 11,
+    color: '#e6dbb3', colorDark: '#675a2e',
+    length: 56, width: 10,
     depth: 3, rarity: 'incomum', habitat: ['soil', 'water'],
     motility: 'gliding', speed: 0.6,
     divides: true,
@@ -178,8 +180,8 @@ const SPECIES = [
     sciName: 'Cyclotella sp.',
     wikiTitle: 'Cyclotella',
     shape: 'diatom-centric',
-    color: '#dad3c2', colorDark: '#7b6e55',
-    length: 24, width: 24,
+    color: '#dfe3d0', colorDark: '#46645a',
+    length: 28, width: 28,
     depth: 3, rarity: 'incomum', habitat: ['water'],
     motility: 'brownian', speed: 0.02, turnRate: 0.15,
     divides: true,
@@ -189,12 +191,12 @@ const SPECIES = [
   {
     id: 'diatomR',
     displayName: 'diatomR',
-    commonName: 'Diatomácea retangular',
+    commonName: 'Diatomácea em forma de barco',
     sciName: 'Navicula sp.',
     wikiTitle: 'Navicula',
     shape: 'diatom-rect',
-    color: '#d9d1bf', colorDark: '#7a6c52',
-    length: 32, width: 13,
+    color: '#e2dcc6', colorDark: '#5d5640',
+    length: 38, width: 11,
     depth: 3, rarity: 'incomum', habitat: ['soil', 'water'],
     motility: 'gliding', speed: 0.55,
     divides: true,
@@ -208,8 +210,8 @@ const SPECIES = [
     sciName: 'Triceratium sp.',
     wikiTitle: 'Triceratium',
     shape: 'diatom-tri',
-    color: '#dbd4c4', colorDark: '#7d7058',
-    length: 30, width: 30,
+    color: '#e4e2ec', colorDark: '#47435a',
+    length: 34, width: 34,
     depth: 3, rarity: 'raro', habitat: ['water'],
     motility: 'brownian', speed: 0.02, turnRate: 0.15,
     divides: true,
@@ -223,12 +225,13 @@ const SPECIES = [
     sciName: 'Closterium sp.',
     wikiTitle: 'Closterium',
     shape: 'closterium-crescent',
-    color: '#d0d7c3', colorDark: '#647553',
-    length: 54, width: 10,
+    color: '#d9e8b9', colorDark: '#4a6a26',
+    length: 150, width: 20,
     depth: 2, rarity: 'incomum', habitat: ['water'],
-    motility: 'gliding', speed: 0.4,
+    motility: 'gliding', speed: 0.08, turnRate: 0.04,
+    scan: true, maxInView: 2,
     desc: 'Alga desmídia unicelular em forma de meia-lua alongada, com dois cloroplastos simétricos. Cada extremidade abriga um vacúolo com cristais de gipsita em movimento browniano.',
-    behavior: 'Move-se lentamente deslizando sobre superfícies por secreção de muco pelas extremidades, podendo também balançar-se lentamente de um lado a outro.'
+    behavior: 'Desliza muito lentamente sobre superfícies por secreção de muco pelas extremidades. É grande demais para a pipeta: escaneie segurando o clique sobre ela.'
   },
   {
     id: 'spiny',
@@ -237,27 +240,28 @@ const SPECIES = [
     sciName: 'Micrasterias sp.',
     wikiTitle: 'Micrasterias',
     shape: 'spiny-desmid',
-    color: '#cdd5c0', colorDark: '#5f7150',
-    length: 42, width: 36,
+    color: '#d2e3a9', colorDark: '#44621c',
+    length: 110, width: 96,
     depth: 3, rarity: 'raro', habitat: ['water'],
-    motility: 'brownian', speed: 0.02, turnRate: 0.15,
+    motility: 'brownian', speed: 0.01, turnRate: 0.02,
+    scan: true, maxInView: 2,
     desc: 'Alga desmídia de simetria radial elaborada, com o corpo dividido em dois semicélulas espelhadas e margens profundamente recortadas em lobos espinhosos.',
-    behavior: 'Não possui locomoção própria; permanece praticamente parada, apenas derivando suavemente no meio líquido.'
+    behavior: 'Não possui locomoção própria; permanece praticamente parada, apenas derivando suavemente no meio líquido. Grande demais para a pipeta: escaneie segurando o clique sobre ela.'
   },
   {
     id: 'heliozoan',
     displayName: 'heliozoan',
     commonName: 'Heliozoário',
-    sciName: 'Actinophrys sol',
-    wikiTitle: 'Heliozoa',
+    sciName: 'Acanthocystis turfacea',
+    wikiTitle: 'Acanthocystis',
     shape: 'heliozoan-rays',
-    color: '#dfded6', colorDark: '#62645b',
-    length: 26, width: 26,
+    color: '#cfe1ad', colorDark: '#4b6a2c',
+    length: 34, width: 34,
     depth: 3, rarity: 'raro', habitat: ['water'],
     motility: 'crawl', speed: 0.2,
     eats: ['chlamy'],
-    desc: 'Protista esférico conhecido como "ameba-sol", com finos pseudópodes radiais rígidos (axópodes) usados tanto para captura de presas quanto para locomoção lenta.',
-    behavior: 'Move-se muito lentamente rolando sobre os próprios axópodes, que também vibram para atrair e capturar pequenas presas que tocam sua superfície.'
+    desc: 'Heliozoário verde: o corpo esférico é cheio de algas simbiontes (zooclorelas) que fazem fotossíntese para ele, e é coberto de escamas e de longos espinhos de sílica que irradiam como os raios do sol. Entre os espinhos saem axópodes finíssimos que capturam presas.',
+    behavior: 'Quase não sai do lugar: rola devagar sobre os próprios axópodes, que vibram para prender pequenas presas que encostam neles.'
   },
   {
     id: 'flagellate',
@@ -266,8 +270,8 @@ const SPECIES = [
     sciName: 'Euglena viridis',
     wikiTitle: 'Euglena',
     shape: 'euglena-flagellate',
-    color: '#d0d8c2', colorDark: '#5f7450',
-    length: 36, width: 12,
+    color: '#d9e9b6', colorDark: '#496a24',
+    length: 44, width: 11,
     depth: 1, rarity: 'incomum', habitat: ['water'],
     motility: 'flagellate-whip', speed: 1.7,
     desc: 'Protista flagelado fotossintetizante, com um único flagelo longo usado para locomoção e uma mancha ocular (estigma) sensível à luz, que o ajuda a buscar áreas iluminadas.',
@@ -280,8 +284,8 @@ const SPECIES = [
     sciName: 'Craspedacusta sowerbii',
     wikiTitle: 'Craspedacusta_sowerbii',
     shape: 'medusa-bell',
-    color: '#e0e1dc', colorDark: '#62665f',
-    length: 34, width: 30,
+    color: '#eceaf4', colorDark: '#6d6a8c',
+    length: 40, width: 36,
     depth: 4, rarity: 'lendario', habitat: ['water'],
     motility: 'flagella-colony', speed: 0.7,
     desc: 'Cnidário de água doce com ciclo de vida em duas fases: um pólipo séssil e a medusa. A medusa recém-liberada do pólipo mede só ~0,4 mm (microscópica); adulta chega a ~2 cm e fica visível a olho nu.',
@@ -294,12 +298,13 @@ const SPECIES = [
     sciName: 'Volvox aureus',
     wikiTitle: 'Volvox',
     shape: 'volvox',
-    color: '#cfd8c0', colorDark: '#5f7650',
-    length: 36, width: 36,
+    color: '#d9ebc2', colorDark: '#3e6a1d',
+    length: 110, width: 110,
     depth: 4, rarity: 'lendario', habitat: ['water'],
-    motility: 'flagella-colony', speed: 0.9,
+    motility: 'flagella-colony', speed: 0.12, turnRate: 0.05,
+    scan: true, maxInView: 2,
     desc: 'Colônia esférica de milhares de células flageladas trabalhando em conjunto, girando lentamente como um pequeno planeta verde. Um dos encontros mais raros sob a objetiva.',
-    behavior: 'Gira sobre o próprio eixo enquanto avança em trajetória curva e previsível, todas as células batendo os flagelos em sincronia.'
+    behavior: 'Rola devagar sobre o próprio eixo, todas as células batendo os flagelos em sincronia. A colônia inteira é grande demais para a pipeta: escaneie segurando o clique sobre ela.'
   },
   {
     id: 'rotifer',
@@ -308,8 +313,8 @@ const SPECIES = [
     sciName: 'Philodina sp.',
     wikiTitle: 'Rotifer',
     shape: 'rotifer-crown',
-    color: '#dcdad0', colorDark: '#5d5e55',
-    length: 40, width: 16,
+    color: '#dbe7ec', colorDark: '#536772',
+    length: 50, width: 18,
     depth: 2, rarity: 'incomum', habitat: ['soil', 'water'],
     motility: 'cilia', speed: 1.2,
     eats: ['spirillum'],
@@ -320,15 +325,15 @@ const SPECIES = [
     id: 'vorticella',
     displayName: 'vorticella',
     commonName: 'Vorticella',
-    sciName: 'Vorticella sp.',
+    sciName: 'Vorticella chlorostigma',
     wikiTitle: 'Vorticella',
     shape: 'vorticella-stalked',
-    color: '#dddcd4', colorDark: '#5f6159',
-    length: 22, width: 20,
+    color: '#e3e7d5', colorDark: '#596050',
+    length: 28, width: 24,
     depth: 2, rarity: 'incomum', habitat: ['water'],
     motility: 'stalked', speed: 0.05,
     eats: ['spirillum'],
-    desc: 'Ciliado séssil em forma de sino, preso a superfícies por um longo talo contrátil em espiral. A coroa de cílios ao redor da "boca" cria correntes que atraem alimento.',
+    desc: 'Ciliado séssil em forma de sino invertido, preso a superfícies por um longo talo contrátil. Esta espécie vive cheia de algas verdes simbiontes (zooclorelas), que dão a cor verde ao sino. A coroa de cílios em volta da "boca" cria correntes que trazem alimento.',
     behavior: 'O corpo permanece fixo pelo talo; quando perturbado, o talo se contrai bruscamente em espiral, recolhendo o sino instantaneamente.'
   },
   {
@@ -338,7 +343,7 @@ const SPECIES = [
     sciName: 'Hypsibius exemplaris',
     wikiTitle: 'Tardigrade',
     shape: 'tardigrade',
-    color: '#dedbcf', colorDark: '#5c5b50',
+    color: '#dacfb6', colorDark: '#63573e',
     length: 60, width: 24,
     depth: 4, rarity: 'raro', habitat: ['soil', 'water'],
     maxInView: 2,           // not abundant in a sample: at most two in the field of view
@@ -351,15 +356,15 @@ const SPECIES = [
     id: 'stentor',
     displayName: 'stentor',
     commonName: 'Stentor (trompeta)',
-    sciName: 'Stentor coeruleus',
+    sciName: 'Stentor roeseli',
     wikiTitle: 'Stentor_(ciliate)',
     shape: 'stentor-trumpet',
-    color: '#d3dfe2', colorDark: '#4c6670',
+    color: '#dfe0cf', colorDark: '#565943',
     length: 70, width: 34,
     depth: 2, rarity: 'incomum', habitat: ['water'],
     motility: 'cilia', speed: 0.8,
     eats: ['spirillum', 'rotifer'],
-    desc: 'Um dos maiores protozoários (até 2 mm esticado), em forma de trompete. Tem cílios curtos pelo corpo, mas os grandes — fundidos em membranelas — ficam só na "boca" larga da frente, girando como um redemoinho que puxa alimento. Esta espécie é azul-esverdeada por causa do pigmento estentorina, e seu núcleo parece um colar de contas.',
+    desc: 'Um dos maiores protozoários (até 1 mm esticado), em forma de trompete: uma ponta fina que se prende ao fundo e uma "boca" larga na frente, contornada por membranelas (cílios fundidos) que giram como um redemoinho puxando alimento. Esta espécie é quase incolor e tem um núcleo comprido em forma de minhoca.',
     behavior: 'Nada devagar com o lado largo à frente e o corpo mole se deformando; quando é tocado ou sugado, contrai-se bruscamente numa bola. Come bactérias, algas e até rotíferos.'
   },
   {
@@ -369,7 +374,7 @@ const SPECIES = [
     sciName: 'Chlamydomonas reinhardtii',
     wikiTitle: 'Chlamydomonas_reinhardtii',
     shape: 'biflagellate',
-    color: '#d3dcc6', colorDark: '#56704a',
+    color: '#d8e8bc', colorDark: '#456628',
     length: 22, width: 16,
     depth: 3, rarity: 'raro', habitat: ['water', 'soil'],
     motility: 'flagellate-whip', speed: 2.2,
@@ -385,9 +390,9 @@ const SPECIES = [
     commonName: 'Bacilo do feno',
     sciName: 'Bacillus subtilis',
     wikiTitle: 'Bacillus_subtilis',
-    shape: 'bacillus', flagella: 'peritrichous',
-    color: '#d8d6cc', colorDark: '#2e2e29',
-    length: 14, width: 5,
+    shape: 'bacillus', flagella: 'peritrichous', spores: true,
+    color: '#ebb3c2', colorDark: '#9c3456',
+    length: 18, width: 5,
     depth: 1, rarity: 'comum', habitat: ['soil', 'water'],
     motility: 'flagella-run-tumble', speed: 1.3,
     divides: true,
@@ -400,9 +405,9 @@ const SPECIES = [
     commonName: 'Espirilo',
     sciName: 'Spirillum volutans',
     wikiTitle: 'Spirillum_volutans',
-    shape: 'spirillum', turns: 2.2,
-    color: '#d8d6cc', colorDark: '#2e2e29',
-    length: 30, width: 7,
+    shape: 'spirillum', turns: 3.4,
+    color: '#efb6d3', colorDark: '#a3226a',
+    length: 34, width: 8,
     depth: 2, rarity: 'comum', habitat: ['water'],
     motility: 'flagella-smooth', speed: 1.6,
     divides: true,
@@ -430,9 +435,9 @@ const SPECIES = [
     commonName: 'Espiroqueta',
     sciName: 'Spirochaeta plicatilis',
     wikiTitle: 'Spirochaeta',
-    shape: 'spirochete', turns: 7,
-    color: '#d8d6cc', colorDark: '#2e2e29',
-    length: 70, width: 5,
+    shape: 'spirochete', turns: 15,
+    color: '#8c8c88', colorDark: '#1e1e1c',
+    length: 84, width: 4,
     depth: 1, rarity: 'comum', habitat: ['water'],
     motility: 'flagella-smooth', speed: 0.9,
     desc: 'Bactéria longuíssima e fina, enrolada em espiral apertada. Seus flagelos ficam escondidos dentro da célula (endoflagelos), entre a parede e a membrana externa, e fazem o corpo inteiro girar. Vive em lodos e águas paradas com pouco oxigênio.',
@@ -1191,8 +1196,8 @@ class Organism {
       this._softRimEl = rim;
       this._softGlowEl = glow;
     }
-    const protozoa = ['ovoid-cilia','bean-cilia','ciliate-generic','blepharisma-shape','slipper-cilia','paramecium','vorticella-stalked','rotifer-crown'];
-    const greenCells = ['euglena-flagellate'];
+    // (the shapes redrawn from the reference photos carry their own interiors)
+    const protozoa = ['ciliate-generic'];
     const host = this._softPathEl ? this._softPathEl.parentNode : this.bodyEl;
     const anchor = this._softPathEl ? this._softPathEl.nextSibling : null;
     const add = (node)=>{ host.insertBefore(node, anchor); };
@@ -1216,35 +1221,6 @@ class Organism {
       const cv = el('circle', { cx:(L*0.22).toFixed(1), cy:(-W*0.08).toFixed(1), r:(W*0.12).toFixed(2), fill:'#f4f2e8', opacity:0.5, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.5 });
       add(cv);
       this._contractileVac = { el: cv, baseR: W*0.12, phase: Math.random()*Math.PI*2 };
-    }
-    if(greenCells.includes(s.shape)){
-      for(let i=0;i<9;i++){
-        const [x,y] = inEllipse(L*0.3, W*0.28);
-        add(el('ellipse', { cx:x.toFixed(1), cy:y.toFixed(1), rx:(1.2+Math.random()*0.6).toFixed(2), ry:(0.7+Math.random()*0.3).toFixed(2), fill:'#7d9466', opacity:0.42 }));
-      }
-    }
-    if(s.shape === 'heliozoan-rays'){
-      // Actinophrys: foamy, vacuole-packed cytoplasm with a central nucleus
-      for(let i=0;i<11;i++){
-        const [x,y] = inEllipse(W*0.24, W*0.24);
-        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:(0.9+Math.random()*1.1).toFixed(2), fill:'#f6f4ea', 'fill-opacity':0.6, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.45 }));
-      }
-      add(el('circle', { cx:0, cy:0, r:(W*0.08).toFixed(2), fill:s.colorDark, opacity:0.35 }));
-    }
-    if(s.shape === 'testate-amoeba'){
-      // Arcella's shell is finely dotted (alveolate) and darkens with age
-      for(let i=0;i<26;i++){
-        const [x,y] = inEllipse(W*0.44, W*0.44);
-        add(el('circle', { cx:x.toFixed(1), cy:y.toFixed(1), r:0.35, fill:s.colorDark, opacity:0.35 }));
-      }
-    }
-    if(s.shape === 'nematode-worm' && this.waveEl){
-      const gut = el('path', { d:'', fill:'none', stroke:'#8f8466', 'stroke-width':W*0.22, 'stroke-opacity':0.55, 'stroke-linecap':'round' });
-      const shine = el('path', { d:'', fill:'none', stroke:'#fbfaf2', 'stroke-width':W*0.12, 'stroke-opacity':0.35, 'stroke-linecap':'round', transform:`translate(0,${(-W*0.22).toFixed(1)})` });
-      this.waveEl.parentNode.appendChild(gut);
-      this.waveEl.parentNode.appendChild(shine);
-      this._wormGutEl = gut;
-      this._wormShineEl = shine;
     }
   }
 
@@ -1464,6 +1440,51 @@ class Organism {
     return cg;
   }
 
+  // ---- drawing helpers for the shapes redrawn from the reference photos ----
+  // a random point inside an ellipse with half-axes rx, ry
+  _inEllipse(rx, ry){ const a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random()); return [Math.cos(a)*rx*r, Math.sin(a)*ry*r]; }
+  // up to n circles packed inside an ellipse without overlapping (food
+  // vacuoles, symbiotic algae...); ok(x, y) can veto a spot
+  _packCircles(n, rx, ry, rMin, rMax, ok){
+    const out = [];
+    for(let tries=0; out.length < n && tries < n*40; tries++){
+      const r = rMin + Math.random()*(rMax - rMin);
+      const [x, y] = this._inEllipse(Math.max(0.1, rx - r), Math.max(0.1, ry - r));
+      if(ok && !ok(x, y)) continue;
+      if(out.some(c=> Math.hypot(c.x - x, c.y - y) < (c.r + r)*0.92)) continue;
+      out.push({ x, y, r });
+    }
+    return out;
+  }
+  // a closed outline through pts, smoothed the way render() smooths the soft membranes
+  _smoothClosedD(pts){
+    const f = v => v.toFixed(2), n = pts.length;
+    let d = `M ${f((pts[0][0] + pts[n-1][0])/2)} ${f((pts[0][1] + pts[n-1][1])/2)} `;
+    for(let i=0;i<n;i++){
+      const p0 = pts[i], p1 = pts[(i+1)%n];
+      d += `Q ${f(p0[0])} ${f(p0[1])} ${f((p0[0] + p1[0])/2)} ${f((p0[1] + p1[1])/2)} `;
+    }
+    return d + 'Z';
+  }
+  // outline of a tube along a centre line: c(t) -> [x, y] and hw(t) -> half
+  // width, t from 0 (tail) to 1 (head); both ends close with round caps
+  _tubeD(c, hw, N){
+    const top = [], bot = [];
+    for(let i=0;i<=N;i++){
+      const t = i/N, p = c(t), q = c(Math.min(1, t + 0.002)), r = c(Math.max(0, t - 0.002));
+      let tx = q[0] - r[0], ty = q[1] - r[1];
+      const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
+      const w = Math.max(0.05, hw(t));
+      top.push([p[0] - ty*w, p[1] + tx*w]); bot.push([p[0] + ty*w, p[1] - tx*w]);
+    }
+    const f = v => v.toFixed(2), we = Math.max(0.05, hw(1)), ws = Math.max(0.05, hw(0));
+    let d = `M ${f(top[0][0])} ${f(top[0][1])} `;
+    for(let i=1;i<=N;i++) d += `L ${f(top[i][0])} ${f(top[i][1])} `;
+    d += `A ${f(we)} ${f(we)} 0 0 0 ${f(bot[N][0])} ${f(bot[N][1])} `;
+    for(let i=N-1;i>=0;i--) d += `L ${f(bot[i][0])} ${f(bot[i][1])} `;
+    return d + `A ${f(ws)} ${f(ws)} 0 0 0 ${f(top[0][0])} ${f(top[0][1])} Z`;
+  }
+
   _shapeSVG(s){
     const L = s.length, W = s.width;
     const fa = this._fillAttrs(s);
@@ -1531,6 +1552,12 @@ class Organism {
         this._softBasePts = basePts;
         this._softPathEl = path;
         this._rodInterior(g, s, L, W);
+        // Bacillus subtilis (stained photo): many cells carry a green, oval
+        // endospore in the middle or toward one end
+        if(s.spores && Math.random() < 0.6){
+          g.appendChild(el('ellipse', { cx:((L - W)*(Math.random() < 0.5 ? 0.18 : -0.05)).toFixed(2), cy:0, rx:(W*0.34).toFixed(2), ry:(W*0.26).toFixed(2),
+            fill:'#3fae98', 'fill-opacity':0.85, stroke:'#1f6f5f', 'stroke-width':0.3, 'stroke-opacity':0.6, 'data-keep':1 }));
+        }
         this._bacterialFlagella(flagLayer, s, L, W);
         return g;
       }
@@ -1703,37 +1730,40 @@ class Organism {
         return g;
       }
       case 'stentor-trumpet': {
-        // Stentor: a soft trumpet — wide oral end in front (+x) ringed by the
-        // big membranellar cilia (the only cilia drawn, as seen under the
-        // lens), tapering to a narrow holdfast at the back; blue-green
-        // pigment stripes run lengthwise and the macronucleus is a bead chain
+        // Stentor roeseli (photo): a soft trumpet — a long, narrow foot at the
+        // back flaring to the wide oral funnel in front (+x), whose rim is
+        // ringed by the big membranelles (the only cilia drawn, as seen under
+        // the lens); nearly colourless, finely striped lengthwise, with a long
+        // worm-shaped macronucleus
         const g = el('g', {});
         const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.34)));
         g.appendChild(path);
-        const nverts = 22;
+        const nverts = 26;
         this._softBasePts = this._softEllipsePath(L, W, nverts, a => {
-          const c = Math.cos(a); // +1 front (mouth), -1 back (foot)
-          return c >= 0 ? [0.94 - 0.06*c*c, 0.78 + 0.22*Math.sqrt(c)] : [1, 0.78 + 0.66*c];
+          const c = Math.cos(a);
+          return c >= 0 ? [0.95 - 0.05*c*c, 0.72 + 0.28*Math.sqrt(c)] : [1, Math.max(0.07, 0.72*Math.pow(1 + c, 1.25))];
         });
         this.softBlob = new SoftBlob(nverts, { amp: 0.035, speed: 0.9 });
         this._softPathEl = path;
         for(let k=-3;k<=3;k++){
-          const y0 = k*W*0.13;
-          g.appendChild(el('path', { d:`M ${(L*0.42).toFixed(2)} ${y0.toFixed(2)} Q ${(L*0.05).toFixed(2)} ${(y0*0.75).toFixed(2)} ${(-L*0.44).toFixed(2)} ${(y0*0.08).toFixed(2)}`,
-            fill:'none', stroke:'#4f8696', 'stroke-width':0.7, 'stroke-opacity':0.3 }));
+          const y0 = k*W*0.12;
+          g.appendChild(el('path', { d:`M ${(L*0.42).toFixed(2)} ${y0.toFixed(2)} Q ${(L*0.05).toFixed(2)} ${(y0*0.7).toFixed(2)} ${(-L*0.44).toFixed(2)} ${(y0*0.06).toFixed(2)}`,
+            fill:'none', stroke:'#7d8466', 'stroke-width':0.45, 'stroke-opacity':0.3, 'data-keep':1 }));
         }
-        g.appendChild(el('ellipse', { cx:(L*0.43).toFixed(2), cy:0, rx:(L*0.05).toFixed(2), ry:(W*0.4).toFixed(2),
-          fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.5 })); // oral disc, edge-on
-        for(let i=0;i<7;i++){
-          const t = i/6;
-          g.appendChild(el('circle', { cx:(L*(0.2 - 0.42*t)).toFixed(2), cy:(Math.sin(t*Math.PI*1.4)*W*0.1).toFixed(2), r:(W*0.075).toFixed(2), fill:s.colorDark, opacity:0.32 }));
-        }
+        let gd = '';
+        for(let i=0;i<36;i++){ const [x, y] = this._inEllipse(L*0.3, W*0.3); gd += `M ${(x + L*0.1).toFixed(2)} ${(y*(0.5 + 0.5*(x + L*0.3)/(L*0.6))).toFixed(2)} l 0.01 0 `; }
+        g.appendChild(el('path', { d:gd, fill:'none', stroke:s.colorDark, 'stroke-width':0.6, 'stroke-opacity':0.35, 'stroke-linecap':'round', 'data-keep':1 }));
+        let nd = '';
+        for(let i=0;i<=20;i++){ const t = i/20, x = L*(0.24 - 0.5*t), y = Math.sin(t*Math.PI*3.2)*W*0.08; nd += (i ? 'L ' : 'M ') + x.toFixed(2) + ' ' + y.toFixed(2) + ' '; }
+        g.appendChild(el('path', { d:nd, fill:'none', stroke:'#8f8f66', 'stroke-width':(W*0.07).toFixed(2), 'stroke-opacity':0.45, 'stroke-linecap':'round', 'stroke-linejoin':'round', 'data-keep':1 }));
+        g.appendChild(el('ellipse', { cx:(L*0.43).toFixed(2), cy:0, rx:(L*0.05).toFixed(2), ry:(W*0.42).toFixed(2), fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.5, 'data-keep':1 })); // oral funnel, edge-on
+        g.appendChild(el('path', { d:`M ${(L*0.45).toFixed(2)} ${(W*0.4).toFixed(2)} Q ${(L*0.3).toFixed(2)} ${(W*0.3).toFixed(2)} ${(L*0.33).toFixed(2)} ${(W*0.08).toFixed(2)}`,
+          fill:'none', stroke:s.colorDark, 'stroke-width':0.45, 'stroke-opacity':0.45, 'data-keep':1 })); // buccal pouch
         const cilia = el('g', { class:'cilia', opacity:0.5 });
-        for(let i=0;i<22;i++){
-          const a = (i/21 - 0.5)*1.9;
-          const px = L*0.43 + Math.cos(a)*L*0.04, py = Math.sin(a)*W*0.5;
-          cilia.appendChild(el('line', { x1:px.toFixed(2), y1:py.toFixed(2), x2:(px + Math.cos(a)*W*0.17).toFixed(2), y2:(py + Math.sin(a)*W*0.17).toFixed(2),
-            stroke:s.colorDark, 'stroke-width':0.4 }));
+        for(let i=0;i<26;i++){
+          const a = (i/25 - 0.5)*2.0;
+          const px = L*0.43 + Math.cos(a)*L*0.04, py = Math.sin(a)*W*0.44;
+          cilia.appendChild(el('line', { x1:px.toFixed(2), y1:py.toFixed(2), x2:(px + Math.cos(a)*W*0.17).toFixed(2), y2:(py + Math.sin(a)*W*0.17).toFixed(2), stroke:s.colorDark, 'stroke-width':0.4 }));
         }
         g.appendChild(cilia);
         this.ciliaEl = cilia;
@@ -1741,20 +1771,25 @@ class Organism {
         return g;
       }
       case 'biflagellate': {
-        // Chlamydomonas: oval cell with a cup-shaped chloroplast (pyrenoid at
-        // its base), a red eyespot, and two equal front flagella that beat
-        // like a breaststroke (render sweeps their rest angle)
+        // Chlamydomonas (reference drawing): an oval cell with a small papilla
+        // in front where the two equal flagella come out; the cup-shaped
+        // chloroplast lines the back with the pyrenoid at its base, the
+        // nucleus sits in the cup, the red eyespot on one side and two
+        // contractile vacuoles near the front; the flagella beat like a
+        // breaststroke (render sweeps their rest angle)
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.36)));
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.38)));
         g.appendChild(path);
-        const nverts = 16;
-        this._softBasePts = this._softEllipsePath(L*0.86, W, nverts, a => [1, 0.94 - 0.06*Math.cos(a)]);
+        const nverts = 18;
+        this._softBasePts = this._softEllipsePath(L*0.86, W, nverts, a => { const c = Math.cos(a); return [1 + (c > 0.92 ? 0.06 : 0), 0.94 - 0.08*c]; });
         this.softBlob = new SoftBlob(nverts, { amp: 0.012, speed: 0.6 });
         this._softPathEl = path;
-        g.appendChild(el('path', { d:`M ${(L*0.12).toFixed(2)} ${(-W*0.4).toFixed(2)} C ${(-L*0.5).toFixed(2)} ${(-W*0.5).toFixed(2)} ${(-L*0.5).toFixed(2)} ${(W*0.5).toFixed(2)} ${(L*0.12).toFixed(2)} ${(W*0.4).toFixed(2)} C ${(-L*0.12).toFixed(2)} ${(W*0.22).toFixed(2)} ${(-L*0.12).toFixed(2)} ${(-W*0.22).toFixed(2)} ${(L*0.12).toFixed(2)} ${(-W*0.4).toFixed(2)} Z`,
-          fill:'#6f8f58', 'fill-opacity':0.45 })); // cup chloroplast
-        g.appendChild(el('circle', { cx:(-L*0.2).toFixed(2), cy:0, r:(W*0.13).toFixed(2), fill:'none', stroke:'#3f5a33', 'stroke-width':0.45, 'stroke-opacity':0.6 })); // pyrenoid
-        g.appendChild(el('circle', { cx:(L*0.14).toFixed(2), cy:(-W*0.34).toFixed(2), r:(W*0.07).toFixed(2), fill:'#b5523f', opacity:0.7 })); // eyespot
+        g.appendChild(el('path', { d:`M ${(L*0.16).toFixed(2)} ${(-W*0.4).toFixed(2)} C ${(-L*0.52).toFixed(2)} ${(-W*0.52).toFixed(2)} ${(-L*0.52).toFixed(2)} ${(W*0.52).toFixed(2)} ${(L*0.16).toFixed(2)} ${(W*0.4).toFixed(2)} C ${(-L*0.1).toFixed(2)} ${(W*0.2).toFixed(2)} ${(-L*0.1).toFixed(2)} ${(-W*0.2).toFixed(2)} ${(L*0.16).toFixed(2)} ${(-W*0.4).toFixed(2)} Z`,
+          fill:'#5c9e2a', 'fill-opacity':0.6, stroke:'#3f6e1c', 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 })); // cup chloroplast
+        g.appendChild(el('ellipse', { cx:(-L*0.27).toFixed(2), cy:0, rx:(W*0.15).toFixed(2), ry:(W*0.13).toFixed(2), fill:'#e9b84a', opacity:0.7, stroke:'#9a7420', 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 })); // pyrenoid
+        g.appendChild(el('circle', { cx:0, cy:0, r:(W*0.15).toFixed(2), fill:'#9a84b8', opacity:0.4, stroke:'#5f4a7a', 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 })); // nucleus
+        g.appendChild(el('ellipse', { cx:(L*0.12).toFixed(2), cy:(-W*0.34).toFixed(2), rx:(W*0.09).toFixed(2), ry:(W*0.05).toFixed(2), fill:'#d2402a', opacity:0.88, 'data-keep':1 })); // eyespot
+        [-1, 1].forEach(sg=> g.appendChild(el('circle', { cx:(L*0.3).toFixed(2), cy:(sg*W*0.12).toFixed(2), r:(W*0.06).toFixed(2), fill:'#f6faf0', opacity:0.7, 'data-keep':1 })));
         this._breast = [];
         [-1, 1].forEach(side=>{
           const chain = new TailChain(6, L*0.22, { stiffness: 0.42, damping: 0.72 });
@@ -1788,379 +1823,630 @@ class Organism {
         this._addFlagellum(flagLayer, { kind:'polar', ax:-L/2, ay:0, side:1, len:L*1.4, amp:W*0.38, wl:W*3.4, spread:0, sw:0.6, op:0.45 });
         return g;
       }
-      case 'ovoid-cilia':
-      case 'bean-cilia':
-      case 'ciliate-generic':
-      case 'blepharisma-shape': {
+      case 'ovoid-cilia': {
+        // Colpoda (photo): a kidney with a deep notch on one flank where the
+        // mouth sits, so stuffed with round food vacuoles that the whole cell
+        // looks dark olive; a thin clear cortex and a short, dense fur of cilia
+        const g = el('g', {});
+        const path = el('path', { d:'', fill: s.color, 'fill-opacity':0.4, stroke: s.colorDark, 'stroke-opacity':0.6, 'stroke-width':0.75 });
+        g.appendChild(path);
+        const nverts = 26, a0 = 2.3; // the notch, on the lower front flank
+        const notchAt = a => { const d = Math.atan2(Math.sin(a - a0), Math.cos(a - a0)); return 1 - 0.36*Math.exp(-d*d/0.08); };
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => { const k = notchAt(a); return [k*(0.97 + 0.03*Math.cos(a)), k*(1 - 0.08*Math.cos(a))]; });
+        this.softBlob = new SoftBlob(nverts, { amp: 0.03, speed: 0.9 });
+        this._softPathEl = path;
+        // the macronucleus, half hidden behind the vacuoles
+        g.appendChild(el('ellipse', { cx:(-L*0.05).toFixed(2), cy:(-W*0.06).toFixed(2), rx:(W*0.22).toFixed(2), ry:(W*0.19).toFixed(2), fill:'#4c4824', opacity:0.16, 'data-keep':1 }));
+        // food vacuoles packed edge to edge (the dark "berries" of the photo), none in the notch
+        const inNotch = (x, y)=>{ const a = Math.atan2(y/W, x/L), d = Math.atan2(Math.sin(a - a0), Math.cos(a - a0)); return Math.abs(d) < 0.55 && Math.hypot(x/(L/2), y/(W/2)) > 0.45; };
+        this._packCircles(30, L*0.43, W*0.4, W*0.06, W*0.12, (x, y)=> !inNotch(x, y)).forEach(c=>{
+          g.appendChild(el('circle', { cx:c.x.toFixed(2), cy:c.y.toFixed(2), r:c.r.toFixed(2), fill:'#6c663a', 'fill-opacity':0.42, stroke:'#3f3b1c', 'stroke-width':0.28, 'stroke-opacity':0.5, 'data-keep':1 }));
+          g.appendChild(el('circle', { cx:(c.x - c.r*0.3).toFixed(2), cy:(c.y - c.r*0.3).toFixed(2), r:(c.r*0.3).toFixed(2), fill:'#f2efdc', 'fill-opacity':0.35, 'data-keep':1 }));
+        });
+        const cilia = this._radialCilia(L*0.98, W*0.98, 36, 0.3, 0.65);
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        return g;
+      }
+      case 'bean-cilia': {
+        // Colpidium (photo): an elongated, slightly kidney-shaped cell, clear
+        // and glassy, with a row of round food vacuoles down the middle, the
+        // mouth (cytostome) in a shallow dent near the front and a fur of
+        // fine cilia all round
+        const g = el('g', {});
+        const path = el('path', { d:'', fill: s.color, 'fill-opacity':0.3, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 });
+        g.appendChild(path);
+        const nverts = 24;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => {
+          const c = Math.cos(a), sn = Math.sin(a);
+          // front (+x) a little narrower; a shallow concavity on the lower side
+          const dent = sn > 0 ? 1 - 0.14*Math.exp(-Math.pow(c - 0.25, 2)/0.08) : 1;
+          return [1, (1 - 0.12*Math.max(0, c))*dent];
+        });
+        this.softBlob = new SoftBlob(nverts, { amp: 0.035, speed: 1.0 });
+        this._softPathEl = path;
+        for(let i=0;i<26;i++){
+          const [x, y] = this._inEllipse(L*0.4, W*0.32);
+          g.appendChild(el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:(0.2 + Math.random()*0.3).toFixed(2), fill:s.colorDark, opacity:0.4 }));
+        }
+        // a column of food vacuoles in the front half, each with dark grains
+        const nV = 4 + Math.floor(Math.random()*2);
+        for(let i=0;i<nV;i++){
+          const t = i/(nV - 1), x = L*(0.28 - 0.44*t), y = (Math.random() - 0.5)*W*0.16, r = W*(0.12 + Math.random()*0.04);
+          g.appendChild(el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:r.toFixed(2), fill:'#f4f5f8', 'fill-opacity':0.55, stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 }));
+          for(let k=0;k<4;k++) g.appendChild(el('circle', { cx:(x + (Math.random() - 0.5)*r).toFixed(2), cy:(y + (Math.random() - 0.5)*r).toFixed(2), r:(r*0.18).toFixed(2), fill:'#6b6e7c', opacity:0.55, 'data-keep':1 }));
+        }
+        // cytostome: a short curved groove near the front, on the dented side
+        g.appendChild(el('path', { d:`M ${(L*0.12).toFixed(2)} ${(W*0.4).toFixed(2)} q ${(L*0.08).toFixed(2)} ${(-W*0.18).toFixed(2)} ${(L*0.2).toFixed(2)} ${(-W*0.04).toFixed(2)}`,
+          fill:'none', stroke:s.colorDark, 'stroke-width':0.45, 'stroke-opacity':0.6, 'data-keep':1 }));
+        const cv = el('circle', { cx:(-L*0.36).toFixed(2), cy:(-W*0.05).toFixed(2), r:(W*0.1).toFixed(2), fill:'#f7f8fb', opacity:0.6, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.5, 'data-keep':1 });
+        g.appendChild(cv);
+        this._contractileVacs = [{ el: cv, baseR: W*0.1, phase: Math.random()*Math.PI*2 }];
+        const cilia = this._radialCilia(L, W, 40, 0.34, 0.8);
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        return g;
+      }
+      case 'ciliate-generic': {
         const g = el('g', {});
         const path = el('path', Object.assign({ d:'' },
           { fill: s.color, 'fill-opacity':0.32, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 }
         ));
         g.appendChild(path);
         const nverts = 18;
-        // each shape differs only in how it distorts the base ellipse:
-        // plain oval, kidney-bean curve, generic oval, or blepharisma's
-        // tapered-posterior silhouette.
-        const asymmetry = s.shape==='bean-cilia'
-          ? (a => [0.82 + 0.22*Math.cos(a-0.6), 0.8 + 0.3*Math.sin(a*2+1)])
-          : s.shape==='blepharisma-shape'
-          ? (a => [0.78 + 0.22*Math.cos(a-2.4), 0.88 + 0.12*Math.sin(a*2)])
-          : (a => [0.94 + 0.06*Math.cos(a*3), 0.94 + 0.06*Math.sin(a*3+1)]); // ovoid / generic ciliate: near-plain oval
-        const baseOutline = this._softEllipsePath(L, W, nverts, asymmetry);
+        // near-plain oval
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => [0.94 + 0.06*Math.cos(a*3), 0.94 + 0.06*Math.sin(a*3+1)]);
         this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.1 });
-        this._softBasePts = baseOutline;
         this._softPathEl = path;
-
         g.appendChild(el('ellipse', { cx: -L*0.08, cy:1, rx: W*0.17, ry: W*0.13, fill: s.colorDark, opacity:0.3 }));
         const cilia = this._radialCilia(L, W, 24, 0.32);
         g.appendChild(cilia);
         this.ciliaEl = cilia;
         return g;
       }
-      case 'spirogyra-filament': {
-        // One continuous cylindrical filament with straight cross-walls; inside
-        // each cell the ribbon chloroplast winds in a helix (seen from above as
-        // a band crossing the cell), studded with pyrenoids, plus a faint nucleus.
+      case 'blepharisma-shape': {
+        // Blepharisma (photo): a rose-pink pear — the front (+x) narrows to a
+        // blunt point, the rear is broad and round. The oral groove runs along
+        // one edge from the tip to the middle, lined by the dense comb of
+        // adoral membranelles; kineties stripe the body lengthwise, pink
+        // pigment granules dust it and a big contractile vacuole sits at the rear
         const g = el('g', {});
-        g.appendChild(el('rect', { x:-L/2, y:-W/2, width:L, height:W, rx:W*0.42,
-          fill:s.color, 'fill-opacity':0.3, stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':0.5 }));
-        const nCells = 4, cellLen = L/nCells;
-        for(let c=1;c<nCells;c++){
-          const x = -L/2 + c*cellLen;
-          g.appendChild(el('line', { x1:x, y1:-W/2+0.3, x2:x, y2:W/2-0.3, stroke:s.colorDark, 'stroke-width':0.35, opacity:0.45 }));
+        const path = el('path', { d:'', fill: s.color, 'fill-opacity':0.42, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 });
+        g.appendChild(path);
+        const nverts = 26;
+        const narrow = c => c > 0 ? 1 - 0.7*Math.pow(c, 1.8) : 1 - 0.1*c*c;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => [1, narrow(Math.cos(a))]);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.04, speed: 1.0 });
+        this._softPathEl = path;
+        const hwAt = x => { const c = Math.max(-1, Math.min(1, x/(L/2))); return (W/2)*narrow(c)*Math.sqrt(Math.max(0, 1 - c*c)); };
+        for(let k=-2;k<=2;k++){
+          const y = k*W*0.15;
+          g.appendChild(el('path', { d:`M ${(-L*0.44).toFixed(2)} ${(y*0.8).toFixed(2)} Q ${(L*0.02).toFixed(2)} ${(y*1.08).toFixed(2)} ${(L*0.4).toFixed(2)} ${(y*0.25).toFixed(2)}`,
+            fill:'none', stroke:'#9c5a70', 'stroke-width':0.35, 'stroke-opacity':0.32, 'data-keep':1 }));
         }
-        for(let c=0;c<nCells;c++){
-          const x0 = -L/2 + c*cellLen + W*0.12, x1 = x0 + cellLen - W*0.24;
-          const steps = 30, turns = 1.3, ph0 = c*0.9;
-          const pts = [];
-          for(let i=0;i<=steps;i++){
-            const t = i/steps, ph = t*Math.PI*2*turns + ph0;
-            pts.push([x0 + t*(x1-x0), Math.sin(ph)*W*0.34]);
+        // adoral membranelles: a dense comb just inside the upper edge, from the tip back to the mouth
+        let md = '', gd = '';
+        for(let i=0;i<=24;i++){
+          const x = L*0.45 - i*(L*0.5/24), hw = hwAt(x);
+          md += `M ${x.toFixed(2)} ${(-hw*0.94).toFixed(2)} L ${(x - W*0.06).toFixed(2)} ${(-hw*0.6).toFixed(2)} `;
+          gd += (i ? 'L ' : 'M ') + (x - W*0.06).toFixed(2) + ' ' + (-hw*0.6).toFixed(2) + ' ';
+        }
+        g.appendChild(el('path', { d:md, fill:'none', stroke:'#5a2b3a', 'stroke-width':0.32, 'stroke-opacity':0.55, 'data-keep':1 }));
+        g.appendChild(el('path', { d:gd, fill:'none', stroke:'#5a2b3a', 'stroke-width':0.4, 'stroke-opacity':0.4, 'data-keep':1 }));
+        for(let i=0;i<34;i++){
+          const [x, y] = this._inEllipse(L*0.4, W*0.34);
+          if(hwAt(x)*0.85 > Math.abs(y)) g.appendChild(el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:(0.22 + Math.random()*0.28).toFixed(2), fill:'#b9607c', opacity:0.5, 'data-keep':1 }));
+        }
+        this._packCircles(4, L*0.25, W*0.28, W*0.08, W*0.12).forEach(c=> g.appendChild(el('circle', { cx:(c.x - L*0.08).toFixed(2), cy:c.y.toFixed(2), r:c.r.toFixed(2),
+          fill:'#c69aa8', 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 })));
+        g.appendChild(el('ellipse', { cx:(-L*0.02).toFixed(2), cy:(W*0.08).toFixed(2), rx:(L*0.14).toFixed(2), ry:(W*0.12).toFixed(2), fill:'#a06a7e', opacity:0.22, 'data-keep':1 }));
+        const cv = el('circle', { cx:(-L*0.38).toFixed(2), cy:0, r:(W*0.16).toFixed(2), fill:'#fbf3f5', opacity:0.7, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 });
+        g.appendChild(cv);
+        this._contractileVacs = [{ el: cv, baseR: W*0.16, phase: Math.random()*Math.PI*2 }];
+        const cilia = this._radialCilia(L, W*0.92, 30, 0.28, 0.7);
+        g.appendChild(cilia);
+        this.ciliaEl = cilia;
+        return g;
+      }
+      case 'spirogyra-filament': {
+        // Spirogyra (photo): a long, bright green filament of cylindrical
+        // cells joined end to end by straight cross-walls. In each cell the
+        // ribbon chloroplast winds in a tight helix, which from above reads
+        // as close diagonal green bands studded with pale pyrenoids, under a
+        // clear, glassy wall. Long and nearly still: drawn once along a bend.
+        const g = el('g', {});
+        const bend = (Math.random() < 0.5 ? -1 : 1) * W*(0.8 + Math.random()*2.4);
+        const cy = x => bend*(1 - Math.pow(2*x/L, 2));
+        const slope = x => -bend*8*x/(L*L);
+        const wall = this._tubeD(t => { const x = -L/2 + t*L; return [x, cy(x)]; }, ()=> W/2, 40);
+        g.appendChild(el('path', { d:wall, fill:'none', stroke:'#fbfff0', 'stroke-width':1.6, 'stroke-opacity':0.5, 'data-keep':1 }));
+        g.appendChild(el('path', { d:wall, fill:'#e6f2d2', 'fill-opacity':0.4, stroke:'#5f8a3a', 'stroke-width':0.6, 'stroke-opacity':0.6, 'data-keep':1 }));
+        const n = Math.max(3, Math.round(L/(W*(2.6 + Math.random()*0.8)))), cl = L/n;
+        for(let i=0;i<n;i++){
+          const x0 = -L/2 + (i + 0.5)*cl, a = Math.atan(slope(x0))*180/Math.PI;
+          const cg = el('g', { transform:`translate(${x0.toFixed(2)},${cy(x0).toFixed(2)}) rotate(${a.toFixed(2)})` });
+          const ix = -cl/2 + W*0.08, iw = cl - W*0.16;
+          cg.appendChild(el('rect', { x:ix.toFixed(2), y:(-W*0.42).toFixed(2), width:iw.toFixed(2), height:(W*0.84).toFixed(2), rx:(W*0.1).toFixed(2), fill:'#a6d462', 'fill-opacity':0.5, 'data-keep':1 }));
+          // the helical ribbon seen from above: diagonal bands with light edges and pyrenoids
+          const bands = Math.max(4, Math.round(iw/(W*0.3))), step = iw/bands, ph = Math.random()*step;
+          let bd = '', ed = '', pd = '';
+          for(let k=0;k<bands;k++){
+            const u = ix + ph + k*step;
+            if(u > ix + iw - W*0.1) continue;
+            bd += `M ${(u - W*0.2).toFixed(2)} ${(-W*0.38).toFixed(2)} L ${(u + W*0.2).toFixed(2)} ${(W*0.38).toFixed(2)} `;
+            ed += `M ${(u - W*0.25).toFixed(2)} ${(-W*0.36).toFixed(2)} L ${(u + W*0.15).toFixed(2)} ${(W*0.4).toFixed(2)} `;
+            pd += `M ${(u + (Math.random() - 0.5)*W*0.2).toFixed(2)} ${((Math.random() - 0.5)*W*0.4).toFixed(2)} l 0.01 0 `;
           }
-          g.appendChild(el('polyline', { points: pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '),
-            fill:'none', stroke:s.colorDark, 'stroke-width':1.5, 'stroke-opacity':0.34, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
-          for(let k=0;k<4;k++){
-            const t = (k+0.5)/4, ph = t*Math.PI*2*turns + ph0;
-            g.appendChild(el('circle', { cx:(x0+t*(x1-x0)).toFixed(1), cy:(Math.sin(ph)*W*0.34).toFixed(1), r:0.75, fill:s.colorDark, opacity:0.38 }));
+          cg.appendChild(el('path', { d:bd, fill:'none', stroke:'#3d8a17', 'stroke-width':(W*0.15).toFixed(2), 'stroke-opacity':0.64, 'stroke-linecap':'round', 'data-keep':1 }));
+          cg.appendChild(el('path', { d:ed, fill:'none', stroke:'#c9ec8e', 'stroke-width':(W*0.035).toFixed(2), 'stroke-opacity':0.55, 'stroke-linecap':'round', 'data-keep':1 }));
+          cg.appendChild(el('path', { d:pd, fill:'none', stroke:'#eef9d6', 'stroke-width':(W*0.09).toFixed(2), 'stroke-opacity':0.75, 'stroke-linecap':'round', 'data-keep':1 }));
+          cg.appendChild(el('ellipse', { cx:0, cy:0, rx:(W*0.14).toFixed(2), ry:(W*0.11).toFixed(2), fill:'#f1f8e4', 'fill-opacity':0.45, stroke:'#5f8a3a', 'stroke-width':0.25, 'stroke-opacity':0.45, 'data-keep':1 }));
+          g.appendChild(cg);
+          // cross-wall at the end of the cell: a dark line with a bright edge
+          if(i < n - 1){
+            const xe = -L/2 + (i + 1)*cl, ae = Math.atan(slope(xe)), nx = -Math.sin(ae), ny = Math.cos(ae), ye = cy(xe), h = W*0.47;
+            g.appendChild(el('line', { x1:(xe - nx*h).toFixed(2), y1:(ye - ny*h).toFixed(2), x2:(xe + nx*h).toFixed(2), y2:(ye + ny*h).toFixed(2), stroke:'#4c6e2c', 'stroke-width':0.55, 'stroke-opacity':0.65, 'data-keep':1 }));
+            g.appendChild(el('line', { x1:(xe - nx*h + 0.4).toFixed(2), y1:(ye - ny*h).toFixed(2), x2:(xe + nx*h + 0.4).toFixed(2), y2:(ye + ny*h).toFixed(2), stroke:'#fbfff0', 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 }));
           }
-          g.appendChild(el('ellipse', { cx:((x0+x1)/2).toFixed(1), cy:0, rx:W*0.14, ry:W*0.11, fill:'none', stroke:s.colorDark, 'stroke-width':0.25, opacity:0.3 }));
         }
         return g;
       }
       case 'oscillatoria-filament': {
-        // A continuous trichome (not a string of beads): one smooth cylinder whose
-        // cells are shorter than wide, separated by fine cross-walls; drawn each
-        // frame in render() so the free tip can sway like the real filament.
+        // Oscillatoria (photo): a long, pale olive trichome — one smooth
+        // cylinder of very short, disc-shaped cells, so fine cross-walls crowd
+        // along it, with tiny granules at the walls; the tip is rounded and a
+        // little narrower. It lies in a gentle bend and the free end sways
+        // slowly (the oscillation it is named after) — rebuilt in render()
         const g = el('g', {});
-        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.5 });
-        g.appendChild(body);
-        const walls = [];
-        const nWalls = Math.round(L/(W*0.6));
-        for(let i=1;i<nWalls;i++){
-          const ln = el('line', { x1:0, y1:0, x2:0, y2:0, stroke:s.colorDark, 'stroke-width':0.3, opacity:0.42 });
-          g.appendChild(ln); walls.push({ el:ln, t:i/nWalls });
-        }
-        this._osc = { L, W, body, walls };
+        const body = el('path', { d:'', fill:'#e4dfc9', 'fill-opacity':0.5, stroke:s.colorDark, 'stroke-opacity':0.6, 'stroke-width':0.55, 'data-keep':1 });
+        const core = el('path', { d:'', fill:'none', stroke:'#a49b74', 'stroke-width':(W*0.5).toFixed(2), 'stroke-opacity':0.16, 'stroke-linecap':'round', 'data-keep':1 });
+        const walls = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.45, 'data-keep':1 });
+        const grains = el('path', { d:'', fill:'none', stroke:'#4f4a36', 'stroke-width':0.7, 'stroke-opacity':0.32, 'stroke-linecap':'round', 'data-keep':1 });
+        const shine = el('path', { d:'', fill:'none', stroke:'#fffdf2', 'stroke-width':(W*0.12).toFixed(2), 'stroke-opacity':0.4, 'stroke-linecap':'round', 'data-keep':1 });
+        [body, core, walls, grains, shine].forEach(n=> g.appendChild(n));
+        this._osc = { L, W, body, core, walls, grains, shine,
+          bend: (Math.random() < 0.5 ? -1 : 1) * W*(1 + Math.random()*3), nWalls: Math.round(L/(W*0.28)) };
         return g;
       }
       case 'nematode-worm': {
+        // C. elegans (photo, DIC): a smooth, glassy grey-green cylinder with a
+        // rounded head and a long, finely pointed tail; the relief shading of
+        // DIC (a lit edge on one side, shadow on the other), the pharynx with
+        // its two bulbs behind the mouth and the granular gut. Rebuilt each
+        // frame along the body's S-wave (render)
         const g = el('g', {});
-        // translucent tube: a faint dark stroke for the two refractive edges,
-        // with a slightly narrower pale stroke on top so the body reads as
-        // clear cuticle with dark margins — not an opaque grey sausage.
-        const path = el('path', {
-          d:'', fill:'none', stroke: s.colorDark, 'stroke-opacity':0.5, 'stroke-width': W*0.82, 'stroke-linecap':'round'
-        });
-        g.appendChild(path);
-        const inner = el('path', {
-          d:'', fill:'none', stroke: s.color, 'stroke-opacity':0.85, 'stroke-width': W*0.6, 'stroke-linecap':'round'
-        });
-        g.appendChild(inner);
-        this._wormInnerEl = inner;
-        const steps = 24;
-        this.wavePoints = { turns: 1, steps, L, W, basePts: Array.from({length:steps+1},(_,i)=>{
-          const t = i/steps; return [-L/2+t*L, 0];
-        })};
-        this.waveEl = path;
-        this._wormWave = true; // flag: render as a smooth S-curve path, not a jagged polyline
+        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.55, stroke:s.colorDark, 'stroke-opacity':0.6, 'stroke-width':0.45, 'data-keep':1 });
+        const shade = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':(W*0.2).toFixed(2), 'stroke-opacity':0.16, 'stroke-linecap':'round', 'data-keep':1 });
+        const gut = el('path', { d:'', fill:'none', stroke:'#8e8f6c', 'stroke-width':(W*0.3).toFixed(2), 'stroke-opacity':0.38, 'stroke-linecap':'round', 'data-keep':1 });
+        const gran = el('path', { d:'', fill:'none', stroke:'#6a6b4b', 'stroke-width':0.55, 'stroke-opacity':0.45, 'stroke-linecap':'round', 'data-keep':1 });
+        const pharynx = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':(W*0.13).toFixed(2), 'stroke-opacity':0.35, 'stroke-linecap':'round', 'data-keep':1 });
+        const bulbs = [0, 1].map(()=> el('ellipse', { rx:(W*0.2).toFixed(2), ry:(W*0.17).toFixed(2), fill:s.color, 'fill-opacity':0.6, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.55, 'data-keep':1 }));
+        const shine = el('path', { d:'', fill:'none', stroke:'#fbfcf8', 'stroke-width':(W*0.14).toFixed(2), 'stroke-opacity':0.5, 'stroke-linecap':'round', 'data-keep':1 });
+        [body, shade, gut, gran, pharynx, ...bulbs, shine].forEach(n=> g.appendChild(n));
+        this._nema = { L, W, body, shade, gut, gran, pharynx, bulbs, shine,
+          grains: Array.from({length:24}, ()=> [0.32 + Math.random()*0.5, (Math.random() - 0.5)*0.5]) };
         return g;
       }
       case 'segmented-worm': {
-        // Aeolosoma: a continuous, slightly tapering worm body (broad head lobe in
-        // front), faint segment boundaries, tiny bristle (chaetae) pairs at each
-        // segment, a gut line, and its hallmark epidermal oil droplets. Outline is
-        // rebuilt each frame in render() so a peristaltic bulge can travel along it.
+        // Aeolosoma (reference video): a long, glassy worm with a broad,
+        // ciliated head lobe (prostomium) in front, bundles of long hair-like
+        // bristles (chaetae) along both sides, a yellow-green gut and the
+        // coloured oil droplets of its skin glands. The outline is rebuilt
+        // each frame in render() so a peristaltic bulge travels along it.
         const g = el('g', {});
-        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.35, stroke:s.colorDark, 'stroke-opacity':0.5, 'stroke-width':0.5 });
+        const body = el('path', { d:'', fill:s.color, 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.5 });
         g.appendChild(body);
-        const gut = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':W*0.16, 'stroke-opacity':0.3, 'stroke-linecap':'round' });
-        g.appendChild(gut);
-        const nSeg = 9, segLines = [], chaetae = [];
-        for(let i=1;i<nSeg;i++){
-          const ln = el('line', { stroke:s.colorDark, 'stroke-width':0.28, opacity:0.32 });
-          const c1 = el('line', { stroke:s.colorDark, 'stroke-width':0.22, opacity:0.42 });
-          const c2 = el('line', { stroke:s.colorDark, 'stroke-width':0.22, opacity:0.42 });
-          g.appendChild(ln); g.appendChild(c1); g.appendChild(c2);
-          segLines.push({ el:ln, t:i/nSeg }); chaetae.push({ a:c1, b:c2, t:i/nSeg });
-        }
+        const gut = el('path', { d:'', fill:'none', stroke:'#b3aa3c', 'stroke-width':(W*0.3).toFixed(2), 'stroke-opacity':0.42, 'stroke-linecap':'round', 'data-keep':1 });
+        const segs = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.28, 'stroke-opacity':0.3, 'data-keep':1 });
+        const chaetae = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.2, 'stroke-opacity':0.55, 'stroke-linecap':'round', 'data-keep':1 });
+        const cilia = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.18, 'stroke-opacity':0.45, 'stroke-linecap':'round', 'data-keep':1 });
+        [gut, segs, chaetae, cilia].forEach(n=> g.appendChild(n));
+        const COLORS = ['#e2c548', '#e48a3c', '#9fc24a', '#d65d4a'];
         const drops = [];
-        for(let i=0;i<10;i++){
-          const c = el('circle', { r:(0.55+Math.random()*0.6).toFixed(2), fill:'#a29f78', opacity:0.32 });
-          g.appendChild(c); drops.push({ el:c, t:0.08+Math.random()*0.82, off:(Math.random()-0.5)*0.7 });
+        for(let i=0;i<14;i++){
+          const c = el('circle', { r:(0.6 + Math.random()*0.6).toFixed(2), fill:COLORS[i % COLORS.length], opacity:0.62, 'data-keep':1 });
+          g.appendChild(c); drops.push({ el:c, t:0.06 + Math.random()*0.78, off:(Math.random() - 0.5)*0.8 });
         }
-        this._worm2 = { L, W, body, gut, segLines, chaetae, drops };
+        const nSeg = 10;
+        this._worm2 = { L, W, body, gut, segs, chaetae, cilia, drops, nSeg,
+          bristles: Array.from({length:nSeg*6}, ()=> ({ len:0.8 + Math.random()*0.6, spread:(Math.random() - 0.5)*0.5 })) };
         return g;
       }
       case 'diatom-pennate': {
-        // rigid silica shell — no SoftBlob wobble, diatoms don't flex. A long
-        // oval with the raphe (central slit) running its length and fine
-        // cross-striae, the two features that identify pennate diatoms.
+        // Pinnularia (photo): a long, narrow glass valve with parallel sides
+        // and broadly rounded ends. The raphe runs down the middle as a double
+        // line broken by the round central nodule (with a nodule at each end),
+        // dense rib-like striae (costae) cross from each margin toward it, and
+        // two golden plastids lie along the sides. Rigid: no wobble.
         const g = el('g', {});
-        g.appendChild(el('ellipse', Object.assign({ cx:0, cy:0, rx:L/2, ry:W/2 }, this._fillAttrs(s, 0.32))));
-        g.appendChild(el('line', { x1:-L*0.42,y1:0, x2:L*0.42,y2:0, stroke:s.colorDark, 'stroke-width':0.6, opacity:0.6 }));
-        const nStriae = 14;
-        for(let i=1;i<nStriae;i++){
-          const t = i/nStriae - 0.5;
-          const xx = t*L*0.9;
-          const halfW = Math.sqrt(Math.max(0, 1-(t*2)*(t*2))) * W*0.46;
-          g.appendChild(el('line', { x1:xx,y1:-halfW, x2:xx,y2:halfW, stroke:s.colorDark, 'stroke-width':0.3, opacity:0.3 }));
+        const core = (L - W)/2;
+        const hwAt = x => Math.abs(x) <= core ? W/2 : Math.sqrt(Math.max(0, W*W/4 - Math.pow(Math.abs(x) - core, 2)));
+        const pts = this._softCapsulePath(L - W, W, 10);
+        const d = 'M ' + pts.map(p=> p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L ') + ' Z';
+        g.appendChild(el('path', { d, fill:s.color, 'fill-opacity':0.5, stroke:s.colorDark, 'stroke-width':0.8, 'stroke-opacity':0.75, 'data-keep':1 }));
+        g.appendChild(el('path', { d, fill:'none', stroke:'#fffbea', 'stroke-width':0.5, 'stroke-opacity':0.6, transform:'scale(0.94,0.8)', 'data-keep':1 }));
+        [-1, 1].forEach(sg=> g.appendChild(el('rect', { x:(-L*0.4).toFixed(2), y:(sg > 0 ? W*0.1 : -W*0.38).toFixed(2), width:(L*0.8).toFixed(2), height:(W*0.28).toFixed(2), rx:(W*0.14).toFixed(2),
+          fill:'#c49a2c', 'fill-opacity':0.26, 'data-keep':1 })));
+        let cd = '';
+        const nC = Math.round(L/1.2);
+        for(let i=1;i<nC;i++){
+          const x = -L/2 + W*0.3 + i*(L - W*0.6)/nC;
+          if(Math.abs(x) < W*0.36) continue; // the clear central area
+          const hw = hwAt(x)*0.86, tilt = x*0.04;
+          cd += `M ${x.toFixed(2)} ${(-hw).toFixed(2)} L ${(x - tilt).toFixed(2)} ${(-W*0.12).toFixed(2)} M ${x.toFixed(2)} ${hw.toFixed(2)} L ${(x - tilt).toFixed(2)} ${(W*0.12).toFixed(2)} `;
         }
+        g.appendChild(el('path', { d:cd, fill:'none', stroke:s.colorDark, 'stroke-width':0.36, 'stroke-opacity':0.42, 'data-keep':1 }));
+        [-0.03, 0.03].forEach(o=> g.appendChild(el('line', { x1:(-L*0.44).toFixed(2), y1:(o*W).toFixed(2), x2:(L*0.44).toFixed(2), y2:(o*W).toFixed(2), stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.6, 'data-keep':1 })));
+        [0, -L*0.44, L*0.44].forEach((x, i)=> g.appendChild(el('circle', { cx:x.toFixed(2), cy:0, r:(W*(i ? 0.09 : 0.16)).toFixed(2), fill:'#fbf6e4', 'fill-opacity':0.8, stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 })));
         return g;
       }
       case 'diatom-centric': {
+        // Cyclotella (photo): a round valve with a thick, bright rim, a broad
+        // marginal ring of dense radial striae and a smooth central area with
+        // a few pores; small golden plastids show through
         const g = el('g', {});
-        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W/2 }, this._fillAttrs(s, 0.3))));
-        g.appendChild(el('circle', { cx:0, cy:0, r:W*0.3, fill:'none', stroke:s.colorDark, 'stroke-width':0.4, opacity:0.4 }));
-        const nRays = 16;
-        for(let i=0;i<nRays;i++){
-          const a = (i/nRays)*Math.PI*2;
-          g.appendChild(el('line', {
-            x1:Math.cos(a)*W*0.32, y1:Math.sin(a)*W*0.32, x2:Math.cos(a)*W*0.48, y2:Math.sin(a)*W*0.48,
-            stroke:s.colorDark, 'stroke-width':0.3, opacity:0.4
-          }));
-        }
+        const R = W/2;
+        g.appendChild(el('circle', { cx:0, cy:0, r:R.toFixed(2), fill:s.color, 'fill-opacity':0.45, stroke:s.colorDark, 'stroke-width':0.9, 'stroke-opacity':0.75, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.93).toFixed(2), fill:'none', stroke:'#fbfff6', 'stroke-width':0.8, 'stroke-opacity':0.7, 'data-keep':1 }));
+        let sd = '';
+        const nS = 76;
+        for(let i=0;i<nS;i++){ const a = i/nS*Math.PI*2, c = Math.cos(a), sn = Math.sin(a); sd += `M ${(c*R*0.6).toFixed(2)} ${(sn*R*0.6).toFixed(2)} L ${(c*R*0.88).toFixed(2)} ${(sn*R*0.88).toFixed(2)} `; }
+        g.appendChild(el('path', { d:sd, fill:'none', stroke:'#3c5b51', 'stroke-width':0.32, 'stroke-opacity':0.55, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.58).toFixed(2), fill:'#f2f4e8', 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.4, 'data-keep':1 }));
+        for(let i=0;i<7;i++){ const [x, y] = this._inEllipse(R*0.42, R*0.42); g.appendChild(el('ellipse', { cx:x.toFixed(2), cy:y.toFixed(2), rx:(R*0.11).toFixed(2), ry:(R*0.07).toFixed(2), fill:'#b29a3a', opacity:0.32, transform:`rotate(${(Math.random()*180).toFixed(0)} ${x.toFixed(2)} ${y.toFixed(2)})`, 'data-keep':1 })); }
+        for(let i=0;i<5;i++){ const [x, y] = this._inEllipse(R*0.3, R*0.3); g.appendChild(el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:0.3, fill:s.colorDark, opacity:0.5, 'data-keep':1 })); }
         return g;
       }
       case 'diatom-rect': {
-        // Girdle (side) view of a boat-shaped diatom: a rectangle with rounded
-        // corners, the overlapping girdle bands as faint lines along the long
-        // sides, two plate-like plastids against the walls, a clear central area.
+        // Navicula (photo): valve view of a "little boat" — lanceolate, with
+        // drawn-out, bluntly pointed ends. The raphe runs end to end through a
+        // small central nodule, and fine striae radiate from the middle and
+        // turn to converge toward the ends (the herring-bone of the photo)
         const g = el('g', {});
-        g.appendChild(el('rect', Object.assign({ x:-L/2, y:-W/2, width:L, height:W, rx:W*0.34 }, this._fillAttrs(s, 0.32))));
-        [-W*0.29, W*0.29].forEach(yy=> g.appendChild(el('line', { x1:-L*0.43, y1:yy, x2:L*0.43, y2:yy, stroke:s.colorDark, 'stroke-width':0.28, opacity:0.4 })));
-        g.appendChild(el('line', { x1:-L*0.46, y1:0, x2:L*0.46, y2:0, stroke:s.colorDark, 'stroke-width':0.22, opacity:0.22 }));
-        [-1,1].forEach(sg=> g.appendChild(el('ellipse', { cx:0, cy:sg*W*0.13, rx:L*0.34, ry:W*0.1, fill:'#9c8a62', opacity:0.3 })));
-        g.appendChild(el('circle', { cx:0, cy:0, r:W*0.11, fill:'#f4f1e6', opacity:0.45 }));
+        const hwAt = x => (W/2)*Math.pow(Math.max(0, 1 - Math.pow(2*x/L, 2)), 0.85);
+        const N = 40, top = [], bot = [];
+        for(let i=0;i<=N;i++){ const x = -L/2 + i*L/N; top.push([x, -hwAt(x)]); bot.push([x, hwAt(x)]); }
+        const d = 'M ' + top.map(p=> p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L ') + ' L ' + bot.reverse().map(p=> p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L ') + ' Z';
+        g.appendChild(el('path', { d, fill:s.color, 'fill-opacity':0.5, stroke:s.colorDark, 'stroke-width':0.75, 'stroke-opacity':0.75, 'stroke-linejoin':'round', 'data-keep':1 }));
+        g.appendChild(el('path', { d, fill:'none', stroke:'#fffdf2', 'stroke-width':0.45, 'stroke-opacity':0.55, transform:'scale(0.93,0.78)', 'data-keep':1 }));
+        let sd = '';
+        const nS = Math.round(L/1.1);
+        for(let i=1;i<nS;i++){
+          const x = -L/2 + L*0.06 + i*(L*0.88)/nS;
+          if(Math.abs(x) < W*0.22) continue;
+          const hw = hwAt(x)*0.9, lean = (Math.abs(x) < L*0.3 ? -0.18 : 0.14)*Math.sign(x)*W;
+          sd += `M ${x.toFixed(2)} ${(-hw).toFixed(2)} L ${(x + lean).toFixed(2)} ${(-W*0.1).toFixed(2)} M ${x.toFixed(2)} ${hw.toFixed(2)} L ${(x + lean).toFixed(2)} ${(W*0.1).toFixed(2)} `;
+        }
+        g.appendChild(el('path', { d:sd, fill:'none', stroke:s.colorDark, 'stroke-width':0.38, 'stroke-opacity':0.45, 'data-keep':1 }));
+        g.appendChild(el('line', { x1:(-L*0.45).toFixed(2), y1:0, x2:(L*0.45).toFixed(2), y2:0, stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(W*0.14).toFixed(2), fill:'#fbf8ec', 'fill-opacity':0.8, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.55, 'data-keep':1 }));
+        [-1, 1].forEach(sg=> g.appendChild(el('ellipse', { cx:0, cy:(sg*W*0.2).toFixed(2), rx:(L*0.3).toFixed(2), ry:(W*0.09).toFixed(2), fill:'#b69a48', opacity:0.22, 'data-keep':1 })));
         return g;
       }
       case 'diatom-tri': {
-        // Triceratium: a triangular valve with convex sides and rounded corners,
-        // a honeycomb of fine areolae (pores) across the silica, and the small
-        // rounded ocelli at each corner.
+        // Triceratium (photo): a triangular valve with slightly concave sides
+        // and swollen, domed corners (ocelli) covered in very fine pores. From
+        // a small central rosette curved ribs fan out to the sides, with rows
+        // of areolae between them; a strong dark margin.
         const g = el('g', {});
-        const r = L/2;
-        const P = [0,1,2].map(k=>{ const a = -Math.PI/2 + k*2*Math.PI/3; return [Math.cos(a)*r, Math.sin(a)*r]; });
-        const lerp = (A,B,t)=>[A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t];
-        let d = '';
+        const R = L/2, ri = R/2, N = 120, pts = [];
+        for(let i=0;i<N;i++){
+          const th = -Math.PI/2 + i/N*Math.PI*2;
+          // polar outline of a triangle (vertex up), sides bowed in a little, corners clipped round
+          const phi = (((th - Math.PI/2 + Math.PI/3) % (2*Math.PI/3)) + 2*Math.PI/3) % (2*Math.PI/3) - Math.PI/3;
+          let r = ri/Math.cos(phi);
+          r *= 1 - 0.07*Math.cos(phi*1.5);
+          r = Math.min(r, R*0.86);
+          pts.push([Math.cos(th)*r, Math.sin(th)*r]);
+        }
+        const d = this._smoothClosedD(pts);
+        g.appendChild(el('path', { d, fill:s.color, 'fill-opacity':0.5, stroke:s.colorDark, 'stroke-width':1.1, 'stroke-opacity':0.8, 'data-keep':1 }));
+        g.appendChild(el('path', { d, fill:'url(#pat-pores)', opacity:0.3, 'data-keep':1 }));
+        // ribs fanning out from the centre to the sides
+        let rd = '';
+        for(let i=0;i<30;i++){
+          const th = -Math.PI/2 + (i + 0.5)/30*Math.PI*2;
+          const phi = (((th - Math.PI/2 + Math.PI/3) % (2*Math.PI/3)) + 2*Math.PI/3) % (2*Math.PI/3) - Math.PI/3;
+          if(Math.abs(phi) > Math.PI/3*0.78) continue; // not into the corners
+          const r = Math.min(ri/Math.cos(phi)*(1 - 0.07*Math.cos(phi*1.5)), R*0.86)*0.9;
+          const ex = Math.cos(th)*r, ey = Math.sin(th)*r, bend = 0.18*Math.sign(phi);
+          rd += `M ${(Math.cos(th)*R*0.08).toFixed(2)} ${(Math.sin(th)*R*0.08).toFixed(2)} Q ${(Math.cos(th + bend)*r*0.55).toFixed(2)} ${(Math.sin(th + bend)*r*0.55).toFixed(2)} ${ex.toFixed(2)} ${ey.toFixed(2)} `;
+        }
+        g.appendChild(el('path', { d:rd, fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.45, 'data-keep':1 }));
+        // the domed corners with their dense pores
         for(let k=0;k<3;k++){
-          const A = P[k], B = P[(k+1)%3], C = P[(k+2)%3];
-          const a1 = lerp(A,B,0.1), b1 = lerp(B,A,0.1), b2 = lerp(B,C,0.1);
-          const mx = (A[0]+B[0])/2, my = (A[1]+B[1])/2, ml = Math.hypot(mx,my)||1;
-          const qc = [mx + mx/ml*r*0.2, my + my/ml*r*0.2];
-          if(k===0) d += `M ${a1[0].toFixed(2)} ${a1[1].toFixed(2)} `;
-          d += `Q ${qc[0].toFixed(2)} ${qc[1].toFixed(2)} ${b1[0].toFixed(2)} ${b1[1].toFixed(2)} `;
-          d += `Q ${B[0].toFixed(2)} ${B[1].toFixed(2)} ${b2[0].toFixed(2)} ${b2[1].toFixed(2)} `;
+          const th = -Math.PI/2 + k*2*Math.PI/3, cx = Math.cos(th)*R*0.66, cyy = Math.sin(th)*R*0.66, rr = R*0.2;
+          g.appendChild(el('circle', { cx:cx.toFixed(2), cy:cyy.toFixed(2), r:rr.toFixed(2), fill:'#eceaf3', 'fill-opacity':0.6, stroke:s.colorDark, 'stroke-width':0.6, 'stroke-opacity':0.7, 'data-keep':1 }));
+          g.appendChild(el('circle', { cx:cx.toFixed(2), cy:cyy.toFixed(2), r:(rr*0.92).toFixed(2), fill:'url(#pat-pores)', opacity:0.55, 'data-keep':1 }));
         }
-        d += 'Z';
-        g.appendChild(el('path', Object.assign({ d }, this._fillAttrs(s, 0.32))));
-        const inside = (x,y,m)=>{
-          const Q = P.map(p=>[p[0]*m, p[1]*m]);
-          const sgn = (p1,p2,p3)=> (p1[0]-p3[0])*(p2[1]-p3[1]) - (p2[0]-p3[0])*(p1[1]-p3[1]);
-          const d1 = sgn([x,y],Q[0],Q[1]), d2 = sgn([x,y],Q[1],Q[2]), d3 = sgn([x,y],Q[2],Q[0]);
-          return !(((d1<0)||(d2<0)||(d3<0)) && ((d1>0)||(d2>0)||(d3>0)));
-        };
-        const sp = r*0.13;
-        for(let row=0, yy=-r; yy<=r; yy+=sp*0.87, row++){
-          for(let xx=-r; xx<=r; xx+=sp){
-            const x = xx + (row%2 ? sp/2 : 0);
-            if(inside(x, yy, 0.8)) g.appendChild(el('circle', { cx:x.toFixed(2), cy:yy.toFixed(2), r:(sp*0.22).toFixed(2), fill:s.colorDark, opacity:0.2 }));
-          }
-        }
-        P.forEach(p=> g.appendChild(el('circle', { cx:(p[0]*0.78).toFixed(2), cy:(p[1]*0.78).toFixed(2), r:(r*0.09).toFixed(2), fill:'none', stroke:s.colorDark, 'stroke-width':0.32, opacity:0.45 })));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.08).toFixed(2), fill:'#f6f5fa', 'fill-opacity':0.8, stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 }));
         return g;
       }
       case 'closterium-crescent': {
-        // Closterium: a smooth crescent tapering to rounded points, two long
-        // chloroplasts (one per half) with a clear central zone for the nucleus,
-        // and the terminal vacuoles at each tip with tiny dancing gypsum crystals.
+        // Closterium (photo): a long, gracefully curved crescent tapering to
+        // fine rounded tips. The green chloroplast fills each half, ridged
+        // lengthwise and studded with a row of pyrenoids, leaving a clear band
+        // in the middle where the nucleus sits; at each tip a small clear
+        // vacuole holds gypsum crystals that dance (render)
         const g = el('g', {});
-        const tip = L/2, off = W*0.55;
-        const outerC = -W*2.2 + off, innerC = -W*0.2 + off;
-        const d = `M ${-tip} ${off.toFixed(2)} Q 0 ${outerC.toFixed(2)} ${tip} ${off.toFixed(2)} Q 0 ${innerC.toFixed(2)} ${-tip} ${off.toFixed(2)} Z`;
-        g.appendChild(el('path', Object.assign({ d, 'stroke-linejoin':'round' }, this._fillAttrs(s, 0.3))));
-        const midC = (outerC + innerC)/2;
-        const q = t => [ (1-t)*(1-t)*(-tip) + t*t*tip, (1-t)*(1-t)*off + 2*(1-t)*t*midC + t*t*off ];
-        [[0.13,0.44],[0.56,0.87]].forEach(([t0,t1])=>{
-          let pd = '';
-          for(let i=0;i<=12;i++){ const p = q(t0 + (t1-t0)*i/12); pd += (i?'L ':'M ')+p[0].toFixed(2)+' '+p[1].toFixed(2)+' '; }
-          g.appendChild(el('path', { d:pd, fill:'none', stroke:'#7b9466', 'stroke-width':W*0.5, 'stroke-opacity':0.26, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+        const sag = W*1.7;
+        const C = t => { const x = -L/2 + t*L; return [x, -sag*(1 - Math.pow(2*x/L, 2))]; };
+        const hw = t => (W/2)*Math.max(0.12, Math.pow(Math.sin(Math.PI*t), 0.72));
+        const outline = this._tubeD(C, hw, 48);
+        g.appendChild(el('path', { d:outline, fill:'none', stroke:'#fbfff0', 'stroke-width':1.4, 'stroke-opacity':0.5, 'data-keep':1 }));
+        g.appendChild(el('path', { d:outline, fill:'#d9ebb9', 'fill-opacity':0.48, stroke:s.colorDark, 'stroke-width':0.6, 'stroke-opacity':0.65, 'data-keep':1 }));
+        const part = (t0, t1)=> t => C(t0 + (t1 - t0)*t);
+        [[0.07, 0.465], [0.535, 0.93]].forEach(([t0, t1])=>{
+          const c = part(t0, t1);
+          g.appendChild(el('path', { d:this._tubeD(c, t => hw(t0 + (t1 - t0)*t)*0.74, 24), fill:'#7fb03a', 'fill-opacity':0.48, 'data-keep':1 }));
+          // ridges lengthwise
+          [-0.45, 0, 0.45].forEach(o=>{
+            let rd = '';
+            for(let i=0;i<=16;i++){
+              const t = 0.05 + 0.9*i/16, p = c(t), q = c(Math.min(1, t + 0.01)), tl = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+              const w = hw(t0 + (t1 - t0)*t)*0.74*o;
+              rd += (i ? 'L ' : 'M ') + (p[0] - (q[1] - p[1])/tl*w).toFixed(2) + ' ' + (p[1] + (q[0] - p[0])/tl*w).toFixed(2) + ' ';
+            }
+            g.appendChild(el('path', { d:rd, fill:'none', stroke:'#4c7a1e', 'stroke-width':0.4, 'stroke-opacity':0.35, 'data-keep':1 }));
+          });
+          for(let k=0;k<6;k++){ const p = c(0.12 + k*0.15); g.appendChild(el('circle', { cx:p[0].toFixed(2), cy:p[1].toFixed(2), r:(W*0.075).toFixed(2), fill:'#eef6d8', 'fill-opacity':0.75, stroke:'#4c7a1e', 'stroke-width':0.25, 'stroke-opacity':0.45, 'data-keep':1 })); }
         });
-        const n = q(0.5);
-        g.appendChild(el('circle', { cx:n[0].toFixed(2), cy:n[1].toFixed(2), r:(W*0.2).toFixed(2), fill:'#f4f2e8', opacity:0.45 }));
-        [0.05, 0.95].forEach(t=>{
-          const p = q(t);
-          g.appendChild(el('circle', { cx:p[0].toFixed(2), cy:p[1].toFixed(2), r:(W*0.17).toFixed(2), fill:'#f4f2e8', opacity:0.5, stroke:s.colorDark, 'stroke-width':0.2, 'stroke-opacity':0.4 }));
-          for(let k=0;k<3;k++) g.appendChild(el('circle', { cx:(p[0]+(Math.random()-0.5)*W*0.16).toFixed(2), cy:(p[1]+(Math.random()-0.5)*W*0.16).toFixed(2), r:0.28, fill:s.colorDark, opacity:0.5 }));
+        const nuc = C(0.5);
+        g.appendChild(el('circle', { cx:nuc[0].toFixed(2), cy:nuc[1].toFixed(2), r:(W*0.22).toFixed(2), fill:'#f2f8e6', 'fill-opacity':0.6, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.45, 'data-keep':1 }));
+        this._crystals = [];
+        [0.035, 0.965].forEach(t=>{
+          const p = C(t);
+          g.appendChild(el('circle', { cx:p[0].toFixed(2), cy:p[1].toFixed(2), r:(W*0.13).toFixed(2), fill:'#f6f9ef', 'fill-opacity':0.75, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.45, 'data-keep':1 }));
+          for(let k=0;k<3;k++){
+            const c = el('circle', { cx:p[0].toFixed(2), cy:p[1].toFixed(2), r:0.32, fill:s.colorDark, opacity:0.55, 'data-keep':1 });
+            g.appendChild(c); this._crystals.push({ el:c, x:p[0], y:p[1], j:W*0.08 });
+          }
         });
         return g;
       }
       case 'spiny-desmid': {
-        // Micrasterias: a flat disc split into two mirror-image semicells by deep
-        // notches (sinuses) on each side, each semicell cut into radiating lobes
-        // whose tips end in fine teeth; the chloroplast fills most of the cell.
+        // Micrasterias rotata (photo): a big flat green disc split into two
+        // mirror-image semicells by deep notches on the left and right. Each
+        // semicell is cut into a polar lobe and lateral lobes, every lobe cut
+        // again and again, and the margin ends in sharp little teeth; pale
+        // lines run in from the incisions and the chloroplast is speckled
+        // with pyrenoids under a glassy rim
         const g = el('g', {});
-        const R = W/2;
-        const N = 200;
-        const outline = [];
-        for(let i=0;i<N;i++){
-          const th = (i/N)*Math.PI*2;
-          let r = 0.7 + 0.3*Math.pow(Math.abs(Math.cos(th*5)), 0.4);
-          const dA = Math.atan2(Math.sin(th), Math.cos(th));
-          const dB = Math.atan2(Math.sin(th-Math.PI), Math.cos(th-Math.PI));
-          r *= 1 - 0.8*(Math.exp(-dA*dA/0.006) + Math.exp(-dB*dB/0.006));
-          r += 0.03*Math.sin(th*44)*Math.pow(Math.abs(Math.cos(th*5)), 3);
-          outline.push([Math.cos(th)*R*1.08*r, Math.sin(th)*R*r]);
-        }
-        const toD = (pts, k)=> 'M ' + pts.map(p=>(p[0]*k).toFixed(2)+' '+(p[1]*k).toFixed(2)).join(' L ') + ' Z';
-        g.appendChild(el('path', Object.assign({ d: toD(outline,1), 'stroke-linejoin':'round' }, this._fillAttrs(s, 0.3))));
-        g.appendChild(el('path', { d: toD(outline,0.8), fill:'#7b9466', 'fill-opacity':0.2, stroke:'none' }));
-        g.appendChild(el('line', { x1:(-R*0.2).toFixed(2), y1:0, x2:(R*0.2).toFixed(2), y2:0, stroke:s.colorDark, 'stroke-width':0.35, opacity:0.45 }));
+        const R = W/2, sx = L/W;
+        const cuts = [[0.62,0.42,0.0016],[2.52,0.42,0.0016],[1.15,0.5,0.0016],[1.99,0.5,0.0016],
+                      [0.33,0.24,0.001],[0.89,0.24,0.001],[2.25,0.24,0.001],[2.81,0.24,0.001],
+                      [0.19,0.12,0.0005],[0.47,0.12,0.0005],[0.76,0.12,0.0005],[1.02,0.12,0.0005],
+                      [2.12,0.12,0.0005],[2.38,0.12,0.0005],[2.67,0.12,0.0005],[2.95,0.12,0.0005],[Math.PI/2,0.1,0.0008]];
+        const rAt = th => {
+          const phi = Math.abs(Math.atan2(Math.sin(th), Math.cos(th))); // 0 at the right sinus .. PI at the left
+          let r = 1;
+          cuts.forEach(([c, dep, w])=>{ r -= dep*Math.exp(-Math.pow(phi - c, 2)/w); });
+          r -= 0.86*(Math.exp(-phi*phi/0.0022) + Math.exp(-Math.pow(Math.PI - phi, 2)/0.0022)); // the sinuses
+          r += 0.035*Math.pow(Math.max(0, Math.cos(phi*64)), 8);                               // marginal teeth
+          return Math.max(0.06, r);
+        };
+        const N = 760, pts = [];
+        for(let i=0;i<N;i++){ const th = i/N*Math.PI*2, r = rAt(th)*R; pts.push([Math.cos(th)*r*sx, Math.sin(th)*r]); }
+        const d = 'M ' + pts.map(p=> p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join(' L ') + ' Z';
+        g.appendChild(el('path', { d, fill:'none', stroke:'#f6fbe9', 'stroke-width':1.8, 'stroke-opacity':0.55, 'stroke-linejoin':'round', 'data-keep':1 }));
+        g.appendChild(el('path', { d, fill:'#79a43a', 'fill-opacity':0.62, stroke:s.colorDark, 'stroke-width':0.55, 'stroke-opacity':0.7, 'stroke-linejoin':'round', 'data-keep':1 }));
+        g.appendChild(el('ellipse', { cx:(-R*0.1).toFixed(2), cy:(-R*0.12).toFixed(2), rx:(R*0.55*sx).toFixed(2), ry:(R*0.5).toFixed(2), fill:'#e6f3c4', opacity:0.14, 'data-keep':1 }));
+        // pale lines in from each main incision, and the line between the semicells
+        let ld = `M ${(-R*0.86*sx).toFixed(2)} 0 L ${(R*0.86*sx).toFixed(2)} 0 `;
+        cuts.slice(0, 8).forEach(([c, dep])=> [1, -1].forEach(sg=>{
+          const r = (1 - dep)*R*0.98;
+          ld += `M ${(Math.cos(c)*R*0.12*sx).toFixed(2)} ${(sg*Math.sin(c)*R*0.12).toFixed(2)} L ${(Math.cos(c)*r*sx).toFixed(2)} ${(sg*Math.sin(c)*r).toFixed(2)} `;
+        }));
+        g.appendChild(el('path', { d:ld, fill:'none', stroke:'#e2f0bf', 'stroke-width':0.6, 'stroke-opacity':0.5, 'data-keep':1 }));
+        let pd = '';
+        for(let i=0;i<70;i++){ const th = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*rAt(th)*R*0.88; pd += `M ${(Math.cos(th)*r*sx).toFixed(2)} ${(Math.sin(th)*r).toFixed(2)} l 0.01 0 `; }
+        g.appendChild(el('path', { d:pd, fill:'none', stroke:'#eef7d4', 'stroke-width':1.1, 'stroke-opacity':0.55, 'stroke-linecap':'round', 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.07).toFixed(2), fill:'#f4f9e8', 'fill-opacity':0.8, 'data-keep':1 }));
         return g;
       }
       case 'heliozoan-rays': {
+        // Acanthocystis (photo): a green ball — its cytoplasm is full of
+        // symbiotic algae — wrapped in a pale coat of scales, with a crown of
+        // stiff silica spines of different lengths (forked at the tip) and,
+        // between them, the very fine axopodia that pulse in render()
         const g = el('g', {});
-        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W*0.32 }, this._fillAttrs(s, 0.35))));
-        const nRays = 18;
+        const rb = W*0.29;
+        let sd = '';
+        for(let i=0;i<58;i++){
+          const a = (i + Math.random()*0.6)/58*Math.PI*2, r1 = W*(0.5 + Math.random()*0.22), c = Math.cos(a), sn = Math.sin(a);
+          sd += `M ${(c*rb*1.08).toFixed(2)} ${(sn*rb*1.08).toFixed(2)} L ${(c*r1).toFixed(2)} ${(sn*r1).toFixed(2)} `;
+          sd += `M ${(c*r1).toFixed(2)} ${(sn*r1).toFixed(2)} l ${(Math.cos(a + 0.5)*0.8).toFixed(2)} ${(Math.sin(a + 0.5)*0.8).toFixed(2)} M ${(c*r1).toFixed(2)} ${(sn*r1).toFixed(2)} l ${(Math.cos(a - 0.5)*0.8).toFixed(2)} ${(Math.sin(a - 0.5)*0.8).toFixed(2)} `;
+        }
+        g.appendChild(el('path', { d:sd, fill:'none', stroke:'#8c9384', 'stroke-width':0.3, 'stroke-opacity':0.6, 'stroke-linecap':'round', 'data-keep':1 }));
         const rayLines = [];
-        for(let i=0;i<nRays;i++){
-          const a = (i/nRays)*Math.PI*2;
-          const line = el('line', {
-            x1:Math.cos(a)*W*0.3, y1:Math.sin(a)*W*0.3, x2:Math.cos(a)*W*0.62, y2:Math.sin(a)*W*0.62,
-            stroke:s.colorDark, 'stroke-width':0.26, opacity:0.4
-          });
+        for(let i=0;i<18;i++){
+          const a = (i/18)*Math.PI*2;
+          const line = el('line', { x1:(Math.cos(a)*rb).toFixed(2), y1:(Math.sin(a)*rb).toFixed(2), x2:(Math.cos(a)*W*0.75).toFixed(2), y2:(Math.sin(a)*W*0.75).toFixed(2),
+            stroke:s.colorDark, 'stroke-width':0.16, 'stroke-opacity':0.35, 'data-keep':1 });
           g.appendChild(line);
           rayLines.push({ el: line, angle: a });
         }
-        this._heliozoanRays = { rayLines, W };
+        this._heliozoanRays = { rayLines, W, len: 0.75 };
+        g.appendChild(el('circle', { cx:0, cy:0, r:(rb*1.1).toFixed(2), fill:'#eef2e2', 'fill-opacity':0.35, stroke:'#9aa48e', 'stroke-width':0.5, 'stroke-opacity':0.45, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:rb.toFixed(2), fill:'#7fb046', 'fill-opacity':0.72, stroke:'#4b6a2c', 'stroke-width':0.4, 'stroke-opacity':0.6, 'data-keep':1 }));
+        this._packCircles(26, rb*0.95, rb*0.95, rb*0.07, rb*0.14).forEach(c=> g.appendChild(el('circle', { cx:c.x.toFixed(2), cy:c.y.toFixed(2), r:c.r.toFixed(2), fill:'#3f7a1c', opacity:0.42, 'data-keep':1 })));
+        for(let i=0;i<10;i++){ const [x, y] = this._inEllipse(rb*0.8, rb*0.8); g.appendChild(el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:(rb*0.06).toFixed(2), fill:'#d9efb2', opacity:0.6, 'data-keep':1 })); }
         return g;
       }
       case 'euglena-flagellate': {
+        // Euglena (photo): a spindle, rounded in front and drawn out into a
+        // pointed tail, packed with bright green chloroplasts; a clear nucleus
+        // in the middle, white paramylon grains, the orange-red eyespot near
+        // the front and faint spiral stripes of the pellicle
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.34)));
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.36)));
         g.appendChild(path);
-        const nverts = 16;
-        const baseOutline = this._softEllipsePath(L, W, nverts, a => [0.86+0.14*Math.cos(a-2.6), 0.9+0.1*Math.sin(a*2)]);
+        const nverts = 24;
+        const prof = c => c < 0 ? 1 - 0.92*Math.pow(-c, 1.6) : 1 - 0.3*c*c;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => [1, prof(Math.cos(a))]);
         this.softBlob = new SoftBlob(nverts, { amp: 0.06, speed: 1.3 });
-        this._softBasePts = baseOutline;
         this._softPathEl = path;
-        g.appendChild(el('circle', { cx:L*0.3, cy:-W*0.12, r:1.4, fill:'#9a5a4c', opacity:0.5 })); // eyespot (stigma)
-
+        const hwAt = x => { const c = Math.max(-1, Math.min(1, x/(L/2))); return (W/2)*prof(c)*Math.sqrt(Math.max(0, 1 - c*c)); };
+        for(let i=0;i<30;i++){
+          const x = (Math.random()*1.5 - 0.85)*L/2, hw = hwAt(x)*0.8;
+          if(hw < 0.6) continue;
+          const y = (Math.random()*2 - 1)*hw, rot = (Math.random() - 0.5)*70;
+          g.appendChild(el('ellipse', { cx:x.toFixed(2), cy:y.toFixed(2), rx:(W*0.16).toFixed(2), ry:(W*0.08).toFixed(2), fill:'#5ea42a', opacity:0.62, transform:`rotate(${rot.toFixed(0)} ${x.toFixed(2)} ${y.toFixed(2)})`, 'data-keep':1 }));
+        }
+        let pd = '';
+        for(let k=0;k<7;k++){ const x0 = -L*0.42 + k*L*0.13; pd += `M ${x0.toFixed(2)} ${(-hwAt(x0)*0.95).toFixed(2)} l ${(L*0.08).toFixed(2)} ${(hwAt(x0)*1.9).toFixed(2)} `; }
+        g.appendChild(el('path', { d:pd, fill:'none', stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.18, 'data-keep':1 }));
+        g.appendChild(el('ellipse', { cx:(-L*0.04).toFixed(2), cy:0, rx:(W*0.24).toFixed(2), ry:(W*0.2).toFixed(2), fill:'#f2f8e2', 'fill-opacity':0.55, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.4, 'data-keep':1 }));
+        for(let i=0;i<3;i++) g.appendChild(el('ellipse', { cx:(L*(0.08 - i*0.14)).toFixed(2), cy:((Math.random() - 0.5)*W*0.3).toFixed(2), rx:(W*0.13).toFixed(2), ry:(W*0.07).toFixed(2), fill:'#fbfdf4', opacity:0.75, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:(L*0.3).toFixed(2), cy:(-W*0.12).toFixed(2), r:(W*0.13).toFixed(2), fill:'#dd5a1f', opacity:0.88, 'data-keep':1 })); // eyespot
+        g.appendChild(el('ellipse', { cx:(L*0.4).toFixed(2), cy:0, rx:(W*0.12).toFixed(2), ry:(W*0.09).toFixed(2), fill:'#f6faee', opacity:0.6, 'data-keep':1 })); // reservoir
         const chain = new TailChain(5, L*0.11, { stiffness: 0.42, damping: 0.72 });
         const tailEl = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.7, 'stroke-opacity':0.6, 'stroke-linecap':'round' });
         g.appendChild(tailEl);
-        this.tails.push({
-          chain, el: tailEl, localAttach: { x: L/2, y: 0 }, restAngle: 0,
-          flutterPhase: Math.random()*Math.PI*2, flutterAmount: 1.8
-        });
+        this.tails.push({ chain, el: tailEl, localAttach: { x: L/2, y: 0 }, restAngle: 0, flutterPhase: Math.random()*Math.PI*2, flutterAmount: 1.8 });
         return g;
       }
       case 'medusa-bell': {
-        // outer g carries the organism's heading; the inner g is turned 90°
-        // so the bell dome faces the direction of travel and the tentacles
-        // trail behind — the way a jellyfish actually swims (bell-first).
+        // Craspedacusta (photo): a clear, whitish bell with four milky
+        // gonads hanging inside, the manubrium in the middle, the thin velum
+        // at the rim and a fringe of many fine tentacles. Outer g carries the
+        // heading; the inner g is turned 90° so the dome leads and the
+        // tentacles trail (render sways them)
         const g = el('g', {});
         const inner = el('g', { transform:'rotate(90)' });
         g.appendChild(inner);
-        const bell = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.28)));
-        inner.appendChild(bell);
-        const nverts = 14;
-        this.softBlob = new SoftBlob(nverts, { amp: 0.07, speed: 1.6 }); // bell pulsing
-        this._softBasePts = this._softEllipsePath(W, L*0.7, nverts, a => a > 0 ? [1, 0.5] : [1,1]);
-        this._softPathEl = bell;
-        // radial canals and the manubrium (mouth stalk) seen through the clear bell
-        for(let i=0;i<4;i++){
-          const a = -Math.PI*0.85 + i*(Math.PI*0.7/3);
-          inner.appendChild(el('line', { x1:0, y1:0, x2:(Math.cos(a)*W*0.42).toFixed(1), y2:(Math.sin(a)*L*0.3).toFixed(1), stroke:s.colorDark, 'stroke-width':0.35, opacity:0.4 }));
-        }
-        inner.appendChild(el('ellipse', { cx:0, cy:L*0.02, rx:W*0.08, ry:L*0.12, fill:s.colorDark, opacity:0.3 }));
-        const nTent = 9;
+        const tent = el('g', {});
+        inner.appendChild(tent);
+        const nTent = 26;
+        let td = '';
         for(let i=0;i<nTent;i++){
-          const tx = (i/(nTent-1) - 0.5) * W*0.8;
-          inner.appendChild(el('path', {
-            d:`M ${tx.toFixed(1)} ${(L*0.1).toFixed(1)} q ${((Math.random()-0.5)*4).toFixed(1)} ${(L*0.2).toFixed(1)} ${((Math.random()-0.5)*3).toFixed(1)} ${(L*0.38+Math.random()*5).toFixed(1)}`,
-            fill:'none', stroke:s.colorDark, 'stroke-width':0.4, opacity:0.42
-          }));
+          const tx = (i/(nTent - 1) - 0.5)*W*0.9, len = L*(0.3 + Math.random()*0.5), w1 = (Math.random() - 0.5)*W*0.22, w2 = (Math.random() - 0.5)*W*0.22;
+          td += `M ${tx.toFixed(2)} ${(L*0.12).toFixed(2)} c ${w1.toFixed(2)} ${(len*0.3).toFixed(2)} ${(-w2).toFixed(2)} ${(len*0.6).toFixed(2)} ${((w1 - w2)*0.3).toFixed(2)} ${len.toFixed(2)} `;
         }
+        tent.appendChild(el('path', { d:td, fill:'none', stroke:'#8c88aa', 'stroke-width':0.26, 'stroke-opacity':0.45, 'stroke-linecap':'round', 'data-keep':1 }));
+        this._medusaTent = tent;
+        const bell = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.3)));
+        inner.appendChild(bell);
+        const nverts = 16;
+        this.softBlob = new SoftBlob(nverts, { amp: 0.07, speed: 1.6 }); // bell pulsing
+        this._softBasePts = this._softEllipsePath(W, L*0.7, nverts, a => a > 0 ? [1, 0.45] : [1, 1]);
+        this._softPathEl = bell;
+        inner.appendChild(el('ellipse', { cx:0, cy:(L*0.14).toFixed(2), rx:(W*0.48).toFixed(2), ry:(L*0.035).toFixed(2), fill:'none', stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.45, 'data-keep':1 })); // velum
+        for(let i=0;i<4;i++){
+          const a = -Math.PI*0.82 + i*(Math.PI*0.64/3);
+          inner.appendChild(el('line', { x1:0, y1:0, x2:(Math.cos(a)*W*0.44).toFixed(1), y2:(Math.sin(a)*L*0.3).toFixed(1), stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.35, 'data-keep':1 }));
+        }
+        [-0.3, -0.1, 0.1, 0.3].forEach(k=> inner.appendChild(el('rect', { x:(k*W - W*0.08).toFixed(2), y:(-L*0.09).toFixed(2), width:(W*0.16).toFixed(2), height:(L*0.15).toFixed(2), rx:(W*0.08).toFixed(2),
+          fill:'#fbfaff', 'fill-opacity':0.82, stroke:'#a9a6c4', 'stroke-width':0.35, 'stroke-opacity':0.6, 'data-keep':1 })));
+        inner.appendChild(el('ellipse', { cx:0, cy:(L*0.02).toFixed(2), rx:(W*0.07).toFixed(2), ry:(L*0.13).toFixed(2), fill:'#d9d6ea', opacity:0.55, 'data-keep':1 }));
         return g;
       }
       case 'rotifer-crown': {
+        // Bdelloid rotifer (photo): a glassy, bluish body — the wheel organ
+        // (two ciliated discs) in front (+x), a neck, a plump trunk holding
+        // the big red-brown stomach and the jaws (mastax), then a telescoping,
+        // ringed foot ending in two toes
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.3)));
-        g.appendChild(path);
-        const nverts = 16;
-        this._softBasePts = this._softEllipsePath(L*0.62, W, nverts, a => [0.9+0.1*Math.cos(a), 1]);
-        this.softBlob = new SoftBlob(nverts, { amp: 0.05, speed: 1.2 });
-        this._softPathEl = path;
-        const crownCx = -L*0.3;
-        const cilia = el('g', { class:'cilia', opacity:0.4 });
-        const nC = 14;
-        for(let i=0;i<nC;i++){
-          const a = (i/nC - 0.5) * Math.PI*1.3;
-          cilia.appendChild(el('line', {
-            x1: crownCx+Math.cos(a)*W*0.4, y1: Math.sin(a)*W*0.4,
-            x2: crownCx+Math.cos(a)*W*0.6, y2: Math.sin(a)*W*0.6,
-            stroke: s.colorDark, 'stroke-width':0.4
-          }));
-        }
+        const prof = u => u < 0.3 ? 0.16 + 0.3*u/0.3
+                        : u < 0.8 ? 0.46 + 0.54*Math.pow(Math.sin(Math.PI*(u - 0.3)/0.5), 0.8)
+                        : u < 0.88 ? 0.5 : 0.66;
+        const N = 40, top = [], bot = [];
+        for(let i=0;i<=N;i++){ const u = i/N, x = -L/2 + u*L, h = (W/2)*prof(u); top.push([x, -h]); bot.push([x, h]); }
+        const d = this._smoothClosedD(top.concat(bot.reverse()));
+        g.appendChild(el('path', Object.assign({ d }, this._fillAttrs(s, 0.3))));
+        // telescoping foot rings and the two toes
+        [0.08, 0.15, 0.22].forEach(u=>{ const x = -L/2 + u*L, h = (W/2)*prof(u)*0.95; g.appendChild(el('line', { x1:x.toFixed(2), y1:(-h).toFixed(2), x2:x.toFixed(2), y2:h.toFixed(2), stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.4, 'data-keep':1 })); });
+        [-1, 1].forEach(sg=> g.appendChild(el('path', { d:`M ${(-L*0.49).toFixed(2)} ${(sg*W*0.04).toFixed(2)} l ${(-L*0.06).toFixed(2)} ${(sg*W*0.07).toFixed(2)}`, fill:'none', stroke:s.colorDark, 'stroke-width':0.45, 'stroke-opacity':0.55, 'stroke-linecap':'round', 'data-keep':1 })));
+        // the red-brown stomach with its granules
+        const sx = -L/2 + 0.55*L;
+        g.appendChild(el('ellipse', { cx:sx.toFixed(2), cy:0, rx:(L*0.19).toFixed(2), ry:(W*0.3).toFixed(2), fill:'#a3401f', opacity:0.7, 'data-keep':1 }));
+        for(let i=0;i<12;i++){ const [x, y] = this._inEllipse(L*0.15, W*0.24); g.appendChild(el('circle', { cx:(sx + x).toFixed(2), cy:y.toFixed(2), r:(0.4 + Math.random()*0.5).toFixed(2), fill:'#6c2410', opacity:0.45, 'data-keep':1 })); }
+        g.appendChild(el('ellipse', { cx:(sx - L*0.04).toFixed(2), cy:(-W*0.08).toFixed(2), rx:(L*0.08).toFixed(2), ry:(W*0.08).toFixed(2), fill:'#d77a52', opacity:0.35, 'data-keep':1 }));
+        // mastax (jaws)
+        const mx = -L/2 + 0.8*L;
+        g.appendChild(el('path', { d:`M ${(mx - W*0.12).toFixed(2)} 0 q ${(W*0.12).toFixed(2)} ${(-W*0.16).toFixed(2)} ${(W*0.24).toFixed(2)} 0 q ${(-W*0.12).toFixed(2)} ${(W*0.16).toFixed(2)} ${(-W*0.24).toFixed(2)} 0 Z`, fill:'#5a3a2a', opacity:0.5, 'data-keep':1 }));
+        // the wheel organ: two ciliated discs whose cilia beat (render)
+        const cilia = el('g', { class:'cilia', opacity:0.5 });
+        [-1, 1].forEach(sg=>{
+          const cx = L*0.46, cyy = sg*W*0.2, r = W*0.18;
+          g.appendChild(el('circle', { cx:cx.toFixed(2), cy:cyy.toFixed(2), r:r.toFixed(2), fill:s.color, 'fill-opacity':0.4, stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.5, 'data-keep':1 }));
+          for(let i=0;i<12;i++){
+            const a = -Math.PI*0.75 + i/11*Math.PI*1.5 + (sg > 0 ? 0.3 : -0.3);
+            cilia.appendChild(el('line', { x1:(cx + Math.cos(a)*r).toFixed(2), y1:(cyy + Math.sin(a)*r).toFixed(2), x2:(cx + Math.cos(a)*r*1.55).toFixed(2), y2:(cyy + Math.sin(a)*r*1.55).toFixed(2), stroke:s.colorDark, 'stroke-width':0.3 }));
+          }
+        });
         g.appendChild(cilia);
         this.ciliaEl = cilia;
-        // posterior "foot"
-        // tapering, faintly ringed foot ending in two small toes
-        g.appendChild(el('path', { d:`M ${(L*0.24).toFixed(2)} ${(-W*0.2).toFixed(2)} Q ${(L*0.38).toFixed(2)} ${(-W*0.12).toFixed(2)} ${(L*0.48).toFixed(2)} ${(-W*0.06).toFixed(2)} L ${(L*0.48).toFixed(2)} ${(W*0.06).toFixed(2)} Q ${(L*0.38).toFixed(2)} ${(W*0.12).toFixed(2)} ${(L*0.24).toFixed(2)} ${(W*0.2).toFixed(2)} Z`,
-          fill:s.color, 'fill-opacity':0.35, stroke:s.colorDark, 'stroke-opacity':0.45, 'stroke-width':0.4 }));
-        [0.3, 0.36, 0.42].forEach(t=> g.appendChild(el('line', { x1:(L*t).toFixed(2), y1:(-W*0.15+ (t-0.24)*W*0.5).toFixed(2), x2:(L*t).toFixed(2), y2:(W*0.15-(t-0.24)*W*0.5).toFixed(2), stroke:s.colorDark, 'stroke-width':0.2, opacity:0.35 })));
-        [-1,1].forEach(sg=> g.appendChild(el('path', { d:`M ${(L*0.48).toFixed(2)} ${(sg*W*0.04).toFixed(2)} l ${(L*0.05).toFixed(2)} ${(sg*W*0.05).toFixed(2)}`, fill:'none', stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.5, 'stroke-linecap':'round' })));
         return g;
       }
       case 'vorticella-stalked': {
+        // Vorticella chlorostigma (photo): an upside-down bell — the wide
+        // peristome lip with its crown of cilia at the free end (-x), tapering
+        // to where the stalk attaches (+x) — packed with bright green
+        // zoochlorellae and finely striated; the long stalk has the darker
+        // spasmoneme coiled inside it (render)
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.3)));
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.32)));
         g.appendChild(path);
-        const nverts = 16;
-        this._softBasePts = this._softEllipsePath(L*0.8, W, nverts, a => [1, a<0 ? 0.8 : 1]); // bell-ish, narrower top
-        this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.0 });
+        const nverts = 20;
+        const prof = c => c < 0 ? 1 : 1 - 0.78*Math.pow(c, 1.2);
+        this._softBasePts = this._softEllipsePath(L*0.92, W, nverts, a => [1, prof(Math.cos(a))]);
+        this.softBlob = new SoftBlob(nverts, { amp: 0.035, speed: 0.9 });
         this._softPathEl = path;
-        const cilia = this._radialCilia(L*0.75, W, 20, 0.3, 0.8);
+        const hwAt = x => { const c = Math.max(-1, Math.min(1, x/(L*0.46))); return (W/2)*prof(c)*Math.sqrt(Math.max(0, 1 - c*c)); };
+        for(let k=-2;k<=2;k++) g.appendChild(el('path', { d:`M ${(-L*0.38).toFixed(2)} ${(k*W*0.17).toFixed(2)} Q ${(L*0.05).toFixed(2)} ${(k*W*0.15).toFixed(2)} ${(L*0.36).toFixed(2)} ${(k*W*0.03).toFixed(2)}`,
+          fill:'none', stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.25, 'data-keep':1 }));
+        this._packCircles(32, L*0.42, W*0.44, W*0.045, W*0.075, (x, y)=> Math.abs(y) < hwAt(x)*0.82 && x < L*0.32).forEach(c=>{
+          g.appendChild(el('circle', { cx:c.x.toFixed(2), cy:c.y.toFixed(2), r:c.r.toFixed(2), fill:'#a7c93a', 'fill-opacity':0.8, stroke:'#5f8a1f', 'stroke-width':0.25, 'stroke-opacity':0.55, 'data-keep':1 }));
+        });
+        g.appendChild(el('ellipse', { cx:(-L*0.44).toFixed(2), cy:0, rx:(L*0.05).toFixed(2), ry:(W*0.52).toFixed(2), fill:s.color, 'fill-opacity':0.35, stroke:s.colorDark, 'stroke-width':0.45, 'stroke-opacity':0.55, 'data-keep':1 })); // peristome lip
+        const cv = el('circle', { cx:(-L*0.3).toFixed(2), cy:(W*0.18).toFixed(2), r:(W*0.08).toFixed(2), fill:'#f6f8f0', opacity:0.65, stroke:s.colorDark, 'stroke-width':0.25, 'stroke-opacity':0.45, 'data-keep':1 });
+        g.appendChild(cv);
+        this._contractileVacs = [{ el: cv, baseR: W*0.08, phase: Math.random()*Math.PI*2 }];
+        const cilia = el('g', { class:'cilia', opacity:0.38 });
+        for(let i=0;i<22;i++){
+          const a = Math.PI + (i/21 - 0.5)*2.2, px = -L*0.44 + Math.cos(a)*L*0.05, py = Math.sin(a)*W*0.52;
+          cilia.appendChild(el('line', { x1:px.toFixed(2), y1:py.toFixed(2), x2:(px + Math.cos(a)*W*0.15).toFixed(2), y2:(py + Math.sin(a)*W*0.15).toFixed(2), stroke:s.colorDark, 'stroke-width':0.22 }));
+        }
         g.appendChild(cilia);
         this.ciliaEl = cilia;
-        // contractile stalk — drawn as a simple spiral line trailing from the body
-        const stalk = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.5, 'stroke-opacity':0.5, 'stroke-linejoin':'round', 'stroke-linecap':'round' });
-        g.appendChild(stalk);
-        this._vorticellaStalk = { el: stalk, L, W };
+        const stalk = el('path', { d:'', fill:'none', stroke:s.colorDark, 'stroke-width':0.9, 'stroke-opacity':0.35, 'stroke-linejoin':'round', 'stroke-linecap':'round', 'data-keep':1 });
+        const spasm = el('path', { d:'', fill:'none', stroke:'#3f4636', 'stroke-width':0.35, 'stroke-opacity':0.6, 'stroke-linejoin':'round', 'stroke-linecap':'round', 'data-keep':1 });
+        g.appendChild(stalk); g.appendChild(spasm);
+        this._vorticellaStalk = { el: stalk, inner: spasm, L, W, x0: L*0.42 };
         return g;
       }
       case 'testate-amoeba': {
+        // Arcella conica (photo): a golden-brown shell (theca) seen from
+        // above, faceted like a cut stone — eight rounded angles with ridges
+        // running in to a central dome — covered in a fine honeycomb, with the
+        // round aperture in the middle; the amoeba's blunt pseudopods push
+        // out from under the shell's front edge and draw back (render)
         const g = el('g', {});
-        g.appendChild(el('circle', Object.assign({ cx:0, cy:0, r:W/2 }, this._fillAttrs(s, 0.3))));
-        g.appendChild(el('circle', { cx:0, cy:W*0.1, r:W*0.14, fill:'none', stroke:s.colorDark, 'stroke-width':0.5, opacity:0.5 })); // aperture
-        const nPseudo = 5;
-        const pseudoLines = [];
-        for(let i=0;i<nPseudo;i++){
-          const line = el('line', { x1:0,y1:W*0.2, x2:0,y2:W*0.2, stroke:s.colorDark, 'stroke-width':0.5, opacity:0.4 });
-          g.appendChild(line);
-          pseudoLines.push(line);
+        const R = W/2, N = 8;
+        const pods = [];
+        for(let i=0;i<3;i++){
+          const a = (i - 1)*0.55 + (Math.random() - 0.5)*0.2;
+          const outer = el('line', { stroke:s.colorDark, 'stroke-width':(R*0.23).toFixed(2), 'stroke-opacity':0.18, 'stroke-linecap':'round', 'data-keep':1 });
+          const innerL = el('line', { stroke:'#e8e5d8', 'stroke-width':(R*0.18).toFixed(2), 'stroke-opacity':0.5, 'stroke-linecap':'round', 'data-keep':1 });
+          g.appendChild(outer); g.appendChild(innerL);
+          pods.push({ outer, inner: innerL, a, ph: Math.random()*Math.PI*2 });
         }
-        this._pseudopods = { lines: pseudoLines, W };
+        this._pseudopods = { pods, R };
+        const polyR = th => { const seg = 2*Math.PI/N, k = ((th % seg) + seg) % seg - seg/2; return R*Math.cos(Math.PI/N)/Math.cos(k*0.82); };
+        const pts = [];
+        for(let i=0;i<96;i++){ const th = i/96*Math.PI*2, r = polyR(th); pts.push([Math.cos(th)*r, Math.sin(th)*r]); }
+        const d = this._smoothClosedD(pts);
+        g.appendChild(el('path', { d, fill:'#c49453', 'fill-opacity':0.62, stroke:'#6b471c', 'stroke-width':0.9, 'stroke-opacity':0.75, 'data-keep':1 }));
+        g.appendChild(el('path', { d, fill:'url(#pat-honey)', opacity:0.32, 'data-keep':1 }));
+        const inner = pts.map(([x, y])=> [x*0.56, y*0.56]);
+        g.appendChild(el('path', { d:this._smoothClosedD(inner), fill:'#e2c48c', 'fill-opacity':0.35, stroke:'#7a5426', 'stroke-width':0.5, 'stroke-opacity':0.5, 'data-keep':1 }));
+        let rd = '';
+        for(let i=0;i<N;i++){ const th = i*2*Math.PI/N, r = polyR(th)*0.96; rd += `M ${(Math.cos(th)*r).toFixed(2)} ${(Math.sin(th)*r).toFixed(2)} L ${(Math.cos(th)*r*0.58).toFixed(2)} ${(Math.sin(th)*r*0.58).toFixed(2)} `; }
+        g.appendChild(el('path', { d:rd, fill:'none', stroke:'#7a5426', 'stroke-width':0.6, 'stroke-opacity':0.55, 'data-keep':1 }));
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.2).toFixed(2), fill:'#f1e6cc', 'fill-opacity':0.55, stroke:'#5a3a14', 'stroke-width':0.7, 'stroke-opacity':0.7, 'data-keep':1 })); // aperture
+        g.appendChild(el('circle', { cx:0, cy:0, r:(R*0.14).toFixed(2), fill:'none', stroke:'#5a3a14', 'stroke-width':0.35, 'stroke-opacity':0.4, 'data-keep':1 }));
+        for(let i=0;i<3;i++){ const a = Math.random()*Math.PI*2, r = R*(0.25 + Math.random()*0.15); g.appendChild(el('circle', { cx:(Math.cos(a)*r).toFixed(2), cy:(Math.sin(a)*r).toFixed(2), r:(R*0.08).toFixed(2), fill:'#9cb84a', opacity:0.7, stroke:'#5f7a22', 'stroke-width':0.25, 'stroke-opacity':0.5, 'data-keep':1 })); }
         return g;
       }
       case 'tardigrade': {
@@ -2226,9 +2512,9 @@ class Organism {
             fill:'none', stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.22 }));
         });
         // gut with greenish-brown food contents
-        g.appendChild(el('ellipse', { cx:(-L*0.06).toFixed(2), cy:0, rx:(L*0.27).toFixed(2), ry:(W*0.19).toFixed(2), fill:'#8f8d63', opacity:0.28 }));
+        g.appendChild(el('ellipse', { cx:(-L*0.06).toFixed(2), cy:0, rx:(L*0.27).toFixed(2), ry:(W*0.19).toFixed(2), fill:'#7f7438', opacity:0.32 }));
         for(let i=0;i<9;i++){
-          g.appendChild(el('circle', { cx:(-L*0.06 + (Math.random()-0.5)*L*0.46).toFixed(2), cy:((Math.random()-0.5)*W*0.28).toFixed(2), r:(0.5+Math.random()*0.7).toFixed(2), fill:'#6f7a4c', opacity:0.32 }));
+          g.appendChild(el('circle', { cx:(-L*0.06 + (Math.random()-0.5)*L*0.46).toFixed(2), cy:((Math.random()-0.5)*W*0.28).toFixed(2), r:(0.5+Math.random()*0.7).toFixed(2), fill:'#5f6a2c', opacity:0.38 }));
         }
         // free-floating storage cells in the body cavity
         for(let i=0;i<14;i++){
@@ -2245,79 +2531,84 @@ class Organism {
       }
       case 'paramecium':
       case 'slipper-cilia': {
+        // Paramecium (photo): a long slipper — blunt in front, a little
+        // narrower at the back — with the oral groove as a shallow dent on one
+        // side. The cytoplasm is crowded with granules and small food
+        // vacuoles, two star-shaped contractile vacuoles sit near the ends,
+        // the big macronucleus is a faint grey oval and the bright pellicle is
+        // fringed with fine cilia
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' },
-          { fill: s.color, 'fill-opacity':0.32, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 }
-        ));
+        const path = el('path', { d:'', fill: s.color, 'fill-opacity':0.36, stroke: s.colorDark, 'stroke-opacity':0.55, 'stroke-width':0.7 });
         g.appendChild(path);
-        // slipper-shaped base outline, sampled as vertices for soft wobble
-        const baseOutline = [];
-        const nverts = 18;
-        for(let i=0;i<nverts;i++){
-          const a = (i/nverts)*Math.PI*2;
-          // slipper shape: squashed ellipse with a notch feel via slight asymmetry
-          const rx = L/2 * (0.86 + 0.14*Math.cos(a - 0.5));
-          const ry = W/2 * (0.86 + 0.14*Math.sin(a*2));
-          baseOutline.push([Math.cos(a)*rx, Math.sin(a)*ry]);
-        }
-        this.softBlob = new SoftBlob(nverts, { amp: 0.045, speed: 1.1 });
-        this._softBasePts = baseOutline;
+        const nverts = 26;
+        this._softBasePts = this._softEllipsePath(L, W, nverts, a => {
+          const c = Math.cos(a), sn = Math.sin(a);
+          const groove = sn > 0 ? 1 - 0.15*Math.exp(-Math.pow(c - 0.1, 2)/0.06) : 1;
+          return [1, (c > 0 ? 1 - 0.08*c*c : 1 - 0.16*c*c)*groove];
+        });
+        this.softBlob = new SoftBlob(nverts, { amp: 0.04, speed: 1.0 });
         this._softPathEl = path;
-
-        g.appendChild(el('path', {
-          d:`M ${-L*0.05} ${-W*0.08} Q ${L*0.12} 0 ${-L*0.05} ${W*0.2}`,
-          stroke: s.colorDark, 'stroke-width':0.9, fill:'none', opacity:0.4
-        }));
-        g.appendChild(el('ellipse', { cx:0, cy:2, rx: W*0.16, ry: W*0.12, fill: s.colorDark, opacity:0.32 }));
-        const cilia = el('g', { class:'cilia', opacity:0.35 });
-        const n = 26;
-        for(let i=0;i<n;i++){
-          const t = (i/n)*Math.PI*2;
-          const rx = L*0.5, ry = W*0.5;
-          const px = Math.cos(t)*rx, py = Math.sin(t)*ry;
-          const nx = Math.cos(t), ny = Math.sin(t);
-          cilia.appendChild(el('line', {
-            x1:px, y1:py, x2: px+nx*2.3, y2: py+ny*2.3,
-            stroke: s.colorDark, 'stroke-width':0.22
-          }));
-        }
+        let gd = '';
+        for(let i=0;i<70;i++){ const [x, y] = this._inEllipse(L*0.43, W*0.36); gd += `M ${x.toFixed(2)} ${y.toFixed(2)} l 0.01 0 `; }
+        g.appendChild(el('path', { d:gd, fill:'none', stroke:'#776a52', 'stroke-width':0.55, 'stroke-opacity':0.42, 'stroke-linecap':'round', 'data-keep':1 }));
+        g.appendChild(el('ellipse', { cx:(L*0.02).toFixed(2), cy:(-W*0.05).toFixed(2), rx:(L*0.14).toFixed(2), ry:(W*0.2).toFixed(2), fill:'#8a7f66', opacity:0.2, 'data-keep':1 })); // macronucleus
+        this._packCircles(11, L*0.4, W*0.33, W*0.05, W*0.09, (x)=> Math.abs(x) < L*0.36).forEach(c=>{
+          g.appendChild(el('circle', { cx:c.x.toFixed(2), cy:c.y.toFixed(2), r:c.r.toFixed(2), fill:'#b39a72', 'fill-opacity':0.35, stroke:'#6b5b40', 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 }));
+        });
+        g.appendChild(el('path', { d:`M ${(L*0.3).toFixed(2)} ${(W*0.36).toFixed(2)} Q ${(L*0.08).toFixed(2)} ${(W*0.16).toFixed(2)} ${(-L*0.04).toFixed(2)} ${(W*0.08).toFixed(2)}`,
+          fill:'none', stroke:s.colorDark, 'stroke-width':0.55, 'stroke-opacity':0.5, 'data-keep':1 })); // oral groove
+        // two contractile vacuoles, each with its ring of radiating canals
+        this._contractileVacs = [];
+        [L*0.3, -L*0.3].forEach(x=>{
+          const y = -W*0.12;
+          const canals = el('g', {});
+          let cd = '';
+          for(let k=0;k<7;k++){ const a = k/7*Math.PI*2; cd += `M ${(Math.cos(a)*W*0.09).toFixed(2)} ${(Math.sin(a)*W*0.09).toFixed(2)} L ${(Math.cos(a)*W*0.22).toFixed(2)} ${(Math.sin(a)*W*0.22).toFixed(2)} `; }
+          canals.appendChild(el('path', { d:cd, fill:'none', stroke:s.colorDark, 'stroke-width':0.35, 'stroke-opacity':0.45, 'stroke-linecap':'round', 'data-keep':1 }));
+          g.appendChild(canals);
+          const cv = el('circle', { cx:x.toFixed(2), cy:y.toFixed(2), r:(W*0.09).toFixed(2), fill:'#f7f3ea', opacity:0.7, stroke:s.colorDark, 'stroke-width':0.3, 'stroke-opacity':0.5, 'data-keep':1 });
+          g.appendChild(cv);
+          this._contractileVacs.push({ el: cv, baseR: W*0.09, phase: Math.random()*Math.PI*2, canals, x, y });
+        });
+        const cilia = this._radialCilia(L, W, 46, 0.36, 0.75);
         g.appendChild(cilia);
         this.ciliaEl = cilia;
         return g;
       }
       case 'volvox': {
+        // Volvox (photo): a big, clear hollow ball whose surface is set with
+        // hundreds of tiny green cells, with dark green daughter colonies
+        // growing inside. render() turns the ball slowly and projects it, so
+        // the cells on the far side shrink and fade while the near ones grow.
         const g = el('g', {});
-        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.2)));
+        const path = el('path', Object.assign({ d:'' }, this._fillAttrs(s, 0.22)));
         g.appendChild(path);
-        const basePts = [];
-        const nverts = 20;
-        for(let i=0;i<nverts;i++){
-          const a = (i/nverts)*Math.PI*2;
-          basePts.push([Math.cos(a)*W/2, Math.sin(a)*W/2]);
-        }
-        this.softBlob = new SoftBlob(nverts, { amp: 0.04, speed: 0.6 });
+        const nverts = 24, basePts = [];
+        for(let i=0;i<nverts;i++){ const a = (i/nverts)*Math.PI*2; basePts.push([Math.cos(a)*W/2, Math.sin(a)*W/2]); }
+        this.softBlob = new SoftBlob(nverts, { amp: 0.012, speed: 0.4 });
         this._softBasePts = basePts;
         this._softPathEl = path;
-
-        // a hollow ball of cells: points spread evenly over a sphere
-        // (Fibonacci lattice) plus a few daughter colonies inside; render()
-        // spins the sphere and projects it, so cells on the far side shrink
-        // and fade while the near ones grow — it reads as a 3-D rolling ball
+        const daughters = [];
+        const nD = 5 + Math.floor(Math.random()*3);
+        for(let i=0;i<nD;i++){
+          const a = Math.random()*Math.PI*2, b = Math.acos(2*Math.random() - 1), size = W*(0.09 + Math.random()*0.04);
+          const dgEl = el('g', {});
+          dgEl.appendChild(el('circle', { cx:0, cy:0, r:size.toFixed(2), fill:'url(#grad-daughter)', stroke:'#2c5a12', 'stroke-width':0.5, 'stroke-opacity':0.6, 'data-keep':1 }));
+          let dd = '';
+          for(let k=0;k<14;k++){ const [x, y] = this._inEllipse(size*0.82, size*0.82); dd += `M ${x.toFixed(2)} ${y.toFixed(2)} l 0.01 0 `; }
+          dgEl.appendChild(el('path', { d:dd, fill:'none', stroke:'#b9e37e', 'stroke-width':(size*0.16).toFixed(2), 'stroke-opacity':0.6, 'stroke-linecap':'round', 'data-keep':1 }));
+          g.appendChild(dgEl);
+          daughters.push({ el:dgEl, p:[Math.sin(b)*Math.cos(a), Math.cos(b), Math.sin(b)*Math.sin(a)], R:W*0.3 });
+        }
         const cells = [];
-        const n = 64;
+        const n = 220;
         for(let i=0;i<n;i++){
-          const y = 1 - 2*(i+0.5)/n, r = Math.sqrt(1 - y*y), a = i*2.39996;
-          const c = el('circle', { cx:0, cy:0, r:1.2, fill:s.colorDark, opacity:0.4 });
+          const y = 1 - 2*(i + 0.5)/n, r = Math.sqrt(1 - y*y), a = i*2.39996;
+          const c = el('circle', { cx:0, cy:0, r:0.9, fill:'#78b33a', opacity:0.6, 'data-keep':1 });
           g.appendChild(c);
-          cells.push({ el:c, p:[Math.cos(a)*r, y, Math.sin(a)*r], R:W*0.46, size:1.25 });
+          cells.push({ el:c, p:[Math.cos(a)*r, y, Math.sin(a)*r], R:W*0.47, size:0.95 });
         }
-        for(let i=0;i<3;i++){
-          const a = Math.random()*Math.PI*2, b = Math.acos(2*Math.random()-1);
-          const c = el('circle', { cx:0, cy:0, r:W*0.1, fill:s.color, 'fill-opacity':0.5, stroke:'#5f7650', 'stroke-width':0.5, 'stroke-opacity':0.5, opacity:0.5 });
-          g.appendChild(c);
-          cells.push({ el:c, p:[Math.sin(b)*Math.cos(a), Math.cos(b), Math.sin(b)*Math.sin(a)], R:W*0.2, size:W*0.1, daughter:true });
-        }
-        this._volvox3d = { cells, tilt: 0.35 + Math.random()*0.5 };
+        this._volvox3d = { cells, daughters, tilt: 0.35 + Math.random()*0.5 };
         return g;
       }
       default: {
@@ -2378,7 +2669,7 @@ class Organism {
     // organisms with no real escape locomotion (anchored Vorticella, inert
     // diatoms/desmids drifting passively) can't "dart away" — a startled
     // Vorticella only contracts its stalk, which render() shows via fleeing.
-    const canDart = !(mot === 'stalked' || mot === 'brownian');
+    const canDart = !(mot === 'stalked' || mot === 'brownian' || this.species.scan);
 
     if(this.fleeing){
       this.fleeTimer -= dt;
@@ -2489,9 +2780,11 @@ class Organism {
     // actual swimming speed, so a cell visibly "works" while it travels.
     const speedFactor = this.baseSpeed > 0 ? Math.abs(this.speed)/this.baseSpeed : 0;
     this._speedFactor = speedFactor * moveMul;
-    this.phase += dt * (mot === 'cilia' ? 6 : 4) * (0.6 + 0.6*this._speedFactor);
-    this._beatPhase = (this._beatPhase||0) + dt * (9 + 9*this._speedFactor);
-    this._rollPhase = (this._rollPhase||0) + dt * (1.1 + 1.6*this._speedFactor);
+    // the big algae barely move: all their animation runs at a quarter speed
+    const calm = this.species.scan ? 0.25 : 1;
+    this.phase += dt * (mot === 'cilia' ? 6 : 4) * (0.6 + 0.6*this._speedFactor) * calm;
+    this._beatPhase = (this._beatPhase||0) + dt * (9 + 9*this._speedFactor) * calm;
+    this._rollPhase = (this._rollPhase||0) + dt * (1.1 + 1.6*this._speedFactor) * calm;
 
     if(this.hasFlagella){
       this.pulsePhase += dt * (2.2 + speedFactor*3.5);
@@ -2844,7 +3137,7 @@ class Organism {
   }
 
   triggerFlee(fromX, fromY){
-    if(this.caught || this.escaped || this.dying || this.vanishing) return;
+    if(this.caught || this.escaped || this.dying || this.vanishing || this.species.scan) return; // the big algae don't startle
     const dx = this.x - fromX, dy = this.y - fromY;
     this.fleeAngle = Math.atan2(dy, dx) + (Math.random()-0.5)*0.5;
     this.fleeing = true;
@@ -2870,9 +3163,11 @@ class Organism {
     const eatK = this.beingEaten ? Math.min(1, this.beingEaten.t / Organism.EAT_TIME) : 0;
     const vanK = this.vanishing ? Math.min(1, this.vanishT / Organism.VANISH_TIME) : 0;
     const shrink = (1 - 0.22*deathK) * (1 - 0.8*eatK) * (1 - 0.15*vanK);
-    this.group.setAttribute('transform',
-      `translate(${(this.x+jx).toFixed(2)},${(this.y+jy).toFixed(2)}) rotate(${angDeg.toFixed(1)}) rotate(${wig.toFixed(2)})` + (shrink !== 1 ? ` scale(${shrink.toFixed(3)})` : '')
-    );
+    // (the big algae barely move: coarser steps, and the transform is only
+    // rewritten when it actually changes, so the browser can skip repainting them)
+    const pr = this.species.scan ? 1 : 2;
+    const tf = `translate(${(this.x+jx).toFixed(pr)},${(this.y+jy).toFixed(pr)}) rotate(${angDeg.toFixed(1)}) rotate(${wig.toFixed(pr)})` + (shrink !== 1 ? ` scale(${shrink.toFixed(3)})` : '');
+    if(tf !== this._tf){ this._tf = tf; this.group.setAttribute('transform', tf); }
     this.group.style.opacity = (this.spawnFade * (1 - deathK) * (1 - 0.85*eatK) * (1 - vanK)).toFixed(3);
     if(this.dying || this.beingEaten || this.vanishing) return; // frozen: no beating, no breathing
 
@@ -2898,50 +3193,78 @@ class Organism {
       this.bodyEl.setAttribute('transform', `scale(1,${roll.toFixed(3)})`);
     }
 
-    // segmented worm: a peristaltic contraction wave runs head-to-tail
-    // Aeolosoma: rebuild the tapered body outline each frame, with a
-    // peristaltic bulge travelling from tail to head and a gentle body wave.
+    // Aeolosoma: rebuild the body each frame — a peristaltic bulge travels
+    // from tail to head, the broad head lobe stays round and its cilia
+    // flicker; the bristle bundles follow the outline
     if(this._worm2){
-      const { L, W, body, gut, segLines, chaetae, drops } = this._worm2;
-      const N = 26;
+      const w2 = this._worm2, { L, W } = w2, N = 32;
       const cy = t => Math.sin(this.phase*0.8 - t*4.2) * W*0.22;
-      const hw = t => (W/2) * (0.42 + 0.58*Math.pow(Math.sin(Math.PI*(0.12 + 0.8*t)), 0.6))
-                              * (1 + 0.13*Math.sin(this.phase*1.6 - t*10));
-      const X = t => -L/2 + t*L;
+      const neck = t => 1 - 0.25*Math.exp(-Math.pow((t - 0.87)/0.03, 2));
+      const lobe = t => W*0.42*Math.exp(-Math.pow((t - 0.95)/0.045, 2));
+      const hw = t => (W/2)*(0.42 + 0.58*Math.pow(Math.sin(Math.PI*(0.1 + 0.82*t)), 0.6))*(1 + 0.13*Math.sin(this.phase*1.6 - t*10))*neck(t) + lobe(t);
+      const X = t => -L/2 + t*L, f = v => v.toFixed(2);
       const top = [], bot = [];
-      for(let i=0;i<=N;i++){ const t=i/N, y=cy(t), w=hw(t); top.push([X(t), y-w]); bot.push([X(t), y+w]); }
-      let d = `M ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} `;
-      for(let i=1;i<=N;i++) d += `L ${top[i][0].toFixed(2)} ${top[i][1].toFixed(2)} `;
-      d += `A ${hw(1).toFixed(2)} ${hw(1).toFixed(2)} 0 0 1 ${bot[N][0].toFixed(2)} ${bot[N][1].toFixed(2)} `;
-      for(let i=N;i>=0;i--) d += `L ${bot[i][0].toFixed(2)} ${bot[i][1].toFixed(2)} `;
-      d += `A ${hw(0).toFixed(2)} ${hw(0).toFixed(2)} 0 0 1 ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} Z`;
-      body.setAttribute('d', d);
+      for(let i=0;i<=N;i++){ const t = i/N, y = cy(t), w = hw(t); top.push([X(t), y - w]); bot.push([X(t), y + w]); }
+      let d = `M ${f(top[0][0])} ${f(top[0][1])} `;
+      for(let i=1;i<=N;i++) d += `L ${f(top[i][0])} ${f(top[i][1])} `;
+      d += `A ${f(hw(1))} ${f(hw(1))} 0 0 1 ${f(bot[N][0])} ${f(bot[N][1])} `;
+      for(let i=N;i>=0;i--) d += `L ${f(bot[i][0])} ${f(bot[i][1])} `;
+      d += `A ${f(hw(0))} ${f(hw(0))} 0 0 1 ${f(top[0][0])} ${f(top[0][1])} Z`;
+      w2.body.setAttribute('d', d);
       let gd = '';
-      for(let i=0;i<=14;i++){ const t = 0.06 + 0.84*i/14; gd += (i?'L ':'M ') + X(t).toFixed(2)+' '+cy(t).toFixed(2)+' '; }
-      gut.setAttribute('d', gd);
-      segLines.forEach(sgm=>{ const t=sgm.t, x=X(t), y=cy(t), w=hw(t)*0.86;
-        sgm.el.setAttribute('x1', x.toFixed(2)); sgm.el.setAttribute('x2', x.toFixed(2));
-        sgm.el.setAttribute('y1', (y-w).toFixed(2)); sgm.el.setAttribute('y2', (y+w).toFixed(2)); });
-      chaetae.forEach(c=>{ const t=c.t, x=X(t), y=cy(t), w=hw(t);
-        c.a.setAttribute('x1', x.toFixed(2)); c.a.setAttribute('y1', (y-w).toFixed(2));
-        c.a.setAttribute('x2', (x-1.3).toFixed(2)); c.a.setAttribute('y2', (y-w-1.5).toFixed(2));
-        c.b.setAttribute('x1', x.toFixed(2)); c.b.setAttribute('y1', (y+w).toFixed(2));
-        c.b.setAttribute('x2', (x-1.3).toFixed(2)); c.b.setAttribute('y2', (y+w+1.5).toFixed(2)); });
-      drops.forEach(dr=>{ dr.el.setAttribute('cx', X(dr.t).toFixed(2)); dr.el.setAttribute('cy', (cy(dr.t)+dr.off*hw(dr.t)).toFixed(2)); });
+      for(let i=0;i<=14;i++){ const t = 0.06 + 0.78*i/14; gd += (i ? 'L ' : 'M ') + f(X(t)) + ' ' + f(cy(t)) + ' '; }
+      w2.gut.setAttribute('d', gd);
+      let sd = '', cd = '';
+      for(let j=1;j<w2.nSeg;j++){
+        const t = 0.08 + j*0.76/w2.nSeg, x = X(t), y = cy(t), w = hw(t);
+        sd += `M ${f(x)} ${f(y - w*0.86)} L ${f(x)} ${f(y + w*0.86)} `;
+        for(let k=0;k<3;k++) [-1, 1].forEach((sg, si)=>{
+          const b = w2.bristles[(j*3 + k)*2 + si] || w2.bristles[0];
+          cd += `M ${f(x)} ${f(y + sg*w)} l ${f(-W*b.len*0.75)} ${f(sg*W*b.len*(0.6 + b.spread))} `;
+        });
+      }
+      w2.segs.setAttribute('d', sd);
+      w2.chaetae.setAttribute('d', cd);
+      const hx = X(0.95), hy = cy(0.95), hr = hw(0.95);
+      let kd = '';
+      for(let k=0;k<13;k++){
+        const a = -1.3 + k*2.6/12 + 0.15*Math.sin(this._beatPhase - k*0.6);
+        kd += `M ${f(hx + Math.cos(a)*hr)} ${f(hy + Math.sin(a)*hr)} l ${f(Math.cos(a)*1.3)} ${f(Math.sin(a)*1.3)} `;
+      }
+      w2.cilia.setAttribute('d', kd);
+      w2.drops.forEach(dr=>{ dr.el.setAttribute('cx', f(X(dr.t))); dr.el.setAttribute('cy', f(cy(dr.t) + dr.off*hw(dr.t))); });
     }
-    if(this._volvox3d){
-      const { cells, tilt } = this._volvox3d;
+    // Volvox: the ball turns slowly and is projected — far cells shrink and
+    // fade, near ones grow; the daughter colonies ride inside. It turns so
+    // slowly that every other frame is enough.
+    const vf = this._vf = (this._vf || 0) + 1;
+    if(this._volvox3d && (vf === 1 || vf % 2 === 0)){
+      const { cells, daughters, tilt } = this._volvox3d;
       const th = this.phase*0.35, ct = Math.cos(th), st = Math.sin(th), cf = Math.cos(tilt), sf = Math.sin(tilt);
+      const proj = p => { const [x, y, z] = p, x1 = x*ct + z*st, z1 = -x*st + z*ct; return [x1, y*cf - z1*sf, (y*sf + z1*cf + 1)/2]; };
       cells.forEach(c=>{
-        const [x, y, z] = c.p;
-        const x1 = x*ct + z*st, z1 = -x*st + z*ct;          // spin about the vertical axis
-        const y2 = y*cf - z1*sf, z2 = y*sf + z1*cf;         // tilted spin axis
-        const near = (z2 + 1)/2;                            // 0 far side .. 1 near side
-        c.el.setAttribute('cx', (x1*c.R).toFixed(2));
-        c.el.setAttribute('cy', (y2*c.R).toFixed(2));
-        c.el.setAttribute('r', (c.size*(0.65 + 0.55*near)).toFixed(2));
-        c.el.setAttribute('opacity', ((c.daughter ? 0.25 : 0.1) + (c.daughter ? 0.35 : 0.5)*near).toFixed(3));
+        const [px, py, near] = proj(c.p);
+        c.el.setAttribute('cx', (px*c.R).toFixed(2));
+        c.el.setAttribute('cy', (py*c.R).toFixed(2));
+        c.el.setAttribute('r', (c.size*(0.6 + 0.6*near)).toFixed(2));
+        c.el.setAttribute('opacity', (0.22 + 0.62*near).toFixed(3));
       });
+      (daughters || []).forEach(dc=>{
+        const [px, py, near] = proj(dc.p);
+        dc.el.setAttribute('transform', `translate(${(px*dc.R).toFixed(2)},${(py*dc.R).toFixed(2)}) scale(${(0.85 + 0.25*near).toFixed(3)})`);
+        dc.el.setAttribute('opacity', (0.55 + 0.4*near).toFixed(3));
+      });
+    }
+    // Closterium: the gypsum crystals in the tip vacuoles dance (Brownian motion)
+    if(this._crystals){
+      for(const c of this._crystals){
+        c.el.setAttribute('cx', (c.x + (Math.random() - 0.5)*c.j).toFixed(2));
+        c.el.setAttribute('cy', (c.y + (Math.random() - 0.5)*c.j).toFixed(2));
+      }
+    }
+    // Craspedacusta: the tentacle fringe sways with the bell's pulses
+    if(this._medusaTent){
+      this._medusaTent.setAttribute('transform', `skewX(${(Math.sin(this.phase*0.9)*7).toFixed(2)})`);
     }
     // Stentor: contracts into a ball when poked or sucked, then slowly re-extends
     if(this._stentor && this.bodyEl){
@@ -3145,104 +3468,99 @@ class Organism {
       h.front.setAttribute('d', dF); h.back.setAttribute('d', dB); h.core.setAttribute('d', dC);
     }
 
-    // nematode: a single slow, low-frequency S-curve sweeping along the body
-    // (the real "whole-body undulation" gait of a nematode under a lens),
-    // drawn as a smooth <path> rather than a jagged polyline.
-    if(this._wormWave && this.wavePoints && this.waveEl){
-      const { steps, basePts } = this.wavePoints;
-      const pts = basePts.map(([xx,yy], i)=>{
-        const t = i/steps;
-        const localWave = Math.sin(this.phase*1.1 + t*Math.PI*1.8) * (this.species.width*0.9);
-        return [xx, yy+localWave];
-      });
-      let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)} `;
-      for(let i=1;i<pts.length;i++){
-        const prev = pts[i-1], p = pts[i];
-        const mx = (prev[0]+p[0])/2, my = (prev[1]+p[1])/2;
-        d += `Q ${prev[0].toFixed(1)} ${prev[1].toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
-      }
-      this.waveEl.setAttribute('d', d);
-      if(this._wormInnerEl) this._wormInnerEl.setAttribute('d', d);
-      if(this._wormGutEl) this._wormGutEl.setAttribute('d', d);
-      if(this._wormShineEl) this._wormShineEl.setAttribute('d', d);
+    // nematode: rebuild the tapered body along a slow S-wave (the classic
+    // whole-body undulation): outline, gut, DIC light and shadow, pharynx
+    // with its bulbs behind the head, and the gut granules
+    if(this._nema){
+      const n = this._nema, { L, W } = n;
+      const C = t => [-L/2 + t*L, Math.sin(this.phase*1.1 + t*Math.PI*1.8)*W*0.9];
+      const hw = t => (W/2)*Math.min(1, Math.pow(t/0.3, 0.85))*(t > 0.95 ? Math.sqrt(Math.max(0.05, 1 - Math.pow((t - 0.95)/0.05, 2))) : 1);
+      const frame = t => { const p = C(t), q = C(Math.min(1, t + 0.004)), r = C(Math.max(0, t - 0.004)); let tx = q[0] - r[0], ty = q[1] - r[1]; const tl = Math.hypot(tx, ty) || 1; return [p, tx/tl, ty/tl]; };
+      const line = (t0, t1, off, steps)=>{ let d = ''; for(let i=0;i<=steps;i++){ const t = t0 + (t1 - t0)*i/steps, [p, tx, ty] = frame(t), w = hw(t)*off; d += (i ? 'L ' : 'M ') + (p[0] - ty*w).toFixed(2) + ' ' + (p[1] + tx*w).toFixed(2) + ' '; } return d; };
+      n.body.setAttribute('d', this._tubeD(C, hw, 40));
+      n.gut.setAttribute('d', line(0.32, 0.86, 0, 14));
+      n.shade.setAttribute('d', line(0.12, 0.95, 0.55, 18));
+      n.shine.setAttribute('d', line(0.1, 0.97, -0.45, 18));
+      n.pharynx.setAttribute('d', line(0.86, 0.985, 0, 6));
+      [0.9, 0.955].forEach((t, i)=>{ const [p, tx, ty] = frame(t); n.bulbs[i].setAttribute('transform', `translate(${p[0].toFixed(2)},${p[1].toFixed(2)}) rotate(${(Math.atan2(ty, tx)*57.3).toFixed(1)})`); });
+      let gd = '';
+      n.grains.forEach(([t, o])=>{ const [p, tx, ty] = frame(t), w = hw(t)*o; gd += `M ${(p[0] - ty*w).toFixed(2)} ${(p[1] + tx*w).toFixed(2)} l 0.01 0 `; });
+      n.gran.setAttribute('d', gd);
     }
 
-    // oscillatoria: the filament's tip sways side to side (gliding motion),
-    // the rest of the cells trail that sway with a damped lag toward the base.
-    // Oscillatoria: one continuous trichome; the free end sways side to side
-    // (the oscillation it's named after) while the base stays nearly still.
-    if(this._osc){
-      const { L, W, body, walls } = this._osc;
-      const N = 22;
-      const sway = t => Math.sin(this.phase*1.6 - t*1.5) * W*1.5 * Math.pow(t, 1.6);
-      const top = [], bot = [];
-      for(let i=0;i<=N;i++){ const t=i/N, x=-L/2+t*L, y=sway(t); top.push([x, y-W/2]); bot.push([x, y+W/2]); }
-      let d = `M ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} `;
-      for(let i=1;i<=N;i++) d += `L ${top[i][0].toFixed(2)} ${top[i][1].toFixed(2)} `;
-      d += `A ${(W/2).toFixed(2)} ${(W/2).toFixed(2)} 0 0 1 ${bot[N][0].toFixed(2)} ${bot[N][1].toFixed(2)} `;
-      for(let i=N;i>=0;i--) d += `L ${bot[i][0].toFixed(2)} ${bot[i][1].toFixed(2)} `;
-      d += `A ${(W/2).toFixed(2)} ${(W/2).toFixed(2)} 0 0 1 ${top[0][0].toFixed(2)} ${top[0][1].toFixed(2)} Z`;
-      body.setAttribute('d', d);
-      walls.forEach(w=>{ const x=-L/2+w.t*L, y=sway(w.t);
-        w.el.setAttribute('x1', x.toFixed(2)); w.el.setAttribute('x2', x.toFixed(2));
-        w.el.setAttribute('y1', (y-W/2+0.4).toFixed(2)); w.el.setAttribute('y2', (y+W/2-0.4).toFixed(2)); });
+    // Oscillatoria: one long trichome lying in a gentle bend; the free end
+    // sways slowly from side to side (the oscillation it is named after)
+    // while the base stays put. Walls and granules are one path each.
+    if(this._osc && (vf === 1 || vf % 2 === 0)){
+      const o = this._osc, { L, W } = o, N = 48;
+      const sway = t => Math.sin(this.phase*0.6 - t*1.5)*W*1.2*t*t;
+      const C = t => [-L/2 + t*L, o.bend*Math.sin(Math.PI*t) + sway(t)];
+      const hw = t => (W/2)*(t > 0.94 ? 1 - 0.25*(t - 0.94)/0.06 : 1);
+      o.body.setAttribute('d', this._tubeD(C, hw, N));
+      const frame = t => { const p = C(t), q = C(Math.min(1, t + 0.003)), r = C(Math.max(0, t - 0.003)); let tx = q[0] - r[0], ty = q[1] - r[1]; const tl = Math.hypot(tx, ty) || 1; return [p, tx/tl, ty/tl]; };
+      let wd = '', gd = '', cd = '', sd = '';
+      for(let j=1;j<o.nWalls;j++){
+        const t = j/o.nWalls, [p, tx, ty] = frame(t), w = hw(t)*0.9;
+        wd += `M ${(p[0] - ty*w).toFixed(2)} ${(p[1] + tx*w).toFixed(2)} L ${(p[0] + ty*w).toFixed(2)} ${(p[1] - tx*w).toFixed(2)} `;
+        if(j % 3 === 0) gd += `M ${(p[0] - ty*w*0.55).toFixed(2)} ${(p[1] + tx*w*0.55).toFixed(2)} l 0.01 0 M ${(p[0] + ty*w*0.45).toFixed(2)} ${(p[1] - tx*w*0.45).toFixed(2)} l 0.01 0 `;
+      }
+      for(let i=0;i<=24;i++){ const t = 0.02 + 0.94*i/24, [p, tx, ty] = frame(t), w = hw(t)*0.45; cd += (i ? 'L ' : 'M ') + p[0].toFixed(2) + ' ' + p[1].toFixed(2) + ' '; sd += (i ? 'L ' : 'M ') + (p[0] + ty*w).toFixed(2) + ' ' + (p[1] - tx*w).toFixed(2) + ' '; }
+      o.walls.setAttribute('d', wd); o.grains.setAttribute('d', gd); o.core.setAttribute('d', cd); o.shine.setAttribute('d', sd);
     }
 
     // heliozoan: axopodia ray length pulses slightly, as if probing/vibrating
     // to sense and capture prey brushing against them — not a swim motion.
     if(this._heliozoanRays){
-      const { rayLines, W } = this._heliozoanRays;
+      const { rayLines, W } = this._heliozoanRays, len = this._heliozoanRays.len || 0.62;
       rayLines.forEach((r,i)=>{
         const pulse = 1 + Math.sin(this.phase*1.8 + i*0.7)*0.12;
-        r.el.setAttribute('x2', (Math.cos(r.angle)*W*0.62*pulse).toFixed(1));
-        r.el.setAttribute('y2', (Math.sin(r.angle)*W*0.62*pulse).toFixed(1));
+        r.el.setAttribute('x2', (Math.cos(r.angle)*W*len*pulse).toFixed(1));
+        r.el.setAttribute('y2', (Math.sin(r.angle)*W*len*pulse).toFixed(1));
       });
     }
 
-    // vorticella: the contractile stalk is drawn as a tightening/relaxing
-    // spiral trailing behind the body — mostly loose, snapping into a tight
-    // coil briefly whenever the organism "flees" (its real startle response).
     // Vorticella's stalk: a fine thread, almost straight and long when the
-    // cell is relaxed; when startled the contractile spasmoneme snaps it into
-    // a short tight helix (the famous Vorticella "spring").
+    // cell is relaxed; when startled the contractile spasmoneme inside snaps
+    // it into a short tight helix (the famous Vorticella "spring")
     if(this._vorticellaStalk){
-      const { el: stalkEl, L, W } = this._vorticellaStalk;
-      const k = this._stalkK = (this._stalkK === undefined ? 0 : this._stalkK) + ((this.fleeing ? 1 : 0) - (this._stalkK||0)) * 0.25;
-      const len = L*(1.6 - 1.15*k), amp = W*(0.04 + 0.2*k), turns = 1.5 + 5*k;
-      const steps = 36;
-      let d = `M ${(L*0.38).toFixed(2)} 0 `;
+      const vs = this._vorticellaStalk, { L, W } = vs, x0 = vs.x0 || L*0.38;
+      const k = this._stalkK = (this._stalkK === undefined ? 0 : this._stalkK) + ((this.fleeing ? 1 : 0) - (this._stalkK || 0)) * 0.25;
+      const len = L*(1.8 - 1.3*k), amp = W*(0.04 + 0.2*k), turns = 1.5 + 5*k, steps = 36;
+      let d = `M ${x0.toFixed(2)} 0 `, di = `M ${x0.toFixed(2)} 0 `;
       for(let i=1;i<=steps;i++){
-        const t = i/steps;
-        const x = L*0.38 + t*len;
-        const y = Math.sin(t*Math.PI*2*turns + this.phase*0.3*(1-k)) * amp;
-        d += `L ${x.toFixed(2)} ${y.toFixed(2)} `;
+        const t = i/steps, x = x0 + t*len, ph = t*Math.PI*2*turns + this.phase*0.3*(1 - k);
+        d += `L ${x.toFixed(2)} ${(Math.sin(ph)*amp).toFixed(2)} `;
+        di += `L ${x.toFixed(2)} ${(Math.sin(ph)*amp + Math.sin(t*Math.PI*14 + ph)*W*0.03*(1 - k)).toFixed(2)} `;
       }
-      stalkEl.setAttribute('d', d);
+      vs.el.setAttribute('d', d);
+      if(vs.inner) vs.inner.setAttribute('d', di);
     }
 
-    // testate amoeba (Arcella): fine pseudopods extend from the aperture and
-    // retract, the only visible motion since the shell itself never deforms.
+    // Arcella: blunt pseudopods push out from under the front of the shell
+    // and draw back — the only visible motion, the shell never deforms
     if(this._pseudopods){
-      const { lines, W } = this._pseudopods;
-      lines.forEach((line,i)=>{
-        const extend = (Math.sin(this.phase*0.8 + i*1.3) + 1)/2; // 0..1
-        const a = (i/lines.length - 0.5)*Math.PI*0.7;
-        const len = W*0.15 + extend*W*0.35;
-        line.setAttribute('x2', (Math.sin(a)*len).toFixed(1));
-        line.setAttribute('y2', (W*0.2 + Math.cos(a)*len*0.4).toFixed(1));
-        line.setAttribute('opacity', (0.2+extend*0.4).toFixed(2));
+      const { pods, R } = this._pseudopods;
+      pods.forEach(p=>{
+        const ext = (Math.sin(this.phase*0.5 + p.ph) + 1)/2;
+        const r0 = R*0.8, r1 = R*(0.92 + 0.38*ext);
+        const x1 = (Math.cos(p.a)*r0).toFixed(2), y1 = (Math.sin(p.a)*r0).toFixed(2), x2 = (Math.cos(p.a)*r1).toFixed(2), y2 = (Math.sin(p.a)*r1).toFixed(2);
+        [p.outer, p.inner].forEach(n=>{ n.setAttribute('x1', x1); n.setAttribute('y1', y1); n.setAttribute('x2', x2); n.setAttribute('y2', y2); });
       });
     }
 
-    // contractile vacuole: swells slowly, then empties abruptly (systole) —
-    // the rhythmic pulse that's one of the most recognizable things seen in a
-    // living freshwater protozoan.
-    if(this._contractileVac){
-      const cv = this._contractileVac;
-      cv.phase += dt*0.9;
-      const cyc = (cv.phase % (Math.PI*2)) / (Math.PI*2); // 0..1
-      const fill = cyc < 0.85 ? cyc/0.85 : (1-cyc)/0.15;   // slow fill, quick collapse
-      cv.el.setAttribute('r', (cv.baseR*(0.35+0.75*fill)).toFixed(2));
+    // contractile vacuoles: each swells slowly, then empties abruptly
+    // (systole) — the rhythmic pulse that's one of the most recognizable
+    // things in a living freshwater protozoan; in Paramecium the radiating
+    // canals fill while the vacuole is small and empty into it
+    const cvs = this._contractileVacs || (this._contractileVac ? [this._contractileVac] : null);
+    if(cvs){
+      for(const cv of cvs){
+        cv.phase += dt*0.9;
+        const cyc = (cv.phase % (Math.PI*2)) / (Math.PI*2);  // 0..1
+        const fill = cyc < 0.85 ? cyc/0.85 : (1 - cyc)/0.15;  // slow fill, quick collapse
+        cv.el.setAttribute('r', (cv.baseR*(0.35 + 0.75*fill)).toFixed(2));
+        if(cv.canals) cv.canals.setAttribute('transform', `translate(${cv.x.toFixed(2)},${cv.y.toFixed(2)}) scale(${(1.15 - 0.5*fill).toFixed(3)})`);
+      }
     }
 
     // tardigrade: the eight legs step in a wave (alternating sides), swinging
@@ -3615,6 +3933,18 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   // in the middle and grows slightly darker toward its margin (where the light
   // path bends most), ending in a thin dark edge — that gradient is what makes
   // it read as a 3-D transparent body instead of an outline drawing.
+  // shared textures in organism units: the honeycomb of Arcella's shell,
+  // the fine pores (areolae) of diatom glass, and the shading of a Volvox
+  // daughter colony (bright green centre, dark rim)
+  const honey = el('pattern', { id:'pat-honey', width:1.6, height:1.386, patternUnits:'userSpaceOnUse' });
+  [[0.4,0.35],[1.2,0.35],[0,1.04],[0.8,1.04],[1.6,1.04]].forEach(([x,y])=> honey.appendChild(el('circle', { cx:x, cy:y, r:0.28, fill:'none', stroke:'#5c3c14', 'stroke-width':0.16 })));
+  defs.appendChild(honey);
+  const pores = el('pattern', { id:'pat-pores', width:1.2, height:1.04, patternUnits:'userSpaceOnUse' });
+  [[0.3,0.26],[0.9,0.78]].forEach(([x,y])=> pores.appendChild(el('circle', { cx:x, cy:y, r:0.2, fill:'#3c3850' })));
+  defs.appendChild(pores);
+  const dg = el('radialGradient', { id:'grad-daughter', cx:'42%', cy:'40%', r:'60%' });
+  [['0%','#8fcf4a',0.9],['65%','#4c8c22',0.85],['100%','#2c5a12',0.9]].forEach(([off,c,a])=> dg.appendChild(el('stop', { offset:off, 'stop-color':c, 'stop-opacity':a })));
+  defs.appendChild(dg);
   SPECIES.forEach(sp=>{
     const rg = el('radialGradient', { id:`bf-${sp.id}`, cx:'50%', cy:'47%', r:'56%' });
     [['0%', sp.color, 0.10], ['62%', sp.color, 0.16], ['86%', sp.colorDark, 0.17], ['100%', sp.colorDark, 0.32]]
@@ -3955,7 +4285,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     const far = VIEW_W*1.6;
     for(let i=organisms.length-1; i>=0; i--){
       const o = organisms[i];
-      if(o === holding || o.caught) continue;
+      if(o === holding || isScanning(o) || o.caught) continue;
       if(Math.hypot(o.x-viewC.x, o.y-viewC.y) > far){
         if(o.group.parentNode) o.group.parentNode.removeChild(o.group);
         organisms.splice(i,1);
@@ -3971,7 +4301,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   const SHAPE_ICONS = {
     ovoid:       '<ellipse cx="8" cy="8" rx="5.4" ry="4"/>',
     bean:        '<path d="M4.5 9.5c-1-2.5.5-5.5 3.5-5.8 3.2-.3 5.5 1.8 5.3 4.3-.2 2.6-2.6 3.8-4.8 3.8-2 0-3.2-.7-4-2.3z"/>',
-    round:       '<circle cx="8" cy="8" r="4.8"/>',
+    round:       '<path d="M6.1 3.3h3.8l2.8 2.8v3.8l-2.8 2.8H6.1l-2.8-2.8V6.1z"/><circle cx="8" cy="8" r="1.1" fill="none" stroke-width=".6"/>',
     slipper:     '<path d="M3 8c0-2.6 2.6-4.6 5.6-4.2 2.6.3 4.7 2 4.3 4.4-.4 2.5-3 3.8-5.6 3.6C4.8 11.6 3 10.3 3 8z"/>',
     segmented:   '<circle cx="4.3" cy="8" r="2.3"/><circle cx="8" cy="8" r="2.3"/><circle cx="11.7" cy="8" r="2.3"/>',
     ciliate:     '<ellipse cx="8" cy="8" rx="5" ry="3.6"/><path d="M3.4 5.4l-1-1.2M3 8h-1.3M3.4 10.6l-1 1.2M12.6 5.4l1-1.2M13 8h1.3M12.6 10.6l1 1.2" stroke-width=".7"/>',
@@ -3985,7 +4315,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     oscillatoria:'<path d="M2.5 6.3c3.5 2 7.5 2 11 0M2.5 9.7c3.5-2 7.5-2 11 0" fill="none" stroke-width="1"/>',
     diatomP:     '<rect x="4" y="3.5" width="8" height="9" rx="4"/><line x1="8" y1="4.2" x2="8" y2="11.8" stroke-width=".5" opacity=".5"/>',
     diatomC:     '<circle cx="8" cy="8" r="4.6"/><circle cx="8" cy="8" r="2.4" opacity=".5"/>',
-    diatomR:     '<rect x="3.2" y="5" width="9.6" height="6" rx="1.2"/>',
+    diatomR:     '<path d="M2 8c2.5-3 9.5-3 12 0-2.5 3-9.5 3-12 0z"/><line x1="3.5" y1="8" x2="12.5" y2="8" stroke-width=".5"/>',
     diatomT:     '<path d="M8 3.2l4 9.2H4z"/>',
     closterium:  '<path d="M4 4c4-1.2 8-1.2 8 4s-4 5.2-8 4c1.6-2.6 1.6-5.4 0-8z"/>',
     spiny:       '<circle cx="8" cy="8" r="3.4"/><path d="M8 4.6V2M8 13.4v-2.6M4.6 8H2M13.4 8h-2.6M5.4 5.4L3.6 3.6M12.4 12.4l-1.8-1.8M5.4 10.6l-1.8 1.8M12.4 3.6l-1.8 1.8" stroke-width=".7"/>',
@@ -4178,14 +4508,19 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   function attachInteraction(org){
     org.group.addEventListener('pointerdown', (e)=>{
       e.stopPropagation();
-      startHold(org, e);
+      if(org.species.scan) startScan(org, e); else startHold(org, e);
     });
+    // over a big alga the pipette gives way to the scanner
+    if(org.species.scan){
+      org.group.addEventListener('pointerenter', (e)=>{ if(e.pointerType !== 'touch') document.body.classList.add('scan-hover'); });
+      org.group.addEventListener('pointerleave', ()=> document.body.classList.remove('scan-hover'));
+    }
   }
 
   let holdTouch = false; // the hold was started by a finger (bigger target, pipette drawn at the finger)
-  function isPointerOverOrganism(org, clientX, clientY){
+  function isPointerOverOrganism(org, clientX, clientY, touch){
     const rect = org.group.getBoundingClientRect();
-    const pad = holdTouch ? 24 : 6; // small tolerance: a pipette tip doesn't need pixel-perfect aim; a fingertip covers more
+    const pad = (touch !== undefined ? touch : holdTouch) ? 24 : 6; // small tolerance: a pipette tip doesn't need pixel-perfect aim; a fingertip covers more
     return clientX >= rect.left-pad && clientX <= rect.right+pad &&
            clientY >= rect.top-pad && clientY <= rect.bottom+pad;
   }
@@ -4285,6 +4620,111 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     requestAnimationFrame(holdLoop);
   }
   requestAnimationFrame(holdLoop);
+
+  // ---- scanning: the big algae (species with scan: true) are far too large
+  // for the pipette. Holding on one sweeps a scan line along it; when the
+  // sweep is done the species is catalogued and the alga stays where it was.
+  // Same rules as the pipette: in focus, and the pointer has to stay on it.
+  const SCAN_DURATION = 3000;
+  const scannedLog = {};        // species id -> how many individuals were scanned
+  let scanning = null;          // { org, progress, last, pointer, touch, fx }
+  const isScanning = o => !!scanning && scanning.org === o;
+  const scanLayer = el('g', { class:'scan-fx', 'pointer-events':'none' });
+  droppletSvg.appendChild(scanLayer); // above the focal-plane layers, so it is never blurred
+
+  // corner brackets around the alga, the part already read tinted, and the
+  // moving scan line; drawn in the alga's own frame (render keeps it there)
+  function buildScanFx(org){
+    const bb = org.group.getBBox(), pad = 4;
+    const x0 = bb.x - pad, y0 = bb.y - pad, x1 = bb.x + bb.width + pad, y1 = bb.y + bb.height + pad;
+    const c = Math.max(3, Math.min(14, Math.min(x1 - x0, y1 - y0)*0.25));
+    const g = el('g', {});
+    const cover = el('rect', { x:x0.toFixed(1), y:y0.toFixed(1), width:0, height:(y1 - y0).toFixed(1), fill:'#2bc2b6', opacity:0.12 });
+    const glow = el('line', { x1:x0, y1:y0, x2:x0, y2:y1, stroke:'#2bc2b6', 'stroke-width':4, 'stroke-opacity':0.25, 'stroke-linecap':'round' });
+    const line = el('line', { x1:x0, y1:y0, x2:x0, y2:y1, stroke:'#13a89c', 'stroke-width':1.1, 'stroke-opacity':0.95, 'stroke-linecap':'round' });
+    const corners = el('path', { d:`M ${x0} ${y0 + c} V ${y0} H ${x0 + c} M ${x1 - c} ${y0} H ${x1} V ${y0 + c} M ${x1} ${y1 - c} V ${y1} H ${x1 - c} M ${x0 + c} ${y1} H ${x0} V ${y1 - c}`,
+      fill:'none', stroke:'#13a89c', 'stroke-width':1.3, 'stroke-linecap':'square', 'vector-effect':'non-scaling-stroke' });
+    g.append(cover, glow, line, corners);
+    scanLayer.appendChild(g);
+    return { g, cover, glow, line, corners, x0, x1 };
+  }
+  function placeScanFx(s){
+    const { org, fx } = s;
+    fx.g.setAttribute('transform', org.group.getAttribute('transform') || '');
+    const x = fx.x0 + (fx.x1 - fx.x0)*Math.min(1, s.progress*1000/SCAN_DURATION);
+    fx.cover.setAttribute('width', (x - fx.x0).toFixed(1));
+    [fx.line, fx.glow].forEach(l=>{ l.setAttribute('x1', x.toFixed(1)); l.setAttribute('x2', x.toFixed(1)); });
+  }
+
+  function startScan(org, e){
+    if(gameOver || org.dying || org.vanishing || scanning || holding) return;
+    const pt = svgPointFromEvent(e);
+    spawnRipple(pt.x, pt.y);
+    if(org.depthLevel !== currentDepth){ showToast('Fora de foco — ajuste a profundidade.', true); return; }
+    if(org.scanned){ openSpeciesPanel(org.species); return; } // this one is already in the catalogue: show its sheet
+    scanning = { org, progress: 0, last: performance.now(), pointer: { x: e.clientX, y: e.clientY }, touch: e.pointerType === 'touch', fx: buildScanFx(org) };
+    placeScanFx(scanning);
+    document.body.classList.add('scanning');
+    captureProgress.classList.add('scan');
+    updateProgressPosition(e.clientX, e.clientY, dropletClip.getBoundingClientRect());
+    captureProgress.style.display = 'block';
+    setCaptureBar(0);
+    window.addEventListener('pointermove', onScanMove);
+    window.addEventListener('pointerup', onScanEnd);
+    window.addEventListener('pointercancel', onScanEnd);
+  }
+  function onScanMove(e){
+    if(!scanning) return;
+    scanning.pointer = { x: e.clientX, y: e.clientY };
+    updateProgressPosition(e.clientX, e.clientY, dropletClip.getBoundingClientRect());
+  }
+  function stopScan(){
+    window.removeEventListener('pointermove', onScanMove);
+    window.removeEventListener('pointerup', onScanEnd);
+    window.removeEventListener('pointercancel', onScanEnd);
+    document.body.classList.remove('scanning');
+    captureProgress.classList.remove('scan');
+    captureProgress.style.display = 'none';
+    const s = scanning;
+    scanning = null;
+    return s;
+  }
+  function onScanEnd(){
+    const s = stopScan();
+    if(!s) return;
+    s.fx.g.remove();
+    if(s.progress*1000/SCAN_DURATION > 0.15) showToast('Escaneamento interrompido — segure até o fim.', true);
+  }
+  function completeScan(s){
+    const org = s.org, sp = org.species;
+    org.scanned = true;
+    scannedLog[sp.id] = (scannedLog[sp.id] || 0) + 1;
+    markShapeDiscovered(sp);
+    // the brackets close in on the alga and fade
+    s.fx.cover.setAttribute('width', (s.fx.x1 - s.fx.x0).toFixed(1));
+    s.fx.g.animate([{ opacity:1 }, { opacity:1, offset:0.4 }, { opacity:0 }], { duration:900, easing:'ease-out' }).onfinish = ()=> s.fx.g.remove();
+    showToast(`Escaneado: ${sp.displayName} (${RARITY_INFO[sp.rarity].label})`, false, RARITY_INFO[sp.rarity].color, 2400);
+    updateHud();
+    updateReel();
+  }
+  function scanLoop(){
+    const s = scanning;
+    if(s){
+      const now = performance.now(), dt = Math.min(0.25, (now - s.last)/1000);
+      s.last = now;
+      if(s.org.dying || s.org.vanishing || s.org.dead || gameOver){ stopScan(); s.fx.g.remove(); }
+      else {
+        const onTarget = s.org.depthLevel === currentDepth && isPointerOverOrganism(s.org, s.pointer.x, s.pointer.y, s.touch);
+        s.progress = onTarget ? s.progress + dt : Math.max(0, s.progress - dt*1.5);
+        const t = Math.min(1, s.progress*1000/SCAN_DURATION);
+        setCaptureBar(t);
+        placeScanFx(s);
+        if(t >= 1){ stopScan(); completeScan(s); }
+      }
+    }
+    requestAnimationFrame(scanLoop);
+  }
+  requestAnimationFrame(scanLoop);
 
   // ---- glass pipette following the pointer over the slide ----
   // Replaces the system cursor there (mouse/pen only). Pressing squeezes the
@@ -4441,9 +4881,9 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     touchPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     panVel.x = panVel.y = 0;
     if(touchPts.size === 2){ panTouch = null; twoFingerY = avgTouchY(); twoFingerAccum = 0; return; }
-    if(touchPts.size > 2 || holding) return;
+    if(touchPts.size > 2 || holding || scanning) return;
     const near = nearestCatchable(e.clientX, e.clientY, 30);
-    if(near){ startHold(near, e); return; }
+    if(near){ if(near.species.scan) startScan(near, e); else startHold(near, e); return; }
     panTouch = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
   });
   window.addEventListener('pointermove', (e)=>{
@@ -4685,16 +5125,19 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   function thumbnailScaleFor(species){
     const longestDim = Math.max(species.length, species.width);
     const targetFill = 40; // desired on-screen size in the 60x60 viewBox, leaving margin
-    return Math.min(2.2, Math.max(0.7, targetFill / longestDim));
+    return Math.min(2.2, Math.max(0.08, targetFill / longestDim));
   }
 
   // ---- reel (bottom right) ----
   function updateReel(){
     reel.innerHTML = '';
-    Object.keys(caughtLog).forEach(id=>{
+    // vials for what was caught, a scanner card for each big alga scanned
+    const ids = Object.keys(caughtLog).concat(Object.keys(scannedLog).filter(id=> !caughtLog[id]));
+    ids.forEach(id=>{
       const species = SPECIES.find(s=>s.id===id);
+      const scanned = !caughtLog[id];
       const slot = document.createElement('div');
-      slot.className = `reel-slot rarity-${species.rarity}`;
+      slot.className = `reel-slot rarity-${species.rarity}` + (scanned ? ' scanned' : '');
       const mini = new Organism(species, 60, 60);
       mini.spawnFade = 1;
       mini.x = 0; mini.y = 0; mini.angle = 0;
@@ -4706,13 +5149,13 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
       slot.appendChild(svg);
       const countEl = document.createElement('span');
       countEl.className = 'reel-count mono';
-      countEl.textContent = `×${caughtLog[id]}`;
+      countEl.textContent = scanned ? `⌖ ${scannedLog[id]}` : `×${caughtLog[id]}`;
       slot.appendChild(countEl);
       const nameEl = document.createElement('span');
       nameEl.className = 'reel-name';
       nameEl.textContent = species.displayName;
       slot.appendChild(nameEl);
-      slot.title = `${species.displayName} — ${species.commonName}`;
+      slot.title = `${species.displayName} — ${species.commonName}` + (scanned ? ' (escaneada)' : '');
       if(species.health){
         const h = HEALTH_INFO[species.health];
         const badge = document.createElement('span');
@@ -4764,7 +5207,10 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     document.getElementById('panel-depth').textContent = DEPTH_INFO[species.depth];
     document.getElementById('panel-shape').textContent = species.shapeLabel || shapeLabel(species.shape);
     document.getElementById('panel-motility').textContent = motilityLabel(species);
-    document.getElementById('panel-caught-count').textContent = caughtLog[species.id] || 0;
+    // the big algae are scanned, not caught
+    const countEl = document.getElementById('panel-caught-count');
+    countEl.previousElementSibling.textContent = species.scan ? 'Escaneados' : 'Capturados';
+    countEl.textContent = (species.scan ? scannedLog[species.id] : caughtLog[species.id]) || 0;
 
     const portrait = document.getElementById('panel-portrait');
     portrait.innerHTML = '';
@@ -5160,7 +5606,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     : null;
   let dishSeq = 0;
   function makeDish(sp){
-    const R = Math.min(160, Math.max(45, Math.max(sp.length, sp.width)*3)); // big organisms get a "wider" dish
+    const Lmax = Math.max(sp.length, sp.width);
+    const R = Lmax > 100 ? Lmax*0.62 : Math.min(160, Math.max(45, Lmax*3)); // big organisms get a "wider" dish; the big algae fit across it
     const pad = R*0.12;
     const card = document.createElement('button');
     card.className = 'dish-card';
@@ -5208,7 +5655,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
   }
 
   // ---- the white analysis plane: one species, enlarged, alone ----
-  function analysisBase(sp){ return Math.max(150, Math.max(sp.length, sp.width)*6); }
+  function analysisBase(sp){ const L = Math.max(sp.length, sp.width); return Math.max(150, L*(L > 100 ? 1.7 : 6)); }
   function analysisCount(sp){ const L = Math.max(sp.length, sp.width); return L <= 20 ? 8 : L <= 45 ? 4 : 2; }
   function fitAnalysisView(){
     if(!analysis) return;
@@ -5279,7 +5726,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     row('Motilidade', motilityLabel(sp));
     row('Plano focal', DEPTH_INFO[sp.depth]);
     row('Habitat', sp.habitat.map(h => HABITAT_LABEL[h] || h).join(' · '));
-    row('Nos frascos', String(caughtLog[sp.id] || 0));
+    if(sp.scan) row('Escaneados', String(scannedLog[sp.id] || 0));
+    else row('Nos frascos', String(caughtLog[sp.id] || 0));
     const wiki = add('a', 'wiki-btn', `Ver "${sp.commonName}" na Wikipedia ↗`);
     wiki.href = wikipediaUrl(sp); wiki.target = '_blank'; wiki.rel = 'noopener noreferrer';
   }
@@ -5435,7 +5883,7 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
     const cx = camera.x + VIEW_W/2, cy = camera.y + VIEW_H/2;
     let far = null, farD = -1;
     organisms.forEach(o=>{
-      if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten) return;
+      if(o === holding || isScanning(o) || o.caught || o.dying || o.vanishing || o.beingEaten) return;
       const d = Math.hypot(o.x - cx, o.y - cy);
       if(d > farD){ far = o; farD = d; }
     });
@@ -5444,13 +5892,13 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
 
   function renewScene(){
     organisms.forEach(o=>{
-      if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun) return;
+      if(o === holding || isScanning(o) || o.caught || o.dying || o.vanishing || o.beingEaten || o._split || o.tun) return;
       refreshQueue.push({ o, at: simTime + Math.random()*1.2 });
     });
   }
   // swap one organism for a freshly drawn one of the same plane, in its place
   function swapOrganism(o){
-    if(o === holding || o.caught || o.dying || o.vanishing || o.beingEaten || o.dead) return;
+    if(o === holding || isScanning(o) || o.caught || o.dying || o.vanishing || o.beingEaten || o.dead) return;
     if(!isInsideWetBlob(o.x, o.y, simTime, 0.92)) return;
     const sp = pickWeightedSpecies(o.depthLevel);
     o.vanish();
@@ -5736,7 +6184,8 @@ Organism.VANISH_TIME = 0.9; // seconds to fade out when swapped / trimmed
       }
       organisms.forEach(o=>{
         o.update(dt, bounds);
-        const onScreen = o.x > vx0 && o.x < vx1 && o.y > vy0 && o.y < vy1;
+        const r = o._cullR || (o._cullR = Math.max(o.species.length, o.species.width)*0.6); // long filaments reach far past their centre
+        const onScreen = o.x > vx0 - r && o.x < vx1 + r && o.y > vy0 - r && o.y < vy1 + r;
         if(onScreen){
           if(o._hidden){ o.group.style.display = ''; o._hidden = false; }
           o.render(dt);

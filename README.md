@@ -17,6 +17,8 @@ O **saguão** mostra três cartões; passe o mouse para eles inclinarem e clique
 | `celulas-3d/` | Células em 3D (bactéria, lactobacilo, levedura e célula vegetal), abertas camada por camada |
 | `comum/` | O que as páginas dividem: fontes, three.js e `entrada.js` (a passagem entre o saguão e cada parte) |
 
+No jogo, os microrganismos são coletados com a pipeta (segure 5 s sobre eles); as algas grandes (Spirogyra, Oscillatoria, Closterium, Micrasterias e Vólvox) são longas demais para a pipeta e são **escaneadas** (segure o clique ou o dedo sobre elas por 3 s). Os desenhos dos organismos seguem fotos reais de microscópio.
+
 O jogo abre as células 3D por cima dele, num quadro (botão "Modelos 3D das células" e "Ver a estrutura em 3D" na ficha), sem perder o que foi coletado. Cada parte tem um botão "← Início" para voltar ao saguão.
 
 ## Apresentação (`microcosmo/apresentacao/`)

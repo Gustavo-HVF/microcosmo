@@ -793,3 +793,16 @@ body.touch #focus-ctl{ display:flex; }
 #intro .back-home{ position:absolute; top:calc(env(safe-area-inset-top, 0px) + 16px); left:calc(env(safe-area-inset-left, 0px) + 18px); color:#444; text-decoration:none; font-size:.78rem; letter-spacing:.04em; padding:8px 12px; border:1px solid #ddd; border-radius:999px; }
 #intro .back-home:hover{ color:#111; border-color:#111; }
 .home-btn{ display:block; width:auto; text-align:center; text-decoration:none; margin:0 0 10px; box-sizing:border-box; }
+
+/* ---- scanning the big algae (too large for the pipette) ---- */
+/* over a big alga, and while scanning, the pipette gives way to a crosshair */
+body.scan-hover #pipette, body.scanning #pipette{ opacity:0; }
+body.pipette-on.scan-hover #droplet-clip, body.pipette-on.scan-hover #droplet-clip .organism,
+body.scanning #droplet-clip, body.scanning #droplet-clip .organism{ cursor:crosshair; }
+#capture-progress.scan circle.bar{ stroke:#13a89c; }
+#capture-progress.scan circle.track{ stroke:rgba(19,168,156,.22); }
+/* a scanned alga has no vial: a dashed scanner card instead */
+.reel-slot.scanned{ border:2px dashed #13a89c; border-radius:6px; background:#f4fbfa; }
+.reel-slot.scanned::before{ display:none; }
+.reel-slot.scanned svg{ margin-top:4px; }
+.reel-slot.scanned .reel-count{ color:#0f7f76; font-weight:700; }
